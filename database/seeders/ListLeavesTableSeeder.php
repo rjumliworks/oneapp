@@ -15,7 +15,7 @@ class ListLeavesTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_leaves')->truncate();
+        \DB::table('list_leaves')->delete();
         
         \DB::table('list_leaves')->insert(array (
             0 => 

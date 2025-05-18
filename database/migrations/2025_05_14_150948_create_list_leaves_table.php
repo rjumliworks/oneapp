@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name',100);
             $table->string('citation');  
             $table->boolean('is_regular')->default(1);
+            $table->boolean('is_after')->default(0);
             $table->boolean('carry_over')->default(0);
             $table->boolean('requires_balance')->default(0);
             $table->string('renewal_period');
