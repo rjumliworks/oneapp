@@ -35,7 +35,8 @@
     <body>
         
         <?php 
-           
+            $lists = json_encode($lists); 
+            $lists = json_decode($lists, true);  
 
             $employee = json_encode($user); 
             $employee = json_decode($user, true);  
@@ -83,10 +84,10 @@
                         @if(!$list['is_with'])
                             <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px;">{{ $list['data'] }}</td>
                         @else
-                            <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_in'] : '' }}</td>
-                            <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_out'] : '' }}</td>
-                            <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['pm_in'] : '' }}</td>
-                            <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['pm_out'] : '' }}</td>
+                            <td style="font-size: 8px;">{{ ($list['data']) ? $list['data']['am_in'] : '' }}</td>
+                            <td style="font-size: 8px;">{{ ($list['data']) ? $list['data']['am_out'] : '' }}</td>
+                            <td style="font-size: 8px;">{{ ($list['data']) ? $list['data']['pm_in'] : '' }}</td>
+                            <td style="font-size: 8px;">{{ ($list['data']) ? $list['data']['pm_out'] : '' }}</td>
                             <td></td>
                             <td></td>
                         @endif
@@ -155,10 +156,10 @@
                             @if(!$list['is_with'])
                                 <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px;">{{ $list['data'] }}</td>
                             @else
-                                <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_in'] : '' }}</td>
-                                <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_out'] : '' }}</td>
-                                <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['pm_in'] : '' }}</td>
-                                <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['pm_out'] : '' }}</td>
+                                <td style="font-size: 8px;">{{ ($list['data']) ? $list['data']['am_in'] : '' }}</td>
+                                <td style="font-size: 8px;">{{ ($list['data']) ? $list['data']['am_out'] : '' }}</td>
+                                <td style="font-size: 8px;">{{ ($list['data']) ? $list['data']['pm_in'] : '' }}</td>
+                                <td style="font-size: 8px;">{{ ($list['data']) ? $list['data']['pm_out'] : '' }}</td>
                                 <td></td>
                                 <td></td>
                             @endif

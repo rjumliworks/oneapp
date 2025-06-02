@@ -1,6 +1,6 @@
 <template>
     <Head title="Employees"/>
-        <PageHeader title="List of Morale Survey" pageTitle="List" />
+        <PageHeader title="Morale Survey Management" pageTitle="List" />
         <BRow>
             <div class="col-md-12">
                 <div class="card bg-light-subtle shadow-none border">
@@ -14,7 +14,7 @@
                                 </div>
                             </div>
                             <div class="flex-grow-1">
-                                <h5 class="mb-0 fs-14"><span class="text-body">Morale Survey</span></h5>
+                                <h5 class="mb-0 fs-14"><span class="text-body">List of Morale Survey</span></h5>
                                 <p class="text-muted text-truncate-two-lines fs-12">A comprehensive list of campuses from various schools, providing location and institutional details</p>
                             </div>
                             <div class="flex-shrink-0" style="width: 45%;">

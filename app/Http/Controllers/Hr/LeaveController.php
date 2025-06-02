@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Traits\HandlesTransaction;
 use App\Services\Hr\Leave\SaveClass;
 use App\Services\Hr\Leave\ViewClass;
+use App\Http\Requests\HumanResource\LeaveRequest;
 
 class LeaveController extends Controller
 {
@@ -24,7 +25,7 @@ class LeaveController extends Controller
     public function index(Request $request){
         switch($request->option){
             case 'lists':
-                return $this->view->lists($request);
+                return [];
             break;
             default:
                 return inertia('Modules/HumanResource/Leaves/Index',[
@@ -34,5 +35,9 @@ class LeaveController extends Controller
                     ]
                 ]); 
         }   
+    }
+
+    public function store(LeaveRequest $request){
+
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Models\ListUnit;
 use App\Models\ListData;
 use App\Models\ListRole;
@@ -35,17 +36,59 @@ class DropdownClass
     }
 
     public function leaves(){
-        $data = ListLeave::where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name,
-                'citation' => $item->citation,
-                'is_regular' => $item->is_regular,
-                'is_increasing' => $item->is_increasing,
-                'is_active' => $item->is_active
-            ];
+       $data = ListLeave::where('is_active', 1)->get()->map(function ($item) {
+            if ($item->requires_balance === 1) {
+                return [
+                    'label' => 'Require Credits',
+                    'options' => [
+                        'value' => $item->id,
+                        'name' => $item->name,
+                        'citation' => $item->citation,
+                        'is_regular' => $item->is_regular,
+                        'is_increasing' => $item->is_increasing,
+                        'is_after' => $item->is_after,
+                        'is_active' => $item->is_active,
+                        'requires_balance' => $item->requires_balance
+                    ]
+                ];
+            } else if($item->requires_balance === 0) {
+                return [
+                    'label' => 'Require Documents',
+                    'options' => [
+                        'value' => $item->id,
+                        'name' => $item->name,
+                        'citation' => $item->citation,
+                        'is_regular' => $item->is_regular,
+                        'is_increasing' => $item->is_increasing,
+                        'is_after' => $item->is_after,
+                        'is_active' => $item->is_active,
+                        'requires_balance' => $item->requires_balance
+                    ]
+                ];
+            }else{
+                   return [
+                    'label' => 'Others',
+                    'options' => [
+                        'value' => $item->id,
+                        'name' => $item->name,
+                        'citation' => $item->citation,
+                        'is_regular' => $item->is_regular,
+                        'is_increasing' => $item->is_increasing,
+                        'is_after' => $item->is_after,
+                        'is_active' => $item->is_active,
+                        'requires_balance' => $item->requires_balance
+                    ]
+                ];
+            }
         });
-        return $data;
+        $grouped = $data->groupBy('label')->map(function ($items) {
+            return [
+                'label' => $items->first()['label'],
+                'options' => $items->pluck('options')->values()
+            ];
+        })->values();
+
+        return $grouped;
     }
 
 
@@ -266,6 +309,27 @@ class DropdownClass
                 'short' => $item->short
             ];
         });
+        return $data;
+    }
+
+    public function users($keyword){
+        $data =  User::with('profile')
+        ->with('organization.position.administrative')
+        ->when($keyword, function ($query) use ($keyword){
+            $query->whereHas('profile', function ($query) use ($keyword) {
+                $query->whereRaw('concat(firstname, " ", lastname) LIKE ?', ['%' . $keyword . '%'])
+                    ->orWhereRaw('concat(lastname, " ", firstname) LIKE ?', ['%' . $keyword . '%']);
+            });
+        })
+        ->limit(5)->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->profile->lastname.' '.$item->profile->firstname.', '.$item->profile->middlename.'.',
+                'position' => $item->organization->position->administrative->name,
+                'avatar' => $item->profile->avatar
+            ];
+        });
+        
         return $data;
     }
 }

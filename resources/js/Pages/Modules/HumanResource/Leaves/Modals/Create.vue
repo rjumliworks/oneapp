@@ -6,13 +6,19 @@
             <BRow class="g-3 mdiv">
                 <BCol lg="6" class="mt-3">
                     <InputLabel for="name" value="Type of Leave" :message="form.errors.type_id"/>
-                    <Multiselect :options="dropdowns.leaves" :searchable="true" label="name" object v-model="form.type" placeholder="Select Type" @input="handleInput('type')"/>
+                    <Multiselect
+                        v-model="form.type" :groups="true"
+                        :options="dropdowns.leaves"
+                        label="name"
+                        object
+                        placeholder="Select type"
+                    />
                 </BCol>
                 <BCol lg="6" class="mt-3">
                     <InputLabel for="name" value="Details of Leave" :message="form.errors.detail_id"/>
                     <Multiselect :options="filteredDetails" :searchable="true" label="name" object v-model="form.detail" placeholder="Select Detail" @input="handleInput('detail_id')"/>
                 </BCol>
-                <BCol lg="12" v-if="form.detail?.others === 'specify' || form.detail?.others === 'specify illness'" class="mt-1">
+                <BCol lg="12" v-if="form.detail?.others === 'specify' || form.detail?.others === 'specify illness' || form.detail?.others === 'specify reason'" class="mt-1">
                     <InputLabel for="name" value="Details" :message="form.errors.details"/>
                     <TextInput id="name" v-model="form.details" type="text" class="form-control" :placeholder="form.detail.others" @input="handleInput('details')" :light="true"/>
                 </BCol>
@@ -22,7 +28,7 @@
                 </BCol>
                 <template v-if="dateType == 'Single Day'">
                     <BCol lg="6" class="mt-2">
-                        <InputLabel for="name" value="Date"  :message="form.errors.date"/>
+                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
                         <flat-pickr v-model="date" :config="single" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
                     </BCol>
                     <BCol lg="6" class="mt-2">
@@ -32,13 +38,13 @@
                 </template>
                 <template v-if="dateType == 'Range'">
                     <BCol lg="12" class="mt-2">
-                        <InputLabel for="name" value="Date"  :message="form.errors.date"/>
+                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
                         <flat-pickr v-model="date" :config="range" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
                     </BCol>
                 </template>
                 <template v-if="dateType == 'Multiple Dates (non-continuous)'">
                     <BCol lg="12" class="mt-2">
-                        <InputLabel for="name" value="Date"  :message="form.errors.date"/>
+                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
                         <flat-pickr v-model="date" :config="multiple" placeholder="Select dates" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
                     </BCol>
                 </template>
@@ -48,12 +54,12 @@
             <BRow>
                 <BCol lg="12" class="mt-3">
                     <div class="mt-0 form-check fs-14">
-                        <input type="checkbox" v-model="form.check" class="form-check-input" id="checkTerms">
+                        <input type="checkbox" v-model="check" class="form-check-input" id="checkTerms">
                         <label class="form-check-label fs-12" for="checkTerms">Please check the box if you have dates selected that are AM or PM only, not whole day</label>
                     </div>
                 </BCol>
                 <BCol lg="12" style="max-height: 250px; overflow: auto;"  id="my-modal-content"> 
-                    <div v-if="form.check" class="mt-3">
+                    <div v-if="check" class="mt-3">
                         <div v-for="(date, index) in form.dates" :key="index" class="mb-2">
                             <div class="input-group mb-1">
                                 <span class="input-group-text"> <i class="ri-calendar-line search-icon"></i></span>
@@ -94,13 +100,12 @@ export default {
                 type: null,
                 type_id: null,
                 detail_id: null,
-                status_id: null,
                 details: null,
                 timeOfDay: 'Whole Day',
                 dates: [],
-                check: false,
                 option: 'leave'
             }),
+            check: false,
             date: null,
             single:{
                 mode: "single",
@@ -119,7 +124,7 @@ export default {
                 dateFormat: 'Y-m-d',
                 altInput: true,
                 altFormat: 'F j, Y',
-                minDate: new Date().setDate(new Date().getDate() + 1),
+                minDate:'',
             },
             multiple: {
                 mode: "multiple",
@@ -152,10 +157,29 @@ export default {
                 const others = this.dropdowns.details.find(detail => detail.id === 24 || detail.value === 24);
                 return others ? [others] : [];
             }
+            if (matches.length == 1) {
+                const others = this.dropdowns.details.find(detail => detail.type == this.form.type.name);
+                if(others){
+                    [others];
+                    this.form.detail = others;
+                }else{
+                    [];
+                }
+            }
             return matches;
         }
     },
     watch: {
+        'form.detail': {
+            immediate: true,
+            handler(newVal) {
+                if(newVal){
+                    this.form.detail_id = newVal.value;
+                }else{
+                    this.form.detail_id = null;
+                }
+            }
+        },
         'form.type': {
             immediate: true,
             handler(newVal) {
@@ -179,6 +203,22 @@ export default {
                     if (!validIds.includes(this.form.detail?.id || this.form.detail?.value)) {
                         this.form.detail = null; 
                     }
+                }
+
+                if (this.form.type && !this.form.type.is_after) {
+                    this.single.minDate = new Date().setDate(new Date().getDate() + 1);
+                    this.range.minDate = new Date().setDate(new Date().getDate() + 1);
+                    this.multiple.minDate = new Date().setDate(new Date().getDate() + 1);
+                }else{
+                    this.single.minDate = null;
+                    this.range.minDate = null;
+                    this.multiple.minDate = null;
+                }
+
+                if(newVal){
+                    this.form.type_id = newVal.value;
+                }else{
+                    this.form.type_id = null;
                 }
             }
         },
@@ -225,7 +265,6 @@ export default {
             this.showModal = true;
         },
         submit(){
-            this.normalizeDates();
             this.form.post('/leaves',{
                 preserveScroll: true,
                 onSuccess: (response) => {

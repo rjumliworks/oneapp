@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('is_regular')->default(1);
             $table->boolean('is_after')->default(0);
             $table->boolean('carry_over')->default(0);
-            $table->boolean('requires_balance')->default(0);
+            $table->boolean('requires_balance')->nullable();
             $table->string('renewal_period');
             $table->integer('max_days');
             $table->decimal('accrual_rate',4,2)->default(0.00);

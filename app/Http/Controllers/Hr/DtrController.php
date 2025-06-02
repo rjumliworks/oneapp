@@ -7,15 +7,17 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Hr\Dtr\SaveClass;
 use App\Services\Hr\Dtr\ViewClass;
+use App\Services\Hr\Dtr\PrintClass;
 use App\Services\Hr\Dtr\UpdateClass;
 
 class DtrController extends Controller
 {
     use HandlesTransaction;
 
-    public function __construct(SaveClass $save, ViewClass $view, UpdateClass $update){
+    public function __construct(SaveClass $save, ViewClass $view, UpdateClass $update, PrintClass $print){
         $this->save = $save;
         $this->view = $view;
+        $this->print = $print;
         $this->update = $update;
     }
 
@@ -23,6 +25,9 @@ class DtrController extends Controller
         switch($request->option){
             case 'lists':
                 return $this->view->lists($request);
+            break;
+            case 'print':
+                return $this->print->dtr($request);
             break;
             default:
                 return inertia('Modules/HumanResource/Dtrs/Index'); 

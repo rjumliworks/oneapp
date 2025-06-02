@@ -1,6 +1,6 @@
 <template>
 <Head title="Dtr"/>
-<PageHeader title="List of Date Time Record" pageTitle="List" />
+<PageHeader title="DTR Management" pageTitle="List" />
 <BRow>
     <div class="col-md-12">
         <div class="card bg-light-subtle shadow-none border">
@@ -14,7 +14,7 @@
                         </div>
                     </div>
                     <div class="flex-grow-1">
-                        <h5 class="mb-0 fs-14"><span class="text-body">Date Time Record</span></h5>
+                        <h5 class="mb-0 fs-14"><span class="text-body">List of Date Time Record</span></h5>
                         <p class="text-muted text-truncate-two-lines fs-12">Logs and tracks recorded date and time entries for events, actions, or attendance.</p>
                     </div>
                     <div class="flex-shrink-0" style="width: 45%;">
@@ -32,8 +32,8 @@
                             <!-- <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                                 <i class="bx bx-refresh search-icon"></i>
                             </span> -->
-                            <b-button type="button" variant="primary" @click="refresh()">
-                                <i class="bx bx-refresh search-icon"></i> 
+                            <b-button type="button" variant="primary" @click="openGenerate()">
+                                <i class="bx bx-refresh search-icon"></i> Generate
                             </b-button>
                         </div>
                     </b-col>
@@ -102,15 +102,17 @@
         </div>
     </div>
     <View ref="view"/>
+    <Generate ref="generate"/>
 </BRow>
 </template>
 <script>
 import _ from 'lodash';
 import View from './Modals/View.vue';
+import Generate from './Modals/Generate.vue';
 import PageHeader from '@/Shared/Components/PageHeader.vue';
 import Pagination from "@/Shared/Components/Pagination.vue";
 export default {
-    components: { PageHeader, Pagination, View },
+    components: { PageHeader, Pagination, View, Generate },
     data(){
         return {
             currentUrl: window.location.origin,
@@ -160,6 +162,9 @@ export default {
         },
         openView(data){
             this.$refs.view.show(data);
+        },
+        openGenerate(){
+            this.$refs.generate.show();
         }
     }
 }

@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Welcome DOST Scholars" />
+    <Head title="Human Resource - Date Time Record" />
 
    <body>
     <div class="account-pages my-4 pt-sm-5">

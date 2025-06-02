@@ -16,6 +16,7 @@ return new class extends Migration
             $table->increments('id');
             $table->decimal('total_credit', 4, 2)->default(0);
             $table->string('details')->nullable();
+            $table->boolean('is_paid');
             $table->tinyInteger('detail_id')->unsigned()->nullable();
             $table->foreign('detail_id')->references('id')->on('list_dropdowns')->onDelete('cascade');
             $table->tinyInteger('type_id')->unsigned()->index();

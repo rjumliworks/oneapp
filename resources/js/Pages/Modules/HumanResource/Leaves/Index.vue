@@ -1,6 +1,6 @@
 <template>
     <Head title="Leaves"/>
-        <PageHeader title="List of Leave Request" pageTitle="List" />
+        <PageHeader title="Leave Management" pageTitle="List" />
         <BRow>
             <div class="col-md-12">
                 <div class="card bg-light-subtle shadow-none border">
@@ -151,7 +151,7 @@
                 this.fetch();
             }, 300),
             fetch(page_url){
-                page_url = page_url || '/surveys';
+                page_url = page_url || '/leaves';
                 axios.get(page_url,{
                     params : {
                         keyword: this.filter.keyword,
@@ -172,6 +172,10 @@
             },
             openCreate(){
                 this.$refs.create.show();
+            },
+            refresh(){
+                this.filter.leave = null;
+                this.filter.keyword = null;
             }
         }
     }

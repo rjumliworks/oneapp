@@ -292,7 +292,7 @@ export default {
             </BButton>
           </div>
 
-          <BDropdown variant="ghost-dark" dropstart class="ms-1 dropdown"
+          <!-- <BDropdown variant="ghost-dark" dropstart class="ms-1 dropdown"
             :offset="{ alignmentAxis: 57, crossAxis: 0, mainAxis: -42 }"
             toggle-class="btn-icon btn-topbar rounded-circle arrow-none" id="page-header-notifications-dropdown"
             menu-class="dropdown-menu-lg dropdown-menu-end p-0" auto-close="outside">
@@ -321,7 +321,7 @@ export default {
             <BTabs nav-class="dropdown-tabs nav-tab-custom bg-primary px-2 pt-2">
               <BTab title=" All (4) " class="tab-pane fade py-2 ps-2 show" id="all-noti-tab" role="tabpanel">
                 <simplebar data-simplebar style="max-height: 300px" class="pe-2">
-                  <!-- <div class="text-reset notification-item d-block dropdown-item position-relative">
+                  <div class="text-reset notification-item d-block dropdown-item position-relative">
                     <div class="d-flex">
                       <div class="avatar-xs me-3 flex-shrink-0">
                         <span class="avatar-title bg-info-subtle text-info rounded-circle fs-16">
@@ -370,7 +370,7 @@ export default {
                         <input class="form-check-input" type="checkbox" />
                       </div>
                     </div>
-                  </div> -->
+                  </div>
 
                   <div class="my-3 text-center">
                     <BButton type="button" variant="soft-success">
@@ -407,7 +407,7 @@ export default {
                 </simplebar>
               </BTab>
             </BTabs>
-          </BDropdown>
+          </BDropdown> -->
 
           <BDropdown variant="link" class="ms-sm-3 header-item topbar-user" toggle-class="rounded-circle arrow-none" menu-class="dropdown-menu-end" :offset="{ alignmentAxis: -14, crossAxis: 0, mainAxis: 0 }">
             <template #button-content>
@@ -423,7 +423,9 @@ export default {
             <Link class="dropdown-item" href="/profile"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
             <span class="align-middle"> Profile</span>
             </Link>
-            
+              <Link class="dropdown-item" href="/DTR"><i class="ri-calendar-todo-fill text-muted fs-16 align-middle me-1"></i>
+            <span class="align-middle"> DTR</span>
+            </Link>
             <div class="dropdown-divider"></div>
             <Link class="dropdown-item" href="/confirm-password"><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i>
             <span class="align-middle"> Lock screen</span>

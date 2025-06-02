@@ -37,6 +37,9 @@ class DashboardController extends Controller
             case 'units':
                 return $this->dropdown->units($request->code);
             break;
+            case 'users':
+                return $this->dropdown->users($request->keyword);
+            break;
         }
     }
 }
