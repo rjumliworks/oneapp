@@ -27,9 +27,9 @@
                             <b-col lg>
                                 <div class="input-group mb-1">
                                     <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
-                                    <input type="text" v-model="filter.keyword" placeholder="Search Employee" class="form-control" style="width: 60%;">
+                                    <input type="text" v-model="filter.keyword" placeholder="Search Employee" class="form-control" style="width: 50%;">
                                     <input type="text" v-model="filter.year" placeholder="Enter Year" class="form-control" style="width: 5%;">
-                                    <Multiselect class="white" style="width: 13%;" :options="dropdowns.semesters" v-model="filter.semester" label="name" :searchable="true" placeholder="Select Semester" />
+                                    <Multiselect class="white" style="width: 17%;" :options="dropdowns.semesters" v-model="filter.semester" label="name" :searchable="true" placeholder="Select Semester" />
                                     <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                                         <i class="bx bx-refresh search-icon"></i>
                                     </span>

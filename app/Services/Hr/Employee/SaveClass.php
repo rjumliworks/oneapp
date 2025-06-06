@@ -68,6 +68,9 @@ class SaveClass
                     if($role){
                         $this->information($data->id);
                     }
+                    $leave = $data->leaves()->create([
+                        ''
+                    ]);
                 }
             }
         }

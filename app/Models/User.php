@@ -60,6 +60,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany('App\Models\UserAcademic', 'user_id');
     }
 
+    public function leaves()
+    {
+        return $this->hasMany('App\Models\LeaveCredit', 'user_id');
+    }
+
     public function answers()
     {
         return $this->hasMany('App\Models\SurveyAnswer', 'user_id');
