@@ -24,7 +24,7 @@ class EmployeeResource extends JsonResource
             'academics' => $this->academics,
             'credentials' => $this->credentials,
             'created_at' => $this->created_at,
-            'avatar' => ($this->profile->avatar === 'avatar.jpg') ? '/images/avatars/'.$this->profile->avatar : '/storage/'.$this->profile->avatar,
+            'avatar' => ($this->profile->avatar === 'avatar.jpg') ? '/images/avatars/'.$this->profile->avatar : '/storage/profile-pictures/'.$this->profile->avatar,
  
         ];
     }

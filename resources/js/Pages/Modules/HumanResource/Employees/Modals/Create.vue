@@ -16,9 +16,9 @@
                               <b-row class="g-3 mt-n3">
                                 <b-col lg>
                                     <div class="input-group mb-0">
-                                        <input type="text" v-model="form.firstname" placeholder="Firstname" class="form-control" style="width: 25%;">
-                                        <input type="text" v-model="form.middlename" placeholder="Middlename" class="form-control" style="width: 25%;">
-                                        <input type="text" v-model="form.lastname" placeholder="Lastname" class="form-control" style="width: 25%;">
+                                        <input type="text" v-model="form.firstname" placeholder="First name" class="form-control" style="width: 25%;">
+                                        <input type="text" v-model="form.middlename" placeholder="Middle name" class="form-control" style="width: 25%;">
+                                        <input type="text" v-model="form.lastname" placeholder="Last name" class="form-control" style="width: 25%;">
                                         <input type="text" v-model="form.suffix" placeholder="Suffix" class="form-control" style="width: 25%;">
                                     </div>
                                 </b-col>
