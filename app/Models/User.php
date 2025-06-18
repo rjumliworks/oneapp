@@ -75,6 +75,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany('App\Models\UserCredential', 'user_id')->orderBy('created_at','DESC');
     }
 
+    public function credits()
+    {
+        return $this->hasMany('App\Models\UserCredit', 'user_id')->orderBy('created_at','DESC');
+    }
+
     public function authentications()
     {
         return $this->haMany('App\Models\AuthenticationLog', 'user_id');

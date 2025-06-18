@@ -198,6 +198,16 @@ class ListUnitsTableSeeder extends Seeder
                 'created_at' => '2024-08-29 16:40:12',
                 'updated_at' => '2024-08-29 16:40:12',
             ),
+            18 => 
+            array (
+                'id' => 19,
+                'name' => 'Guards',
+                'short' => 'Guards',
+                'is_active' => 1,
+                'division_id' => 35,
+                'created_at' => '2024-08-29 16:40:12',
+                'updated_at' => '2024-08-29 16:40:12',
+            ),
         ));
 
         

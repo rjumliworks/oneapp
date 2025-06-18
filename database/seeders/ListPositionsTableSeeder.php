@@ -15,7 +15,7 @@ class ListPositionsTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_positions')->delete();
+        \DB::table('list_positions')->truncate();
         
         \DB::table('list_positions')->insert(array (
             0 => 
@@ -201,7 +201,7 @@ class ListPositionsTableSeeder extends Seeder
             20 => 
             array (
                 'id' => 21,
-                'special_id' => NULL,
+                'special_id' => 351,
                 'administrative_id' => 170,
                 'salary_id' => 7,
                 'created_at' => '2024-08-29 11:59:43',
@@ -996,6 +996,15 @@ class ListPositionsTableSeeder extends Seeder
                 'special_id' => 96,
                 'administrative_id' => 218,
                 'salary_id' => 27,
+                'created_at' => '2024-08-29 12:33:13',
+                'updated_at' => '2024-08-29 12:33:13',
+            ),
+            109 => 
+            array (
+                'id' => 110,
+                'special_id' => 341,
+                'administrative_id' => 341,
+                'salary_id' => 1,
                 'created_at' => '2024-08-29 12:33:13',
                 'updated_at' => '2024-08-29 12:33:13',
             ),

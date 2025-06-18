@@ -15,7 +15,7 @@ class ListDataTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_data')->delete();
+        \DB::table('list_data')->truncate();
         
         \DB::table('list_data')->insert(array (
             0 => 
@@ -560,7 +560,7 @@ class ListDataTableSeeder extends Seeder
             77 => 
             array (
                 'id' => 78,
-                'name' => 'Project Administrative Officer V',
+                'name' => 'Administrative Officer V',
                 'type' => 'Special Order',
                 'is_active' => 1,
             ),
@@ -1962,6 +1962,90 @@ class ListDataTableSeeder extends Seeder
                 'id' => 339,
                 'name' => 'For Your Initials/signature',
                 'type' => 'Document Action',
+                'is_active' => 1,
+            ),
+            278 => 
+            array (
+                'id' => 340,
+                'name' => 'Agency',
+                'type' => 'Employment Status',
+                'is_active' => 1,
+            ),
+            279 => 
+            array (
+                'id' => 341,
+                'name' => 'Security',
+                'type' => 'Administrative Order',
+                'is_active' => 1,
+            ),
+            280 => 
+            array (
+                'id' => 342,
+                'name' => 'Vehicle',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            281 => 
+            array (
+                'id' => 343,
+                'name' => 'All-in-One Computer',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            282 => 
+            array (
+                'id' => 344,
+                'name' => 'Laptop',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            283 => 
+            array (
+                'id' => 345,
+                'name' => 'Desktop Computer',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            284 => 
+            array (
+                'id' => 346,
+                'name' => 'Server Computer',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            285 => 
+            array (
+                'id' => 347,
+                'name' => 'LCD Projector',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            286 => 
+            array (
+                'id' => 348,
+                'name' => 'Genset',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            287 => 
+            array (
+                'id' => 349,
+                'name' => 'Split Type - Air Conditioner',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            288 => 
+            array (
+                'id' => 350,
+                'name' => 'Air Conditioner',
+                'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            289 => 
+            array (
+                'id' => 351,
+                'name' => 'Administrative Aide IV',
+                'type' => 'Special Order',
                 'is_active' => 1,
             ),
         ));

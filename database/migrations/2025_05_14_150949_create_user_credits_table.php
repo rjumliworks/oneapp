@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('leave_credits', function (Blueprint $table) {
+        Schema::create('user_credits', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->decimal('earned',10,2);
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('leave_credits');
+        Schema::dropIfExists('user_credits');
     }
 };

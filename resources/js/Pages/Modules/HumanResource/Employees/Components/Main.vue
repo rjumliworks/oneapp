@@ -38,6 +38,7 @@
                             <transition mode="out-in">
                                 <div :key="index" class="tab-content">
                                     <Overview :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Overview'" />
+                                    <Credits :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credits'" />
                                     <Eligibility :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credentials'" />
                                     <Academic :dropdowns="dropdowns" :lists="employee.academics" :id="employee.id" v-if="menu == 'Academics'"/>
                                     <Background :dropdowns="dropdowns" :information="employee.information" :id="employee.id" v-if="menu == 'Informations'"/>
@@ -53,17 +54,18 @@
 </template>
 <script>
 import simplebar from "simplebar-vue";
+import Credits from './Pages/Credits.vue';
 import Overview from './Pages/Overview.vue';
 import Academic from './Pages/Academic.vue';
 import Background from "./Pages/Background.vue";
 import Eligibility from './Pages/Eligibility.vue';
 export default {
-    components: { simplebar, Eligibility, Academic, Background, Overview },
+    components: { simplebar, Eligibility, Academic, Background, Overview, Credits },
     props: ['employee','dropdowns'],
     data(){
         return {
             menus: [
-                'Overview','Informations','Academics','Credentials'
+                'Overview','Credits','Informations','Academics','Credentials'
             ],
             index: null,
         }

@@ -65,6 +65,23 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function update(EmployeeRequest $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            switch($request->option){
+                case 'employee':
+                    return $this->save->update($request);
+                break;
+            }
+        });
+
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
+    }
+
     public function show($code){
         return inertia('Modules/HumanResource/Employees/View',[
             'employee_data' => $this->view->view($code),

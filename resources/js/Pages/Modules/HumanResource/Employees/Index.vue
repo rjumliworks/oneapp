@@ -103,6 +103,9 @@
                                         <span :class="'badge '+list.organization.status.color+' '+list.organization.status.type">{{list.organization.status.name}}</span>
                                     </td>
                                     <td class="text-end">
+                                        <b-button @click="openEdit(list,index)" variant="soft-warning" class="me-1" v-b-tooltip.hover title="Edit" size="sm">
+                                            <i class="ri-pencil-fill align-bottom"></i>
+                                        </b-button>
                                         <Link :href="`/employees/${list.code}`">
                                             <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
                                                 <i class="ri-eye-fill align-bottom"></i>
@@ -120,7 +123,7 @@
             </div>
         </div>
     </BRow>
-    <Create :dropdowns="dropdowns" ref="create"/>
+    <Create @update="updateUser" :dropdowns="dropdowns" ref="create"/>
 </template>
 <script>
 import _ from 'lodash';
@@ -222,6 +225,13 @@ export default {
         },
         openCreate(){
             this.$refs.create.show();
+        },
+        openEdit(data,index){
+            this.index = index;
+            this.$refs.create.update(data);
+        },
+        updateUser(data){
+            this.lists[this.index] = data;
         }
     }
 }

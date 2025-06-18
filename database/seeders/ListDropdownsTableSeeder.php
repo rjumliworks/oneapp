@@ -348,6 +348,16 @@ class ListDropdownsTableSeeder extends Seeder
                 'others' => 'specify illness',
                 'is_active' => 1,
             ),
+            33 => 
+            array (
+                'id' => 35,
+                'name' => 'Security Guards',
+                'classification' => 'Division',
+                'type' => 'Sub',
+                'color' => 'n/a',
+                'others' => 'Agency',
+                'is_active' => 1,
+            ),
         ));
 
         

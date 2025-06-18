@@ -127,6 +127,8 @@ export default {
         return {
             showModal: false,
             form: useForm({
+                id: null,
+                profile_id: null,
                 firstname: null,
                 middlename: null,
                 lastname: null,
@@ -146,6 +148,7 @@ export default {
                 type_id: null,
                 option: 'employee'
             }),
+            editable: false,
             units: [],
             filteredPositions: []
         };
@@ -176,15 +179,50 @@ export default {
         show(){
             this.showModal = true;
         },
+        update(data){
+            this.form.id = data.id;
+            this.form.profile_id = data.profile.id;
+            this.form.firstname = data.profile.firstname;
+            this.form.middlename = data.profile.middlename;
+            this.form.lastname = data.profile.lastname;
+            this.form.suffix = data.profile.suffix;
+            this.form.username = data.username;
+            this.form.email = data.email;
+            this.form.contact_no = data.profile.contact_no;
+            this.form.birthdate = data.profile.birthdate;
+            this.form.sex = data.profile.sex;
+            this.form.blood_id = data.profile.blood_id;
+            this.form.marital_id = data.profile.marital_id;
+            this.form.religion_id = data.profile.religion_id;
+            this.form.type_id = data.organization.type_id;
+            this.form.division_id = data.organization.division_id;
+            this.form.station_id = data.organization.station_id;
+            this.form.unit_id = data.organization.unit_id;
+            this.form.position_id = data.organization.position_id;
+            this.editable = true;
+            this.showModal = true;
+        },
         submit(){
-            this.form.post('/employees',{
-                preserveScroll: true,
-                onSuccess: (response) => {
-                    this.form.clearErrors();
-                    this.form.reset();
-                    this.hide();
-                },
-            });
+            if(!this.editable){
+                this.form.post('/employees',{
+                    preserveScroll: true,
+                    onSuccess: (response) => {
+                        this.form.clearErrors();
+                        this.form.reset();
+                        this.hide();
+                    },
+                });
+            }else{
+                 this.form.put('/employees/update',{
+                    preserveScroll: true,
+                    onSuccess: (response) => {
+                        this.$emit('update',this.$page.props.flash.data.data);
+                        this.form.clearErrors();
+                        this.form.reset();
+                        this.hide();
+                    },
+                });
+            }
         },
         fetchUnits(code){
             axios.get('/search',{
