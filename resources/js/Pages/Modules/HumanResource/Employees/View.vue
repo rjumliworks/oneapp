@@ -13,7 +13,7 @@
                                             <BCol md="auto">
                                                 <div style="height: 3.5rem; width: 3.5rem;">
                                                     <div class="avatar-title bg-white rounded-circle">
-                                                        <img :src="employee.avatar" alt="" class="avatar-md rounded-circle">
+                                                        <img :src="employee.avatar" alt="" class="avatar-sm rounded-circle">
                                                     </div>
                                                 </div>
                                             </BCol>

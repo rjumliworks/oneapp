@@ -51,7 +51,7 @@ class ListRolesTableSeeder extends Seeder
             3 => 
             array (
                 'id' => 4,
-                'name' => 'Vehicle Operations',
+                'name' => 'Travel Officer',
                 'type' => 'staff',
                 'is_active' => 1,
                 'definition' => 'n/a',

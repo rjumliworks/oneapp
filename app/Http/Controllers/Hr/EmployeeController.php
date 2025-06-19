@@ -9,14 +9,16 @@ use Illuminate\Http\Request;
 use App\Http\Requests\EmployeeRequest;
 use App\Services\Hr\Employee\SaveClass;
 use App\Services\Hr\Employee\ViewClass;
+use App\Services\Hr\Employee\UpdateClass;
 
 class EmployeeController extends Controller
 {
     use HandlesTransaction;
 
-    public function __construct(SaveClass $save, ViewClass $view, DropdownClass $dropdown){
+    public function __construct(SaveClass $save, ViewClass $view, UpdateClass $update, DropdownClass $dropdown){
         $this->view = $view;
         $this->save = $save;
+        $this->update = $update;
         $this->dropdown = $dropdown;
     }
 
@@ -70,6 +72,15 @@ class EmployeeController extends Controller
             switch($request->option){
                 case 'employee':
                     return $this->save->update($request);
+                break;
+                case 'background':
+                    return $this->update->background($request);
+                break;
+                case 'account':
+                    return $this->update->account($request);
+                break;
+                case 'salary':
+                    return $this->update->salary($request);
                 break;
             }
         });

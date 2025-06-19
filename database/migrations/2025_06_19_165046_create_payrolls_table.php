@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_information', function (Blueprint $table) {
+        Schema::create('payrolls', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->longText('salary');
-            $table->longText('accounts');
-            $table->longText('contacts');
-            $table->longText('backgrounds');
-            $table->integer('user_id')->unsigned()->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->integer('cutoff_id')->unsigned()->index();
+            $table->foreign('cutoff_id')->references('id')->on('payroll_cutoffs')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_information');
+        Schema::dropIfExists('payrolls');
     }
 };

@@ -18,6 +18,10 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
         Route::resource('/calendar', App\Http\Controllers\Hr\CalendarController::class);
     });
 
+    Route::middleware(['role:Travel Officer'])->group(function () {
+
+    });
+
     Route::middleware(['role:Document Control Officer'])->group(function () {
         Route::resource('/documents', App\Http\Controllers\Trace\DocumentController::class);
     });

@@ -27,11 +27,8 @@
                     <b-col lg>
                         <div class="input-group mb-1">
                             <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
-                            <input type="text" v-model="filter.keyword" placeholder="Search Dtr" class="form-control" style="width: 70%;">
+                            <input type="text" v-model="filter.keyword" placeholder="Search Dtr" class="form-control" style="width: 65%;">
                             <input type="date" v-model="filter.date" class="form-control">
-                            <!-- <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
-                                <i class="bx bx-refresh search-icon"></i>
-                            </span> -->
                             <b-button type="button" variant="primary" @click="openGenerate()">
                                 <i class="bx bx-refresh search-icon"></i> Generate
                             </b-button>

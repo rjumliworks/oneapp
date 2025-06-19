@@ -48,45 +48,57 @@
                                     <tbody class="fs-12">
                                         <tr>
                                             <td class="text-center text-muted">Time In (AM)</td>
-                                            <td class="text-center">{{ (selected.am_in_at) ? selected.am_in_at.time : '-' }}</td>
+                                            <td class="text-center" :class="selected.am_in_at && selected.am_in_at.is_updated ? 'fst-italic' : ''">{{ (selected.am_in_at) ? selected.am_in_at.time : '-' }}</td>
                                             <td class="text-center">{{ (selected.am_in_at) ? selected.am_in_at.ip : '-' }}</td>
                                             <td class="text-center">{{ (selected.am_in_at) ? selected.am_in_at.pcname : '-' }}</td>
                                             <td class="text-center">
-                                                <b-button :disabled="!selected.am_in_at" @click="openEdit(selected.id,selected.am_in_at,'Time In (AM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-if="selected.am_in_at" @click="openEdit(selected.id,selected.am_in_at,'Time In (AM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
                                                     <i class="ri-pencil-fill align-bottom"></i>
+                                                </b-button>
+                                                <b-button v-else @click="openTime(selected.id,'Time In (am)')" variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                                    <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="text-center text-muted">Time Out (AM)</td>
-                                            <td class="text-center">{{ (selected.am_out_at) ? selected.am_out_at.time : '-' }}</td>
+                                            <td class="text-center" :class="selected.am_out_at && selected.am_out_at.is_updated ? 'fst-italic' : ''">{{ (selected.am_out_at) ? selected.am_out_at.time : '-' }}</td>
                                             <td class="text-center">{{ (selected.am_out_at) ? selected.am_out_at.ip : '-' }}</td>
                                             <td class="text-center">{{ (selected.am_out_at) ? selected.am_out_at.pcname : '-' }}</td>
                                             <td class="text-center">
-                                                <b-button :disabled="!selected.am_out_at" @click="openEdit(selected.id,selected.am_out_at,'Time Out (AM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-if="selected.am_out_at" @click="openEdit(selected.id,selected.am_out_at,'Time Out (AM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
                                                     <i class="ri-pencil-fill align-bottom"></i>
+                                                </b-button>
+                                                <b-button v-else @click="openTime(selected.id,'Time Out (am)')" variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                                    <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="text-center text-muted">Time In (PM)</td>
-                                            <td class="text-center">{{ (selected.pm_in_at) ? selected.pm_in_at.time : '-' }}</td>
+                                            <td class="text-center" :class="selected.pm_in_at && selected.pm_in_at.is_updated ? 'fst-italic' : ''">{{ (selected.pm_in_at) ? selected.pm_in_at.time : '-' }}</td>
                                             <td class="text-center">{{ (selected.pm_in_at) ? selected.pm_in_at.ip : '-' }}</td>
                                             <td class="text-center">{{ (selected.pm_in_at) ? selected.pm_in_at.pcname : '-' }}</td>
                                             <td class="text-center">
-                                                <b-button :disabled="!selected.pm_in_at" @click="openEdit(selected.id,selected.pm_in_at,'Time In (PM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-if="selected.pm_in_at" @click="openEdit(selected.id,selected.pm_in_at,'Time In (PM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
                                                     <i class="ri-pencil-fill align-bottom"></i>
+                                                </b-button>
+                                                <b-button v-else @click="openTime(selected.id,'Time In (pm)')" variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                                    <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="text-center text-muted">Time Out (PM)</td>
-                                            <td class="text-center">{{ (selected.pm_out_at) ? selected.pm_out_at.time : '-' }}</td>
+                                            <td class="text-center" :class="selected.pm_out_at && selected.pm_out_at.is_updated ? 'fst-italic' : ''">{{ (selected.pm_out_at) ? selected.pm_out_at.time : '-' }}</td>
                                             <td class="text-center">{{ (selected.pm_out_at) ? selected.pm_out_at.ip : '-' }}</td>
                                             <td class="text-center">{{ (selected.pm_out_at) ? selected.pm_out_at.pcname : '-' }}</td>
                                             <td class="text-center">
-                                                <b-button :disabled="!selected.pm_out_at" @click="openEdit(selected.id,selected.pm_out_at,'Time Out (PM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-if="selected.pm_out_at" @click="openEdit(selected.id,selected.pm_out_at,'Time Out (PM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
                                                     <i class="ri-pencil-fill align-bottom"></i>
+                                                </b-button>
+                                                <b-button v-else @click="openTime(selected.id,'Time Out (pm)')" variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                                    <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
                                             </td>
                                         </tr>
@@ -102,12 +114,14 @@
             <b-button @click="hide()" variant="light" block>Close</b-button>
         </template>
     </b-modal>
+    <Time @update="updateData" ref="time"/>
     <Edit @update="updateData" ref="edit"/>
 </template>
 <script>
 import Edit from './Edit.vue';
+import Time from './Time.vue';
 export default {
-    components: { Edit },
+    components: { Edit, Time },
     data(){
         return {
             currentUrl: window.location.origin,
@@ -124,6 +138,10 @@ export default {
         openEdit(id,data,type){
             this.type = type;
             this.$refs.edit.show(id,data,type);
+        },
+        openTime(id,type){
+            this.type = type;
+            this.$refs.time.show(id,type);
         },
         updateData(data){
             this.selected = data;

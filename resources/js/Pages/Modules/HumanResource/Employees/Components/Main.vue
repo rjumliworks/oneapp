@@ -41,7 +41,7 @@
                                     <Credits :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credits'" />
                                     <Eligibility :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credentials'" />
                                     <Academic :dropdowns="dropdowns" :lists="employee.academics" :id="employee.id" v-if="menu == 'Academics'"/>
-                                    <Background :dropdowns="dropdowns" :information="employee.information" :id="employee.id" v-if="menu == 'Informations'"/>
+                                    <Background :marital="employee.profile.marital.name" :dropdowns="dropdowns" :information="employee.information" :id="employee.id" v-if="menu == 'Informations'"/>
                                 </div>
                             </transition>
                         </div>

@@ -15,7 +15,7 @@ class ListPositionsTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_positions')->truncate();
+        \DB::table('list_positions')->delete();
         
         \DB::table('list_positions')->insert(array (
             0 => 

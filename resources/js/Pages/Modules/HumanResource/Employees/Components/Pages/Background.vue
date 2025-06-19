@@ -23,7 +23,7 @@
                             <p class="mt-0 mb-0 text-primary fs-12 fw-semibold">Other Information</p>
                         <hr class="text-muted mb-0"/>
                     </div> -->
-                    <div class="col-md-4 col-6" style="cursor: pointer;">
+                    <div class="col-md-4 col-6" style="cursor: pointer;" @click="openBackground()">
                         <div class="d-flex border border-dashed rounded p-3">
                             <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                                 <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="bx bx-female"></i>
@@ -31,12 +31,12 @@
                             </div>
                             <div class="flex-grow-1 overflow-hidden">
                                 <p class="mb-0 fs-12">Mother :</p>
-                                <h6 v-if="backgrounds.parents.father.name" class="text-truncate fs-12 mb-0"> {{backgrounds.parents.father.name}} </h6>
-                                <h6 class="text-truncat text-muted fs-12 mb-0"> Not set </h6>
+                                <h6 v-if="backgrounds.parents.mother.name" class="text-truncate fs-12 mb-0"> {{backgrounds.parents.mother.name}} </h6>
+                                <h6 v-else class="text-truncat text-muted fs-12 mb-0"> Not set </h6>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 col-6" style="cursor: pointer;">
+                    <div class="col-md-4 col-6" style="cursor: pointer;" @click="openBackground()">
                         <div class="d-flex border border-dashed rounded p-3">
                             <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                                 <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="bx bx-male"></i>
@@ -45,11 +45,11 @@
                             <div class="flex-grow-1 overflow-hidden">
                                 <p class="mb-0 fs-12">Father :</p>
                                 <h6 v-if="backgrounds.parents.father.name" class="text-truncate fs-12 mb-0"> {{backgrounds.parents.father.name}} </h6>
-                                <h6 class="text-truncat text-muted fs-12 mb-0"> Not set </h6>
+                                <h6 v-else class="text-truncat text-muted fs-12 mb-0"> Not set </h6>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 col-6" style="cursor: pointer;">
+                    <div class="col-md-4 col-6" style="cursor: pointer;" @click="openBackground()">
                         <div class="d-flex border border-dashed rounded p-3">
                             <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                                 <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-user-2-fill"></i>
@@ -58,14 +58,14 @@
                             <div class="flex-grow-1 overflow-hidden">
                                 <p class="mb-0 fs-12">Spouse :</p>
                                 <h6 v-if="backgrounds.spouse.name" class="text-truncate fs-12 mb-0"> {{backgrounds.spouse.name}} </h6>
-                                <h6 class="text-truncat text-muted fs-12 mb-0"> Not set </h6>
+                                <h6 v-else class="text-truncat text-muted fs-12 mb-0"> Not set </h6>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <hr class="text-muted mt-0 mb-0"/>
                      </div>
-                    <div class="col-md-4 col-6" v-for="(list, index) in accounts" v-bind:key="index" style="cursor: pointer;">
+                    <div class="col-md-4 col-6" v-for="(list, index) in accounts" v-bind:key="index" style="cursor: pointer;" @click="openAccount()">
                         <div class="d-flex border border-dashed rounded p-3">
                             <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                                 <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i :class="icons[index]"></i>
@@ -131,12 +131,16 @@
             </div>
         </div>
     </div>
+    <Persons :marital="marital" ref="persons"/>
+    <Account ref="account"/>
 </template>
 <script>
 import simplebar from "simplebar-vue";
+import Account from './Modals/Accounts.vue';
+import Persons from './Modals/Persons.vue';
 export default {
-    components: { simplebar },
-    props: ['id','dropdowns','information'],
+    components: { simplebar, Persons, Account },
+    props: ['id','dropdowns','information','marital'],
     data(){
         return {
             filter: {
@@ -157,16 +161,22 @@ export default {
         },
     },
    methods: {
-       openCreate(){
-           this.$refs.create.show(this.id);
-       },
-       openCertification(data,id,course){
-           if(data.length > 0){
-               
-           }else{
-               this.$refs.certification.show(id,course);
-           }
-       }   
+        openCreate(){
+            this.$refs.create.show(this.id);
+        },
+        openCertification(data,id,course){
+            if(data.length > 0){
+                
+            }else{
+                this.$refs.certification.show(id,course);
+            }
+        },
+        openBackground(){
+                this.$refs.persons.show(this.id,this.backgrounds);
+        },
+        openAccount(){
+                this.$refs.account.show(this.id,this.accounts);
+        }
    }
 }
 </script>

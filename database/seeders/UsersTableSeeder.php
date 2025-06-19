@@ -496,7 +496,7 @@ class UsersTableSeeder extends Seeder
                 'password_changed_at' => NULL,
                 'two_factor_confirmed_at' => NULL,
                 'created_at' => '2025-06-18 09:47:05',
-                'updated_at' => '2025-06-18 09:47:05',
+                'updated_at' => '2025-06-18 16:09:30',
             ),
             30 => 
             array (

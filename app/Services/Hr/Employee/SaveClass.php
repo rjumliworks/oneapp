@@ -53,6 +53,7 @@ class SaveClass
                 $organization->division_id = $request->division_id;
                 $organization->station_id = $request->station_id;
                 $organization->unit_id = $request->unit_id;
+                $organization->type_id = $request->type_id;
                 $organization->position_id = $request->position_id;
                 $organization->save();
             }

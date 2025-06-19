@@ -15,7 +15,7 @@ class ListDataTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_data')->truncate();
+        \DB::table('list_data')->delete();
         
         \DB::table('list_data')->insert(array (
             0 => 
