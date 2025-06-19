@@ -167,11 +167,11 @@ class DropdownClass
     }
 
     public function positions(){
-        $data = ListPosition::with('special','administrative')->get()->map(function ($item) {
+        $data = ListPosition::with('salary')->get()->map(function ($item) {
             return [
                 'value' => $item->id,
-                'special' => ($item->special) ? $item->special->name : '-',
-                'administrative' => ($item->administrative) ? $item->administrative->name : '-'
+                'name' => $item->name,
+                'is_regular' => $item->is_regular
             ];
         });
         return $data;

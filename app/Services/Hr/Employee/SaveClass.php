@@ -62,7 +62,7 @@ class SaveClass
         $data = new EmployeeResource(
             User::select('users.id','email','username','users.created_at')
             ->with('profile.religion','profile.blood','profile.marital')
-            ->with('organization.division','organization.position.special','organization.position.administrative','organization.unit','organization.station','organization.type','organization.status')
+            ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status')
             ->with('information','academics','credentials')
             ->where('id',$request->id)->first()
         );

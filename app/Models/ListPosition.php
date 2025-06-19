@@ -10,18 +10,8 @@ class ListPosition extends Model
     use HasFactory;
 
     protected $fillable = [
-        'special_id', 'administrative_id','salary_id'
+        'name','short','is_regular','salary_id'
     ];
-
-    public function special()
-    {
-        return $this->belongsTo('App\Models\ListData', 'special_id', 'id');
-    }
-
-    public function administrative()
-    {
-        return $this->belongsTo('App\Models\ListData', 'administrative_id', 'id');
-    }
 
     public function salary()
     {

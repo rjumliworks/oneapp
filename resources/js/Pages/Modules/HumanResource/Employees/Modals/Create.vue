@@ -163,15 +163,13 @@ export default {
         },
         "form.type_id"(newVal){
             if (newVal === 15) {
-                this.filteredPositions = this.dropdowns.positions.map(item => ({
-                    value: item.value,
-                    name: item.special !== '-' ? item.special : item.administrative
-                }));
+                this.filteredPositions = this.dropdowns.positions 
+                .filter(p => p.is_regular === 1)     
+                .map(({ value, name }) => ({ value, name }));
             } else {
-                this.filteredPositions = this.dropdowns.positions.map(item => ({
-                    value: item.value,
-                    name: item.administrative
-                }));
+                this.filteredPositions = this.dropdowns.positions
+                .filter(p => p.is_regular === 0)     
+                .map(({ value, name }) => ({ value, name }));
             }
         },
     },

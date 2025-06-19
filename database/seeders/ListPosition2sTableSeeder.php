@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class ListPositionsTableSeeder extends Seeder
+class ListPosition2sTableSeeder extends Seeder
 {
     /**
      * Auto generated seeder file.
@@ -15,9 +15,9 @@ class ListPositionsTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_positions')->delete();
+        \DB::table('list_position2s')->truncate();
         
-        \DB::table('list_positions')->insert(array (
+        \DB::table('list_position2s')->insert(array (
             0 => 
             array (
                 'id' => 1,

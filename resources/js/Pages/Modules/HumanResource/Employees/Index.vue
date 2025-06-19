@@ -74,9 +74,10 @@
                                 <tr class="fs-11">
                                     <th style="width: 3%;"></th>
                                     <th>Name</th>
+                                    <th style="width: 10%;" class="text-center">Type</th>
                                     <th style="width: 10%;" class="text-center">Employee No.</th>
-                                    <th style="width: 13%;" class="text-center">Contact No.</th>
-                                    <th style="width: 13%;" class="text-center">Email</th>
+                                    <th style="width: 10%;" class="text-center">Contact No.</th>
+                                    <th style="width: 15%;" class="text-center">Email</th>
                                     <th style="width: 13%;" class="text-center">Birthdate</th>
                                     <th style="width: 10%;" class="text-center">Status</th>
                                     <th style="width: 6%;"></th>
@@ -92,10 +93,10 @@
                                     </td>
                                     <td>
                                         <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.profile.lastname}}, {{list.profile.firstname}} {{list.profile.middlename}}.</h5>
-                                        <p class="fs-12 text-muted mb-0" v-if="list.organization.type.name == 'Plantilla'">{{list.organization.position.special.name}}</p>
-                                        <p class="fs-12 text-muted mb-0" v-else>{{list.organization.position.administrative.name}}</p>
+                                        <p class="fs-12 text-muted mb-0">{{list.organization.position.name}}</p>
                                     </td>
                                     <td class="text-center">{{ list.organization.type.name }}</td>
+                                    <td class="text-center">{{ list.username }}</td>
                                     <td class="text-center">{{ list.profile.contact_no }}</td>
                                     <td class="text-center">{{ list.email }}</td>
                                     <td class="text-center">{{ list.profile.birthdate }}</td>

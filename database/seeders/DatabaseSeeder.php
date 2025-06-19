@@ -86,5 +86,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UserInformationTableSeeder::class);
         $this->call(UserOrganizationsTableSeeder::class);
         $this->call(DtrsTableSeeder::class);
+        $this->call(ListPosition2sTableSeeder::class);
     }
 }

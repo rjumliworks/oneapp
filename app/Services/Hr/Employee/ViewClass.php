@@ -25,7 +25,7 @@ class ViewClass
         $data = EmployeeResource::collection(
             User::select('users.id','email','username','users.created_at')
             ->with('profile.religion','profile.blood','profile.marital')
-            ->with('organization.division','organization.position.special','organization.position.administrative','organization.unit','organization.station','organization.type','organization.status')
+            ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status')
             ->with('information','academics','credentials')
             ->join('user_profiles', 'user_profiles.user_id', '=', 'users.id')
             ->when($request->keyword, function ($query, $keyword) {
@@ -35,7 +35,7 @@ class ViewClass
                             ->orWhereRaw('concat(lastname, " ", firstname) LIKE ?', ['%' . $keyword . '%']);
                     });
                 })
-                ->orWhere('username',$keyword);
+                ->orWhere('username', 'like', "%{$keyword}%");
             })
             ->whereHas('organization',function ($query) use ($request) {
                 $query->when($request->status, function ($query, $status) {
@@ -67,7 +67,7 @@ class ViewClass
         $data = new EmployeeResource(
             User::query()
             ->with('profile.religion','profile.blood','profile.marital')
-            ->with('organization.division','organization.position.special','organization.position.administrative','organization.unit','organization.station','organization.type','organization.status')
+            ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status')
             ->with('information','academics.level','credentials.type','credentials.name')
             ->where('id',$id)->first()
         );

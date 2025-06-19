@@ -28,8 +28,7 @@
                             </span>
                         </div>
                         <div class="flex-grow-1 ms-2">
-                            <h6 class="mb-0 fs-12" v-if="employee.organization.type.name == 'Plantilla'">{{employee.organization.position.special.name}}</h6>
-                            <h6 class="mb-0 fs-12" v-else>{{employee.organization.position.administrative.name}}</h6>
+                            <h6 class="mb-0 fs-12">{{employee.organization.position.name}}</h6>
                             <p class="fs-11 mb-0 text-muted">Position</p>
                         </div>
                     </div>
