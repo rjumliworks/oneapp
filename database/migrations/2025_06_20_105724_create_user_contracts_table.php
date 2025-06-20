@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_organizations', function (Blueprint $table) {
+        Schema::create('user_contracts', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->tinyInteger('status_id')->unsigned()->index(); //retired //
@@ -30,6 +30,10 @@ return new class extends Migration
             $table->foreign('station_id')->references('id')->on('list_dropdowns')->onDelete('cascade');
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->boolean('is_active');
+            $table->date('start_at');
+            $table->date('end_at')->nullable();
+            $table->date('terminated_at')->nullable();
             $table->timestamps();
         });
     }
@@ -39,6 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_organizations');
+        Schema::dropIfExists('user_contracts');
     }
 };

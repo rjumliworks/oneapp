@@ -82,11 +82,11 @@
                         </div>
                     </BCol>
                    <BCol lg="12" class="mt-n3 mb-n4"><hr class="text-muted"/></BCol>
-                    <BCol lg="6" class="mt-3">
+                    <BCol lg="12" class="mt-3">
                         <InputLabel for="name" value="Division" :message="form.errors.division_id"/>
                         <Multiselect :options="dropdowns.divisions" :searchable="true" label="name" v-model="form.division_id" placeholder="Select Division" @input="handleInput('division_id')"/>
                     </BCol>
-                    <BCol lg="6" class="mt-3">
+                    <BCol lg="6" class="mt-1">
                         <InputLabel for="name" value="Station" :message="form.errors.station_id"/>
                         <Multiselect :options="dropdowns.stations" :searchable="true" label="name" v-model="form.station_id" placeholder="Select Category" @input="handleInput('station_id')"/>
                     </BCol>
@@ -97,6 +97,14 @@
                     <BCol lg="6" class="mt-1">
                         <InputLabel for="name" value="Position" :message="form.errors.position_id"/>
                         <Multiselect :options="filteredPositions" :searchable="true" label="name" v-model="form.position_id" placeholder="Select Position" @input="handleInput('position_id')"/>
+                    </BCol>
+                    <BCol lg="3" class="mt-1">
+                        <InputLabel for="name" value="Year Rate" :message="form.errors.salary_id"/>
+                        <Multiselect :options="uniqueYears" :searchable="true" label="name" v-model="form.year" placeholder="Select Year" @input="handleInput('year')"/>
+                    </BCol>
+                    <BCol lg="3" class="mt-1">
+                        <InputLabel for="name" value="Salary Grade" :message="form.errors.salary_id"/>
+                        <Multiselect :options="filteredSalaries" :searchable="true" label="name" v-model="form.salary_id" placeholder="Select Salary" @input="handleInput('salary_id')"/>
                     </BCol>
                     <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
                     <div class="mt-n1 ms-2 form-check">
@@ -144,6 +152,7 @@ export default {
                 division_id: null,
                 station_id: null,
                 position_id: null,
+                salary_id: null,
                 unit_id: null,
                 type_id: null,
                 option: 'employee'
@@ -161,6 +170,20 @@ export default {
             }
             this.fetchUnits(newVal);
         },
+        "form.position_id"(newVal){
+            if(!newVal){
+                this.form.salary_id = null;
+            }else{
+                if(this.form.type_id == 15){
+                    const selectedPosition = this.dropdowns.positions.find(
+                        pos => pos.value === newVal
+                    );
+                    console.log(selectedPosition);
+                    this.form.year = selectedPosition.year;
+                    this.form.salary_id = selectedPosition.salary_id;
+                }
+            }
+        },
         "form.type_id"(newVal){
             if (newVal === 15) {
                 this.filteredPositions = this.dropdowns.positions 
@@ -171,7 +194,30 @@ export default {
                 .filter(p => p.is_regular === 0)     
                 .map(({ value, name }) => ({ value, name }));
             }
+            this.form.year = null;
+            this.form.salary_id = null;
+            this.form.position_id = null;
         },
+    },
+    computed: {
+        uniqueYears() {
+            if (!this.form.type_id) return []; // return empty if no type_id
+            const years = this.dropdowns.salaries
+                .map(s => s.year);
+            return [...new Set(years)].sort((a, b) => b - a);
+        },
+        filteredSalaries() {
+            if (!this.form.type_id || !this.form.year) return [];
+            return this.dropdowns.salaries
+            .filter(s => {
+                const matchesYear = s.year === this.form.year;
+                const matchesRegular = this.form.type_id === 15
+                    ? s.is_regular == 1   // loose equality in case it's a string
+                    : s.is_regular != 1;
+                return matchesYear && matchesRegular;
+            })
+            .sort((a, b) => a.grade - b.grade);
+        }
     },
     methods: {
         show(){

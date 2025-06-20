@@ -80,12 +80,13 @@ class DatabaseSeeder extends Seeder
         $this->call(ListLeavesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
         $this->call(UserProfilesTableSeeder::class);
-        $this->call(UserCredentialsTableSeeder::class);
-        $this->call(UserAcademicsTableSeeder::class);
+        // $this->call(UserCredentialsTableSeeder::class);
+        // $this->call(UserAcademicsTableSeeder::class);
         $this->call(UserRolesTableSeeder::class);
         $this->call(UserInformationTableSeeder::class);
         $this->call(UserOrganizationsTableSeeder::class);
         $this->call(DtrsTableSeeder::class);
-        $this->call(ListPosition2sTableSeeder::class);
+        // $this->call(ListPosition2sTableSeeder::class);
+        $this->call(ListDeductionsTableSeeder::class);
     }
 }

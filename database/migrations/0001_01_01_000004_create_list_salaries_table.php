@@ -16,6 +16,8 @@ return new class extends Migration
             $table->tinyIncrements('id');
             $table->string('grade');
             $table->decimal('amount',12,2); 
+            $table->boolean('is_regular');
+            $table->year('year');
             $table->timestamps();
         });
     }

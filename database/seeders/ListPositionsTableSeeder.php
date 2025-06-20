@@ -138,6 +138,76 @@ class ListPositionsTableSeeder extends Seeder
                 'created_at' => '2025-06-19 20:21:52',
                 'updated_at' => '2025-06-19 20:21:52',
             ),
+            12 => 
+            array (
+                'id' => 13,
+                'name' => 'Project Technical Specialist III',
+                'short' => 'PTS III',
+                'salary_id' => 19,
+                'is_regular' => 0,
+                'created_at' => '2025-06-19 20:21:52',
+                'updated_at' => '2025-06-19 20:21:52',
+            ),
+            13 => 
+            array (
+                'id' => 14,
+                'name' => 'Project Technical Specialist II',
+                'short' => 'PTS II',
+                'salary_id' => 19,
+                'is_regular' => 0,
+                'created_at' => '2025-06-19 20:21:52',
+                'updated_at' => '2025-06-19 20:21:52',
+            ),
+            14 => 
+            array (
+                'id' => 15,
+                'name' => 'Project Technical Specialist I',
+                'short' => 'PTS I',
+                'salary_id' => 19,
+                'is_regular' => 0,
+                'created_at' => '2025-06-19 20:21:52',
+                'updated_at' => '2025-06-19 20:21:52',
+            ),
+            15 => 
+            array (
+                'id' => 16,
+                'name' => 'Project Technical Assistant IV',
+                'short' => 'PTA IV',
+                'salary_id' => 19,
+                'is_regular' => 0,
+                'created_at' => '2025-06-19 20:21:52',
+                'updated_at' => '2025-06-19 20:21:52',
+            ),
+            16 => 
+            array (
+                'id' => 17,
+                'name' => 'Project Technical Assistant III',
+                'short' => 'PTA III',
+                'salary_id' => 19,
+                'is_regular' => 0,
+                'created_at' => '2025-06-19 20:21:52',
+                'updated_at' => '2025-06-19 20:21:52',
+            ),
+            17 => 
+            array (
+                'id' => 18,
+                'name' => 'Project Technical Assistant II',
+                'short' => 'PTA II',
+                'salary_id' => 19,
+                'is_regular' => 0,
+                'created_at' => '2025-06-19 20:21:52',
+                'updated_at' => '2025-06-19 20:21:52',
+            ),
+            18 => 
+            array (
+                'id' => 19,
+                'name' => 'Project Technical Assistant I',
+                'short' => 'PTA I',
+                'salary_id' => 19,
+                'is_regular' => 0,
+                'created_at' => '2025-06-19 20:21:52',
+                'updated_at' => '2025-06-19 20:21:52',
+            ),
         ));
 
         

@@ -108,6 +108,76 @@ class ListStatusesTableSeeder extends Seeder
                 'others' => 'Left the job without notice',
                 'is_active' => 1,
             ),
+            9 => 
+            array (
+                'id' => 10,
+                'name' => 'Active',
+                'classification' => 'Contract',
+                'type' => 'bg-success',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            10 => 
+            array (
+                'id' => 11,
+                'name' => 'Promoted',
+                'classification' => 'Contract',
+                'type' => 'bg-primary',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            11 => 
+            array (
+                'id' => 12,
+                'name' => 'Salary Increased',
+                'classification' => 'Contract',
+                'type' => 'bg-info',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            12 => 
+            array (
+                'id' => 13,
+                'name' => 'Terminated',
+                'classification' => 'Contract',
+                'type' => 'bg-danger',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            13 => 
+            array (
+                'id' => 14,
+                'name' => 'Resigned',
+                'classification' => 'Contract',
+                'type' => 'bg-warning',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            14 => 
+            array (
+                'id' => 15,
+                'name' => 'Absorbed',
+                'classification' => 'Contract',
+                'type' => 'bg-dark',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            15 => 
+            array (
+                'id' => 16,
+                'name' => 'Ended',
+                'classification' => 'Contract',
+                'type' => 'bg-danger',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
         ));
 
         

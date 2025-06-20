@@ -15,6 +15,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->tinyIncrements('id');
             $table->string('name')->unique();
+            $table->string('short');
             $table->tinyInteger('salary_id')->unsigned()->index();
             $table->foreign('salary_id')->references('id')->on('list_salaries')->onDelete('cascade');
             $table->boolean('is_regular');

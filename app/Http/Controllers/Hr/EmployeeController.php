@@ -36,6 +36,7 @@ class EmployeeController extends Controller
                         'divisions' => $this->dropdown->divisions(),
                         'stations' => $this->dropdown->stations(),
                         'positions' => $this->dropdown->positions(),
+                        'salaries' => $this->dropdown->salaries(),
                         'statuses' => $this->dropdown->statuses(),
                         'employment_statuses' => $this->dropdown->employment_statuses()
                     ],
@@ -55,6 +56,9 @@ class EmployeeController extends Controller
                 break;
                 case 'academic':
                     return $this->save->academic($request);
+                break;
+                case 'deduction':
+                    return $this->save->deduction($request);
                 break;
             }
         });
@@ -101,7 +105,13 @@ class EmployeeController extends Controller
                 'licenses' => $this->dropdown->licenses(),
                 'levels' => $this->dropdown->levels(),
                 'types' => $this->dropdown->types(),
-            ]
+                'divisions' => $this->dropdown->divisions(),
+                'stations' => $this->dropdown->stations(),
+                'positions' => $this->dropdown->positions(),
+                'salaries' => $this->dropdown->salaries(),
+                'deductions' => $this->dropdown->deductions(),
+                'employment_statuses' => $this->dropdown->employment_statuses()
+            ],
         ]);
     }
 }

@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_information', function (Blueprint $table) {
+        Schema::create('user_deductions', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->longText('salary')->nullable();
-            $table->longText('accounts');
-            $table->longText('contacts');
-            $table->longText('backgrounds');
+            $table->decimal('amount',12,2); 
+            $table->tinyInteger('deduction_id')->unsigned()->index();
+            $table->foreign('deduction_id')->references('id')->on('list_deductions')->onDelete('cascade');
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->boolean('is_active');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_information');
+        Schema::dropIfExists('user_deductions');
     }
 };

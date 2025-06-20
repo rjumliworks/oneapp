@@ -9,6 +9,8 @@ use App\Models\ListRole;
 use App\Models\ListStatus;
 use App\Models\ListLeave;
 use App\Models\ListPosition;
+use App\Models\ListDeduction;
+use App\Models\ListSalary;
 use App\Models\ListDropdown;
 use App\Models\LocationRegion;
 use App\Models\LocationProvince;
@@ -171,6 +173,37 @@ class DropdownClass
             return [
                 'value' => $item->id,
                 'name' => $item->name,
+                'salary_id' => $item->salary_id,
+                'year' => $item->salary->year,
+                'is_regular' => $item->is_regular
+            ];
+        });
+        return $data;
+    }
+
+    public function deductions(){
+        $data = ListDeduction::get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => ($item->subtype != 'n/a') ? $item->name.' ('.$item->subtype.')' : $item->name,
+                'subtype' => $item->subtype,
+                'is_regular' => $item->is_regular,
+                'is_contribution' => $item->is_contribution,
+                'is_loan' => $item->is_loan,
+                'is_enrollable' => $item->is_enrollable
+            ];
+        });
+        return $data;
+    }
+
+    public function salaries(){
+        $data = ListSalary::orderBy('grade','ASC')->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => 'SG '.$item->grade.' ('.$item->amount.')',
+                'grade' => $item->grade,
+                'amount' => $item->amount, 
+                'year' => $item->year,
                 'is_regular' => $item->is_regular
             ];
         });
@@ -314,7 +347,7 @@ class DropdownClass
 
     public function users($keyword){
         $data =  User::with('profile')
-        ->with('organization.position.administrative')
+        ->with('organization.position')
         ->when($keyword, function ($query) use ($keyword){
             $query->whereHas('profile', function ($query) use ($keyword) {
                 $query->whereRaw('concat(firstname, " ", lastname) LIKE ?', ['%' . $keyword . '%'])
@@ -325,7 +358,7 @@ class DropdownClass
             return [
                 'value' => $item->id,
                 'name' => $item->profile->lastname.' '.$item->profile->firstname.', '.$item->profile->middlename.'.',
-                'position' => $item->organization->position->administrative->name,
+                'position' => $item->organization->position->name,
                 'avatar' => $item->profile->avatar
             ];
         });

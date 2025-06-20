@@ -11,11 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payrolls', function (Blueprint $table) {
+        Schema::create('list_deductions', function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->increments('id');
-            $table->integer('cutoff_id')->unsigned()->index();
-            $table->foreign('cutoff_id')->references('id')->on('payroll_cutoffs')->onDelete('cascade');
+            $table->tinyIncrements('id');
+            $table->string('name',100);
+            $table->string('subtype',100);
+            $table->boolean('is_regular');
+            $table->boolean('is_contribution');
+            $table->boolean('is_loan');
+            $table->boolean('is_enrollable');
             $table->timestamps();
         });
     }
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payrolls');
+        Schema::dropIfExists('list_deductions');
     }
 };

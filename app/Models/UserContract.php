@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserOrganization extends Model
+class UserContract extends Model
 {
-    use HasFactory;
-
-    protected $fillable = ['status_id','type_id','position_id','salary_id','unit_id','division_id','station_id','user_id'];
+    protected $fillable = ['status_id','type_id','position_id','salary_id','unit_id','division_id','station_id','user_id','start_at','terminated_at','end_at','is_active'];
 
     public function user()
     {

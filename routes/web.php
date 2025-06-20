@@ -13,6 +13,7 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
     Route::middleware(['role:Human Resource Officer'])->group(function () {
         Route::resource('/employees', App\Http\Controllers\Hr\EmployeeController::class);
         Route::resource('/dtrs', App\Http\Controllers\Hr\DtrController::class);
+        Route::resource('/payrolls', App\Http\Controllers\Hr\PayrollController::class);
         Route::resource('/surveys', App\Http\Controllers\Hr\SurveyController::class);
         Route::resource('/leaves', App\Http\Controllers\Hr\LeaveController::class);
         Route::resource('/calendar', App\Http\Controllers\Hr\CalendarController::class);

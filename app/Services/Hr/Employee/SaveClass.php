@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserOrganization;
 use App\Models\UserAcademic;
+use App\Models\UserDeduction;
 use App\Models\UserCredential;
 use App\Models\UserInformation;
 use Illuminate\Support\Str;
@@ -29,6 +30,15 @@ class SaveClass
             'data' => $data,
             'message' => 'Academic added successfully', 
             'info' => 'You can now manage this employee’s academics',
+        ];
+    }
+
+    public function deduction($request){
+        $data = UserDeduction::create($request->all());
+        return [
+            'data' => $data,
+            'message' => 'Deduction added successfully', 
+            'info' => 'You can now manage this employee’s deduction',
         ];
     }
 

@@ -10,7 +10,7 @@ class ListSalary extends Model
     use HasFactory;
 
     protected $fillable = [
-        'grade', 'amount'
+        'grade','amount','year','is_regular'
     ];
 
     public function setAmountAttribute($value)

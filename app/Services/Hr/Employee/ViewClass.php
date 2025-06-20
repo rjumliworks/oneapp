@@ -67,6 +67,8 @@ class ViewClass
         $data = new EmployeeResource(
             User::query()
             ->with('profile.religion','profile.blood','profile.marital')
+            ->with('deductions.deduction')
+            ->with('contracts.division','contracts.position','contracts.unit','contracts.station','contracts.type','contracts.status')
             ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status')
             ->with('information','academics.level','credentials.type','credentials.name')
             ->where('id',$id)->first()

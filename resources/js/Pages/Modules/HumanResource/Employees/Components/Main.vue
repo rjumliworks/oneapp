@@ -39,6 +39,8 @@
                                 <div :key="index" class="tab-content">
                                     <Overview :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Overview'" />
                                     <Credits :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credits'" />
+                                    <Contracts :dropdowns="dropdowns" :lists="employee.contracts" :id="employee.id" v-if="menu == 'Contracts'" />
+                                    <Deductions :dropdowns="dropdowns" :lists="employee.deductions" :id="employee.id" v-if="menu == 'Deductions'" />
                                     <Eligibility :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credentials'" />
                                     <Academic :dropdowns="dropdowns" :lists="employee.academics" :id="employee.id" v-if="menu == 'Academics'"/>
                                     <Background :marital="employee.profile.marital.name" :dropdowns="dropdowns" :information="employee.information" :id="employee.id" v-if="menu == 'Informations'"/>
@@ -54,18 +56,20 @@
 </template>
 <script>
 import simplebar from "simplebar-vue";
+import Contracts from './Pages/Contracts.vue';
 import Credits from './Pages/Credits.vue';
+import Deductions from './Pages/Deductions.vue';
 import Overview from './Pages/Overview.vue';
 import Academic from './Pages/Academic.vue';
 import Background from "./Pages/Background.vue";
 import Eligibility from './Pages/Eligibility.vue';
 export default {
-    components: { simplebar, Eligibility, Academic, Background, Overview, Credits },
+    components: { simplebar, Eligibility, Academic, Background, Overview, Credits, Contracts, Deductions },
     props: ['employee','dropdowns'],
     data(){
         return {
             menus: [
-                'Overview','Credits','Informations','Academics','Credentials'
+                'Overview','Credits','Deductions','Contracts','Informations','Academics','Credentials'
             ],
             index: null,
         }

@@ -49,6 +49,13 @@
                     </Link>
                 </li>
                 <li class="nav-item">
+                    <Link href="/payrolls" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Payrolls') }">
+                    <i class="ri-hand-coin-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Payroll</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
                     <Link href="/leaves" class="nav-link menu-link"
                         :class="{'active': $page.component.startsWith('Modules/HumanResource/Leaves') }">
                     <i class="ri-calendar-2-line "></i>
