@@ -42,7 +42,6 @@
     </b-modal>
 </template>
 <script>
-import { vMaska } from "maska/vue"
 import { useForm } from '@inertiajs/vue3';
 import Amount from '@/Shared/Components/Forms/Amount.vue';
 import Multiselect from "@vueform/multiselect";
@@ -50,7 +49,6 @@ import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
     components: {InputLabel, TextInput, Multiselect, Amount },
-    directives: { maska: vMaska },
     props: ['deductions'],
     data(){
         return {
@@ -64,19 +62,19 @@ export default {
                 user_id: null,
                 option: 'deduction'
             }),
-            types: [
-               {
-                   'value': 1,
-                   'name': 'Yes'
-               },
-               {
-                   'value': 0,
-                   'name': 'No'
-               }
-           ],
+            types: [ {'value': 1,'name': 'Yes'},{'value': 0,'name': 'No'}],
             showModal: false,
             editable: false
         }
+    },
+    watch: {
+        "form.deduction"(newVal){
+            if(newVal){
+                this.form.deduction_id = this.form.deduction.value;
+            }else{
+                this.form.deduction_id = null;
+            }
+        },
     },
     methods: { 
         amount(val){
@@ -103,15 +101,16 @@ export default {
                 this.form.put('/employees/update',{
                     preserveScroll: true,
                     onSuccess: (response) => {
+                        this.$emit('success',true);
                         this.form.reset();
                         this.hide();
                     },
                 });
             }else{
-                this.form.deduction_id = this.form.deduction.id;
                 this.form.post('/employees',{
                     preserveScroll: true,
                     onSuccess: (response) => {
+                        this.$emit('success',this.$page.props.flash.data);
                         this.form.reset();
                         this.hide();
                         this.$emit('success',true);

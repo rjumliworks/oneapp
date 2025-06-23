@@ -19,9 +19,8 @@
                <thead class="table-light thead-fixed">
                    <tr class="fs-11">
                        <th style="width: 4%;" class="text-center">#</th>
-                       <th>School</th>
-                       <th style="width: 15%;" class="text-center">Level</th>
-                       <th style="width: 15%;" class="text-center">Graduted Year</th>
+                       <th>Deduction</th>
+                       <th style="width: 15%;" class="text-center">Amount</th>
                        <th style="width: 15%;" class="text-center">Status</th>
                        <th style="width: 7%;"></th>
                    </tr>
@@ -30,13 +29,12 @@
                     <tr class="fs-12" v-for="(list,index) in lists" v-bind:key="index" :class="{'bg-success-subtle': list.is_main}">
                         <td class="text-center">{{ index+1 }}</td>
                         <td>
-                            <h5 class="fs-13 mb-0 fw-semibold text-primary">{{list.school}}</h5>
-                            <p class="fs-12 text-muted mb-0">{{list.course}}</p>
+                            <h5 class="fs-13 mb-0 fw-semibold text-primary" v-if="list.deduction">{{list.deduction.name}}</h5>
+                            <!-- <p class="fs-12 text-muted mb-0">{{list.course}}</p> -->
                         </td>
-                        <td class="text-center">{{ list.level.name }}</td>
-                        <td class="text-center">{{ list.graduated_at }}</td>
+                        <td class="text-center">{{ list.amount }}</td>
                         <td class="text-center">
-                            <span v-if="list.is_ongoing" class="badge bg-warning">Ongoing</span>
+                            <span v-if="list.status" class="badge bg-warning">Ongoing</span>
                             <span v-else class="badge bg-success">Completed</span>
                         </td>
                         <td class="text-end">
@@ -54,7 +52,7 @@
            </table>
        </simplebar>
    </div>
-   <Create :deductions="dropdowns.deductions" ref="create"/>
+   <Create @success="updateData" :deductions="dropdowns.deductions" ref="create"/>
 </template>
 <script>
 import simplebar from "simplebar-vue";
@@ -79,7 +77,10 @@ export default {
            }else{
                this.$refs.certification.show(id,course);
            }
-       }   
+       },
+       updateData(data){
+            // this.lists.unshift(data);
+       }
    }
 }
 </script>

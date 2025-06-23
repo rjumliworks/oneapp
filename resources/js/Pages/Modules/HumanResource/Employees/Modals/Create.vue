@@ -95,7 +95,7 @@
                         <Multiselect :options="units" :searchable="true" label="name" v-model="form.unit_id" placeholder="Select Unit" @input="handleInput('unit_id')"/>
                     </BCol>
                     <BCol lg="6" class="mt-1">
-                        <InputLabel for="name" value="Position" :message="form.errors.position_id"/>
+                        <InputLabel for="name" value="Position" :message="form.errors.position_id"/> {{ form.position_id }}
                         <Multiselect :options="filteredPositions" :searchable="true" label="name" v-model="form.position_id" placeholder="Select Position" @input="handleInput('position_id')"/>
                     </BCol>
                     <BCol lg="3" class="mt-1">
@@ -185,6 +185,11 @@ export default {
             }
         },
         "form.type_id"(newVal){
+            if(!this.editable){
+                this.form.year = null;
+                this.form.salary_id = null;
+                this.form.position_id = null;
+            }
             if (newVal === 15) {
                 this.filteredPositions = this.dropdowns.positions 
                 .filter(p => p.is_regular === 1)     
@@ -194,9 +199,6 @@ export default {
                 .filter(p => p.is_regular === 0)     
                 .map(({ value, name }) => ({ value, name }));
             }
-            this.form.year = null;
-            this.form.salary_id = null;
-            this.form.position_id = null;
         },
     },
     computed: {
@@ -221,9 +223,11 @@ export default {
     },
     methods: {
         show(){
+            this.form.reset();
             this.showModal = true;
         },
         update(data){
+            this.editable = true;
             this.form.id = data.id;
             this.form.profile_id = data.profile.id;
             this.form.firstname = data.profile.firstname;
@@ -243,7 +247,7 @@ export default {
             this.form.station_id = data.organization.station_id;
             this.form.unit_id = data.organization.unit_id;
             this.form.position_id = data.organization.position_id;
-            this.editable = true;
+            this.form.salary_id = data.organization.salary_id;
             this.showModal = true;
         },
         submit(){

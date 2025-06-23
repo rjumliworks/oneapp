@@ -2298,80 +2298,80 @@ class DashboardController extends Controller
 //         return $time;
 
         // $startOfMonth = Carbon::now()->startOfMonth()->toDateString(); // e.g., '2025-05-01'
-        $startOfMonth = Carbon::create(null, 5, 1)->startOfDay()->toDateString();
-        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();     // e.g., '2025-06-30'
-        $dtrs = OldDtr::with('user')->whereBetween('date', [$startOfMonth, $endOfMonth])->get();
-        // return $dtrs;
-        foreach($dtrs as $dtr){
-            $user = User::with('profile','organization.division')->where('username',strtolower($dtr->user->username))->first();
-            if($user){
-                $remarks = [
-                    'tardiness' => null,
-                    'undertime' => null
-                ]; 
-                $amin = $dtr->inAM 
-                ? [
-                    'ip' => $dtr->ip,
-                    'pcname' => gethostname(),
-                    'browser' => $request->header('User-Agent'),
-                    'time' =>  date('H:i:s',$dtr->inAM),
-                    'date' => $dtr->date,
-                    'is_updated' => false,
-                    'changes' => []
-                ] 
-                : null;
+        // $startOfMonth = Carbon::create(null, 5, 1)->startOfDay()->toDateString();
+        // $endOfMonth = Carbon::now()->endOfMonth()->toDateString();     // e.g., '2025-06-30'
+        // $dtrs = OldDtr::with('user')->whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+        // // return $dtrs;
+        // foreach($dtrs as $dtr){
+        //     $user = User::with('profile','organization.division')->where('username',strtolower($dtr->user->username))->first();
+        //     if($user){
+        //         $remarks = [
+        //             'tardiness' => null,
+        //             'undertime' => null
+        //         ]; 
+        //         $amin = $dtr->inAM 
+        //         ? [
+        //             'ip' => $dtr->ip,
+        //             'pcname' => gethostname(),
+        //             'browser' => $request->header('User-Agent'),
+        //             'time' =>  date('H:i:s',$dtr->inAM),
+        //             'date' => $dtr->date,
+        //             'is_updated' => false,
+        //             'changes' => []
+        //         ] 
+        //         : null;
 
-            $amout = $dtr->outAM 
-                ? [
-                    'ip' => $dtr->ip,
-                    'pcname' => gethostname(),
-                    'browser' => $request->header('User-Agent'),
-                    'time' => date('H:i:s',$dtr->outAM),
-                    'date' => $dtr->date,
-                    'is_updated' => false,
-                    'changes' => []
-                ] 
-                : null;
+        //     $amout = $dtr->outAM 
+        //         ? [
+        //             'ip' => $dtr->ip,
+        //             'pcname' => gethostname(),
+        //             'browser' => $request->header('User-Agent'),
+        //             'time' => date('H:i:s',$dtr->outAM),
+        //             'date' => $dtr->date,
+        //             'is_updated' => false,
+        //             'changes' => []
+        //         ] 
+        //         : null;
 
-            $pmin = $dtr->inPM 
-                ? [
-                    'ip' => $dtr->ip,
-                    'pcname' => gethostname(),
-                    'browser' => $request->header('User-Agent'),
-                    'time' => date('H:i:s',$dtr->inPM),
-                    'date' => $dtr->date,
-                    'is_updated' => false,
-                    'changes' => []
-                ] 
-                : null;
+        //     $pmin = $dtr->inPM 
+        //         ? [
+        //             'ip' => $dtr->ip,
+        //             'pcname' => gethostname(),
+        //             'browser' => $request->header('User-Agent'),
+        //             'time' => date('H:i:s',$dtr->inPM),
+        //             'date' => $dtr->date,
+        //             'is_updated' => false,
+        //             'changes' => []
+        //         ] 
+        //         : null;
 
-                $pmout = $dtr->outPM 
-                ? [
-                    'ip' => $dtr->ip,
-                    'pcname' => gethostname(),
-                    'browser' => $request->header('User-Agent'),
-                    'time' => date('H:i:s',$dtr->outPM),
-                    'date' => $dtr->date,
-                    'is_updated' => false,
-                    'changes' => []
-                ] 
-                : null;
+        //         $pmout = $dtr->outPM 
+        //         ? [
+        //             'ip' => $dtr->ip,
+        //             'pcname' => gethostname(),
+        //             'browser' => $request->header('User-Agent'),
+        //             'time' => date('H:i:s',$dtr->outPM),
+        //             'date' => $dtr->date,
+        //             'is_updated' => false,
+        //             'changes' => []
+        //         ] 
+        //         : null;
 
-                $data = new Dtr;
-                $data->date = $dtr->date;
-                $data->am_in_at = ($dtr->inAM) ? json_encode($amin) : null;
-                $data->am_out_at = ($dtr->outAM) ? json_encode($amout) : null;
-                $data->pm_in_at = ($dtr->inPM) ? json_encode($pmin) : null;
-                $data->pm_out_at =  ($dtr->outPM) ? json_encode($pmout) : null;
-                $data->remarks = json_encode($remarks);
-                $data->user_id = $user->id;
-                $data->save();
-                $success[] = $dtr->user->username;
-            }else{
-                $failed[] = $dtr->user->username;
-            }
-        }
-        return [$success,array_unique($failed)];
+        //         $data = new Dtr;
+        //         $data->date = $dtr->date;
+        //         $data->am_in_at = ($dtr->inAM) ? json_encode($amin) : null;
+        //         $data->am_out_at = ($dtr->outAM) ? json_encode($amout) : null;
+        //         $data->pm_in_at = ($dtr->inPM) ? json_encode($pmin) : null;
+        //         $data->pm_out_at =  ($dtr->outPM) ? json_encode($pmout) : null;
+        //         $data->remarks = json_encode($remarks);
+        //         $data->user_id = $user->id;
+        //         $data->save();
+        //         $success[] = $dtr->user->username;
+        //     }else{
+        //         $failed[] = $dtr->user->username;
+        //     }
+        // }
+        // return [$success,array_unique($failed)];
 
 
         // $employees = Employee::where('is_active',1)->get();

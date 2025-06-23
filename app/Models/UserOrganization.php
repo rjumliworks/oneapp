@@ -45,4 +45,9 @@ class UserOrganization extends Model
     {
         return $this->belongsTo('App\Models\ListUnit', 'unit_id', 'id');
     }
+
+    public function salary()
+    {
+        return $this->belongsTo('App\Models\ListSalary', 'salary_id', 'id');
+    }
 }

@@ -35,6 +35,7 @@ class SaveClass
 
     public function deduction($request){
         $data = UserDeduction::create($request->all());
+        $data = UserDeduction::with('deduction')->where('id',$data->id)->first();
         return [
             'data' => $data,
             'message' => 'Deduction added successfully', 
@@ -65,6 +66,7 @@ class SaveClass
                 $organization->unit_id = $request->unit_id;
                 $organization->type_id = $request->type_id;
                 $organization->position_id = $request->position_id;
+                $organization->salary_id = $request->salary_id;
                 $organization->save();
             }
         }

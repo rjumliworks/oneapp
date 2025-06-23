@@ -85,7 +85,7 @@
                             </span>
                         </div>
                         <div class="flex-grow-1 ms-2">
-                            <h6 class="mb-0 fs-12">{{employee.information.salary}}</h6>
+                            <h6 class="mb-0 fs-12">{{employee.organization.salary.amount}}</h6>
                             <p class="fs-11 mb-0 text-muted">Monthly Rate</p>
                         </div>
                     </div>

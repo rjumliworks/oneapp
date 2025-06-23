@@ -25,7 +25,7 @@ class ViewClass
         $data = EmployeeResource::collection(
             User::select('users.id','email','username','users.created_at')
             ->with('profile.religion','profile.blood','profile.marital')
-            ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status')
+            ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status','organization.salary')
             ->with('information','academics','credentials')
             ->join('user_profiles', 'user_profiles.user_id', '=', 'users.id')
             ->when($request->keyword, function ($query, $keyword) {
@@ -69,7 +69,7 @@ class ViewClass
             ->with('profile.religion','profile.blood','profile.marital')
             ->with('deductions.deduction')
             ->with('contracts.division','contracts.position','contracts.unit','contracts.station','contracts.type','contracts.status')
-            ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status')
+            ->with('organization.division','organization.position','organization.unit','organization.station','organization.type','organization.status','organization.salary')
             ->with('information','academics.level','credentials.type','credentials.name')
             ->where('id',$id)->first()
         );

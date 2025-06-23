@@ -27,10 +27,10 @@
                     <b-col lg>
                         <div class="input-group mb-1">
                             <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
-                            <input type="text" v-model="filter.keyword" placeholder="Search Dtr" class="form-control" style="width: 65%;">
+                            <input type="text" v-model="filter.keyword" placeholder="Search Payroll" class="form-control" style="width: 65%;">
                             <input type="date" v-model="filter.date" class="form-control">
-                            <b-button type="button" variant="primary" @click="openGenerate()">
-                                <i class="bx bx-refresh search-icon"></i> Generate
+                            <b-button type="button" variant="primary" @click="openCreate()">
+                                <i class="ri-add-circle-fill search-icon"></i> Create
                             </b-button>
                         </div>
                     </b-col>
@@ -63,49 +63,51 @@
                         <thead class="table-light thead-fixed">
                             <tr class="fs-11">
                                 <th style="width: 3%;"></th>
-                                <th>Employee</th>
-                                <th style="width: 15%;" class="text-center">Date</th>
-                                <th style="width: 10%;" class="text-center">AM Time-In</th>
-                                <th style="width: 10%;" class="text-center">AM Time-Out</th>
-                                <th style="width: 10%;" class="text-center">PM Time-In</th>
-                                <th style="width: 10%;" class="text-center">PM Time-Out</th>
-                                <th style="width: 15%;" class="text-center">Remarks</th>
+                                <th>Name</th>
+                                <th style="width: 20%;" class="text-center">Date</th>
+                                <th style="width: 10%;" class="text-center">year</th>
+                                <th style="width: 15%;" class="text-center">Type</th>
+                                <th style="width: 15%;" class="text-center">Employment</th>
+                                <th style="width: 15%;" class="text-center">Status</th>
                                 <th style="width: 6%;"></th>
                             </tr>
                         </thead>
                         <tbody class="table-white fs-12">
                             <tr v-for="(list,index) in lists" v-bind:key="index" >
                                 <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
-                                <td>{{ list.user.profile.firstname }} {{ list.user.profile.lastname }}</td>
-                                <td class="text-center">{{ list.date }}</td>
-                                <td class="text-center">{{ (list.am_in_at) ? list.am_in_at.time : '-' }}</td>
-                                <td class="text-center">{{ (list.am_out_at) ? list.am_out_at.time : '-' }}</td>
-                                <td class="text-center">{{ (list.pm_in_at) ? list.pm_in_at.time : '-' }}</td>
-                                <td class="text-center">{{ (list.pm_out_at) ? list.pm_out_at.time : '-' }}</td>
-                                <td class="text-center">-</td>
+                                <td>{{ list.cycle.month }} {{ list.cycle.year }} Payroll</td>
+                                <td class="text-center">{{ list.start }} to {{ list.end }}</td>
+                                <td class="text-center">{{ list.cycle.year }}</td>
+                                <td class="text-center">{{ (list.type) ? list.type : "-" }}</td>
+                                <td class="text-center">{{ (list.cycle.is_regular) ? 'Regular' : "Contract of Service" }}</td>
+                                <td class="text-center">{{ list.is_locked }}</td>
                                 <td class="text-end">
-                                    <b-button @click="openView(list)" variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
-                                        <i class="ri-eye-fill align-bottom"></i>
-                                    </b-button>
+                                    <Link :href="`/payrolls/${list.code}`">
+                                        <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
+                                            <i class="ri-eye-fill align-bottom"></i>
+                                        </b-button>
+                                    </Link>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </div>cycle.
             </div>
             <div class="card-footer">
                 <Pagination class="ms-2 me-2 mt-n1" v-if="meta" @fetch="fetch" :lists="lists.length" :links="links" :pagination="meta" />
             </div>
         </div>
     </div>
+    <Create ref="create"/>
 </BRow>
 </template>
 <script>
 import _ from 'lodash';
+import Create from './Modals/Create.vue';
 import PageHeader from '@/Shared/Components/PageHeader.vue';
 import Pagination from "@/Shared/Components/Pagination.vue";
 export default {
-    components: { PageHeader, Pagination },
+    components: { PageHeader, Pagination, Create },
     data(){
         return {
             currentUrl: window.location.origin,
@@ -135,7 +137,7 @@ export default {
             this.fetch();
         }, 300),
         fetch(page_url){
-            page_url = page_url || '/dtrs';
+            page_url = page_url || '/payrolls';
             axios.get(page_url,{
                 params : {
                     keyword: this.filter.keyword,
@@ -156,8 +158,8 @@ export default {
         openView(data){
             this.$refs.view.show(data);
         },
-        openGenerate(){
-            this.$refs.generate.show();
+        openCreate(){
+            this.$refs.create.show();
         }
     }
 }
