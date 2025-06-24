@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers\Hr;
 
+use App\Services\DropdownClass;
 use App\Traits\HandlesTransaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Hr\Payroll\SaveClass;
 use App\Services\Hr\Payroll\ViewClass;
 use App\Services\Hr\Payroll\UpdateClass;
+use App\Http\Requests\HumanResource\PayrollRequest;
 
 class PayrollController extends Controller
 {
     use HandlesTransaction;
 
-    public function __construct(SaveClass $save, ViewClass $view, UpdateClass $update){
+    public function __construct(SaveClass $save, ViewClass $view, UpdateClass $update, DropdownClass $dropdown){
         $this->save = $save;
         $this->view = $view;
         $this->update = $update;
+        $this->dropdown = $dropdown;
     }
 
     public function index(Request $request){
@@ -32,11 +35,17 @@ class PayrollController extends Controller
         }   
     }
 
-    public function store(Request $request){
+    public function store(PayrollRequest $request){
         $result = $this->handleTransaction(function () use ($request) {
             switch($request->option){
                 case 'cycle':
                     return $this->save->cycle($request);
+                break;
+                case 'deduction':
+                    return $this->save->deduction($request);
+                break;
+                case 'users':
+                    return $this->save->users($request);
                 break;
             }
         });
@@ -51,7 +60,10 @@ class PayrollController extends Controller
 
     public function show($code){
         return inertia('Modules/HumanResource/Payrolls/View',[
-            'payroll_data' => $this->view->view($code)
+            'payroll_data' => $this->view->view($code),
+            'dropdowns' => [
+                'deductions' => $this->dropdown->deductions(),
+            ]
         ]);
     }
 }

@@ -72,7 +72,7 @@
                                 <th style="width: 6%;"></th>
                             </tr>
                         </thead>
-                        <tbody class="table-white fs-12">
+                        <tbody class="table-white fs-12" v-if="lists.length > 0">
                             <tr v-for="(list,index) in lists" v-bind:key="index" >
                                 <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
                                 <td>{{ list.cycle.month }} {{ list.cycle.year }} Payroll</td>
@@ -90,15 +90,20 @@
                                 </td>
                             </tr>
                         </tbody>
+                        <tbody class="table-white fs-12" v-else>
+                            <tr>
+                                <td colspan="8" class="text-muted text-center">No employees have been selected or added for this payroll cutoff.</td>
+                            </tr>
+                        </tbody>
                     </table>
-                </div>cycle.
+                </div>
             </div>
             <div class="card-footer">
                 <Pagination class="ms-2 me-2 mt-n1" v-if="meta" @fetch="fetch" :lists="lists.length" :links="links" :pagination="meta" />
             </div>
         </div>
     </div>
-    <Create ref="create"/>
+    <Create @success="fetch()" ref="create"/>
 </BRow>
 </template>
 <script>

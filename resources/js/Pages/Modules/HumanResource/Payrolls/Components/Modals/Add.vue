@@ -1,9 +1,9 @@
 <template>
     <!-- style="--vz-modal-width: 600px;" -->
-    <b-modal v-model="showModal" header-class="p-3 bg-light" title="View DTR" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+    <b-modal v-model="showModal" header-class="p-3 bg-light" title="Add Employee" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform">
             <BRow class="g-3">
-                <BCol lg="12" v-if="!selected">
+                <BCol lg="12">
                    <form class="app-search d-none d-md-block mb-n3 mt-n2">
                         <div class="position-relative">
                             <input type="text" class="form-control" placeholder="Search Employee" autocomplete="off" id="search-options" />
@@ -14,7 +14,7 @@
                             <SimpleBar data-simplebar >
                                 <div class="notification-list">
                                     <b-link @click="chooseUser(list)" v-for="(list, index) of names" :key="index" class="d-flex dropdown-item notify-item py-2">
-                                        <img :src="currentUrl+'/images/avatars/avatar.jpg'" class="me-3 rounded-circle avatar-xs" alt="user-pic" />
+                                        <img :src="list.avatar" class="me-3 rounded-circle avatar-xs" alt="user-pic" />
                                         <div class="flex-1">
                                             <h6 class="m-0">{{ list.name}}</h6>
                                             <span class="fs-11 mb-0 text-muted">{{list.position}}</span>
@@ -26,41 +26,22 @@
                     </form>
                      <hr class="text-muted"/>
                 </BCol>
-                <BCol lg="12" v-else>
-                    <ul class="list-unstyled mb-0 vstack gap-3">
-                        <li>
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <img :src="currentUrl+'/images/avatars/avatar.jpg'" alt="" class="avatar-sm rounded material-shadow">
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="fs-14 mb-0">{{selected.name}}</h6>
-                                    <p class="text-muted mb-0">{{selected.position}}</p>
-                                </div>
+                <BCol lg="12" class="mt-n1">
+                    <div class="col-sm-auto">
+                        <div class="avatar-group">
+                            <div class="avatar-group-item material-shadow"  v-for="(list, index) of form.users" :key="index">
+                                <a href="javascript: void(0);" class="d-inline-block" v-b-tooltip.hover :title="list.name">
+                                    <img :src="list.avatar" alt="" class="rounded-circle avatar-xs">
+                                </a>
                             </div>
-                        </li>
-                    </ul>
-                    <hr class="text-muted"/>
-                </BCol>
-                <BCol lg="6" class="mt-n1">
-                    <InputLabel for="name" value="Month" :message="form.errors.year"/>
-                    <Multiselect :options="months" v-model="form.month" label="name" :allow-empty="false" :searchable="true" placeholder="Select Month" />
-                </BCol>
-                <BCol lg="6" class="mt-n1">
-                    <InputLabel for="name" value="Year" :message="form.errors.year"/>
-                    <TextInput id="name" v-model="form.year" type="text" class="form-control" :placeholder="form.year" @input="handleInput('year')" :light="true"/>
-                </BCol>
-                <BCol lg="12">
-                    <div class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show material-shadow fs-12" role="alert">
-                        <i class="ri-alert-line label-icon"></i><strong>Print Option</strong> -
-                        Please open the PDF in Adobe Acrobat Reader, select A4 paper size, and choose 'Actual Size' in the print settings before printing
+                        </div>
                     </div>
                 </BCol>
             </BRow>
         </form>
           <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Close</b-button>
-            <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Generate</b-button>
+            <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Confirm</b-button>
         </template>
     </b-modal>
 </template>
@@ -72,15 +53,14 @@ import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
     components: { Multiselect, TextInput, InputLabel },
+    props: ['is_regular'],
     data(){
         return {
             currentUrl: window.location.origin,
             form: useForm({
-                month: null,
-                year: new Date().getFullYear(),
+                users: [],
                 option: 'dtr'
             }),
-            months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
             names: [],
             selected: null,
             keyword: null,
@@ -102,6 +82,7 @@ export default {
             axios.get('/search', {
                 params: {
                     keyword: this.keyword,
+                    is_regular: this.is_regular,
                     option: 'users'
                 }
             })
@@ -113,11 +94,17 @@ export default {
             })
             .catch(err => console.log(err));
         },
-        chooseUser(data){
-            this.selected = data;
+         chooseUser(data){
+            if (!this.form.users.some(user => user.value === data.value)) {
+                this.form.users.unshift(data);
+            }
+            this.keyword = null;
+            document.getElementById("search-options").value = "";
+            document.getElementById("search-options").focus();
         }, 
         submit(){
-            window.open('/dtrs?option=print&id='+this.selected.value+'&month='+this.form.month+'&year='+this.form.year);
+            this.$emit('users',this.form.users);
+            this.showModal = false;
         }, 
         isCustomDropdown() {
             var searchOptions = document.getElementById("search-close-options");

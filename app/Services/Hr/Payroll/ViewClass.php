@@ -13,6 +13,9 @@ class ViewClass
     public function lists($request){
         $data = CutoffResource::collection(
             PayrollCutoff::with('cycle')
+            ->with('payrolls.deductions.deduction.deduction')
+            ->with('payrolls.user.profile:id,user_id,firstname,middlename,lastname,suffix')
+            ->with('payrolls.user:id,username','payrolls.user.organization:id,user_id,position_id,salary_id','payrolls.user.organization.position:id,name','payrolls.user.organization.salary:id,grade,amount')
             ->orderBy('created_at', 'DESC')
             ->paginate($request->count)
         );
@@ -55,6 +58,7 @@ class ViewClass
         $data = new CutoffResource(
             PayrollCutoff::query()
             ->with('cycle')
+            ->with('payrolls')
             ->where('id',$id)->first()
         );
         return $data;

@@ -1,114 +1,110 @@
 <template>
     <!-- style="--vz-modal-width: 600px;" -->
-    <b-modal v-model="showModal" header-class="p-3 bg-light" title="Add Employee" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+    <b-modal v-model="showModal" style="--vz-modal-width: 700px;" header-class="p-3 bg-light" title="Add Employee" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform">
             <BRow class="g-3">
-                <BCol lg="12" class="mt-2">
-                    <InputLabel for="name" value="Employee Selection Mode" :message="form.errors.year"/>
-                    <Multiselect :options="['All Regular Employees','Custom Employees','Except Employees']" v-model="form.month" label="name" :allow-empty="false" :searchable="true" placeholder="Select Month" />
+                <BCol lg="12" class="mt-3">
+                    <div class="d-flex">
+                        <div style="width: 100%;">
+                            <InputLabel for="name" value="Employee Selection Mode" :message="form.errors.year"/>
+                            <Multiselect :options="['All Regular Employees','Custom Employees','Except Employees']" v-model="form.type" label="name" :allow-empty="false" :searchable="true" placeholder="Select Month" />
+                        </div>
+                        <div class="flex-shrink-0" v-if="form.type != 'All Regular Employees'">
+                            <b-button @click="openAdd()" style="margin-top: 20px;" variant="light" class="waves-effect waves-light ms-1"><i class="ri-add-circle-fill"></i></b-button>
+                        </div>
+                    </div>
+                </BCol>
+                <BCol lg="12" class="mt-0" v-if="form.type">
+                    <hr class="text-muted"/>
+                </BCol>
+                <BCol lg="12" class="mt-0" v-if="form.type == 'All Regular Employees'">
+                    <div class="alert alert-primary alert-dismissible alert-label-icon rounded-label fade show material-shadow" role="alert">
+                        <i class="ri-user-smile-line label-icon"></i>All <b>regular employees</b> will be automatically included in this payroll cutoff.
+                    </div>
+                </BCol>
+                <BCol lg="12" class="mt-0" v-if="form.type == 'Custom Employees'">
+                    <div class="alert alert-warning alert-dismissible alert-label-icon rounded-label fade show material-shadow" role="alert">
+                        <i class="ri-user-smile-line label-icon"></i>Select <b>specific employees</b> to include in this payroll cutoff.
+                    </div>
+                </BCol>
+                <BCol lg="12" class="mt-0" v-if="form.type == 'Except Employees'">
+                    <div class="alert alert-danger alert-dismissible alert-label-icon rounded-label fade show material-shadow" role="alert">
+                        <i class="ri-user-smile-line label-icon"></i>All regular employees will be included <b>except</b> those you manually exclude.
+                    </div>
+                </BCol>
+                 <BCol lg="12" class="mt-n1">
+                    <div class="col-sm-auto">
+                        <div class="avatar-group">
+                            <div class="avatar-group-item material-shadow"  v-for="(list, index) of employees" :key="index">
+                                <a href="javascript: void(0);" class="d-inline-block" v-b-tooltip.hover :title="list.name">
+                                    <img :src="list.avatar" alt="" class="rounded-circle avatar-xs">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </BCol>
             </BRow>
         </form>
-          <template v-slot:footer>
+
+        <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Close</b-button>
-            <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Generate</b-button>
+            <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
         </template>
     </b-modal>
+    <Add :is_regular="is_regular" @users="updateUsers" ref="add"/>
 </template>
+
 <script>
 import _ from 'lodash';
+import Add from './Add.vue';
 import { useForm } from '@inertiajs/vue3';
 import Multiselect from "@vueform/multiselect";
 import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
-    components: { Multiselect, TextInput, InputLabel },
+    components: { Multiselect, TextInput, InputLabel, Add },
+    props: ['is_regular','id'],
     data(){
         return {
             currentUrl: window.location.origin,
             form: useForm({
-                month: null,
-                year: new Date().getFullYear(),
-                option: 'dtr'
+                id: this.id,
+                type: null,
+                users: [],
+                option: 'users'
             }),
-            months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-            names: [],
-            selected: null,
+            employees: [],
             keyword: null,
             showModal: false
         }
     },
-     mounted() {
-        this.isCustomDropdown();
+    watch: {
+        "form.type"(newVal){
+            this.form.users = [];
+        }
     },
     methods: { 
         show(){
-            this.selected = null;
             this.showModal = true;
         },
-        checkSearchStr: _.debounce(function (string) {
-            this.keyword = string;
-            this.search();
-        }, 500),
-        search(){
-            axios.get('/search', {
-                params: {
-                    keyword: this.keyword,
-                    option: 'users'
-                }
-            })
-            .then(response => {
-                if(response){ 
-                    this.names = response.data; 
-                }
-            })
-            .catch(err => console.log(err));
+        openAdd(){
+            this.$refs.add.show();
         },
-        chooseUser(data){
-            this.selected = data;
-        }, 
+        updateUsers(data){
+            data.forEach(user => {
+                if (!this.form.users.some(u => u === user.value)) {
+                    this.form.users.unshift(user.value);
+                    this.employees.unshift(user);
+                }
+            });
+        },
         submit(){
-            window.open('/dtrs?option=print&id='+this.selected.value+'&month='+this.form.month+'&year='+this.form.year);
-        }, 
-        isCustomDropdown() {
-            var searchOptions = document.getElementById("search-close-options");
-            var dropdown = document.getElementById("search-dropdown");
-            var searchInput = document.getElementById("search-options");
-
-            searchInput.addEventListener("focus", () => {
-                var inputLength = searchInput.value.length;
-                if (inputLength > 0) {
-                    dropdown.classList.add("show");
-                    searchOptions.classList.remove("d-none");
-                } else {
-                    dropdown.classList.remove("show");
-                    searchOptions.classList.add("d-none");
-                }
-            });
-
-            searchInput.addEventListener("keyup", () => {
-                var inputLength = searchInput.value.length;
-                if (inputLength > 0) {
-                    dropdown.classList.add("show");
-                    searchOptions.classList.remove("d-none");
-                    this.checkSearchStr(searchInput.value);
-                } else {
-                    dropdown.classList.remove("show");
-                    searchOptions.classList.add("d-none");
-                }
-            });
-
-            searchOptions.addEventListener("click", () => {
-                searchInput.value = "";
-                dropdown.classList.remove("show");
-                searchOptions.classList.add("d-none");
-            });
-
-            document.body.addEventListener("click", (e) => {
-                if (e.target.getAttribute("id") !== "search-options") {
-                    dropdown.classList.remove("show");
-                    searchOptions.classList.add("d-none");
-                }
+            this.form.post('/payrolls',{
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    this.$emit('update',response.props.flash.data.data)
+                    this.hide();
+                },
             });
         },
         handleInput(field) {
@@ -120,8 +116,3 @@ export default {
     }
 }
 </script>
-<style scoped>
-    .dropdown-menu-lg {
-        width: 95%;
-    }
-</style>

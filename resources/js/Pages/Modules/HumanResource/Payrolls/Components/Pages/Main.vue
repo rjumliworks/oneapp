@@ -38,7 +38,7 @@
                 </b-row>
             </div>
             <div class="card-body bg-white rounded-bottom">
-                <div class="table-responsive table-card" style="margin-top: -39px; height: calc(100vh - 465px); overflow: auto;">
+                <div class="table-responsive table-card" style="margin-top: -39px; height: calc(100vh - 440px); overflow: auto;">
                     <table class="table align-middle table-striped table-centered mb-0">
                         <thead class="table-light thead-fixed">
                             <tr class="fs-11">
@@ -53,15 +53,15 @@
                             </tr>
                         </thead>
                         <tbody class="table-white fs-12">
-                            <tr v-for="(list,index) in lists" v-bind:key="index" >
+                            <tr v-for="(list,index) in payroll.payrolls" v-bind:key="index" >
                                 <td class="text-center">{{ index + 1 }}.</td>
                                 <td>
                                     <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.name}}.</h5>
                                     <p class="fs-12 text-muted mb-0">{{list.position}}</p>
                                 </td>
                                 <td class="text-center">{{ list.salary }}</td>
-                                <td class="text-center">{{ list.deductions }}</td>
-                                <td class="text-center">{{ list.net }}</td>
+                                <td class="text-center">{{ list.deduction }}</td>
+                                <td class="text-center">{{ list.netpay }}</td>
                                 <td class="text-center">{{ list.first}}</td>
                                 <td class="text-center">{{ list.second }}</td>
                                 <td class="text-end">
@@ -79,43 +79,31 @@
             </div>
         </div>
     </div>
-    <User ref="user"/>
-    <Deduction ref="deduction"/>
+    <Deduction :deductions="dropdowns.deductions" :users="userOptions" ref="deduction"/>
+    <User :is_regular="is_regular" :id="payroll.id" ref="user"/>
 </template>
 <script>
 import simplebar from "simplebar-vue";
 import User from '../Modals/User.vue';
 import Deduction from '../Modals/Deduction.vue';
 export default {
-    components: { simplebar, Deduction, User },
-    props: ['payroll'],
+    components: { simplebar, User, Deduction },
+    props: ['payroll','is_regular','dropdowns'],
     data(){
         return {
             lists: [],
             index: null,
         }
     },
-    created(){
-        this.fetch();
+    computed: {
+        userOptions() {
+            return this.payroll?.payrolls?.map(user => ({
+                value: user.id,
+                name: user.name
+            })) || [];
+        }
     },
     methods: {
-        fetch(page_url){
-            page_url = page_url || '/payrolls';
-            axios.get(page_url,{
-                params : {
-                    id: this.payroll.code,
-                    option: 'payrolls'
-                }
-            })
-            .then(response => {
-                if(response){
-                    this.lists = response.data.data;
-                    this.meta = response.data.meta;
-                    this.links = response.data.links;          
-                }
-            })
-            .catch(err => console.log(err));
-        },
         openDeduction(){
             this.$refs.deduction.show();
         },

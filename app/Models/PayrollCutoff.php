@@ -6,14 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class PayrollCutoff extends Model
 {
-    protected $fillable = ['start','end','type','is_locked','cycle_id'];
+    protected $fillable = ['code','start','end','type','is_locked','cycle_id','user_id','status_id'];
 
     public function cycle()
     {
         return $this->belongsTo('App\Models\PayrollCycle', 'cycle_id', 'id');
     }
 
-    public function cutoffs()
+    public function status()
+    {
+        return $this->belongsTo('App\Models\ListStatus', 'status_id', 'id');
+    }
+
+    public function payrolls()
     {
         return $this->hasMany('App\Models\Payroll', 'cutoff_id');
     }

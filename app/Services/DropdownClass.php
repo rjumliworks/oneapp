@@ -345,9 +345,14 @@ class DropdownClass
         return $data;
     }
 
-    public function users($keyword){
+    public function users($keyword,$is_regular){
         $data =  User::with('profile')
         ->with('organization.position')
+        ->when($is_regular == 1, function ($query) {
+            $query->whereHas('organization', function ($query) {
+                $query->where('type_id', 15);
+            });
+        })
         ->when($keyword, function ($query) use ($keyword){
             $query->whereHas('profile', function ($query) use ($keyword) {
                 $query->whereRaw('concat(firstname, " ", lastname) LIKE ?', ['%' . $keyword . '%'])
@@ -359,10 +364,9 @@ class DropdownClass
                 'value' => $item->id,
                 'name' => $item->profile->lastname.' '.$item->profile->firstname.', '.$item->profile->middlename.'.',
                 'position' => $item->organization->position->name,
-                'avatar' => $item->profile->avatar
+                'avatar' => ($item->profile->avatar != 'avatar.jpg') ? '/storage/profile-pictures/'.$item->profile->avatar : '/images/avatars/avatar.jpg'
             ];
         });
-        
         return $data;
     }
 }

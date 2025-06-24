@@ -21,6 +21,7 @@ class CutoffResource extends JsonResource
             'type' => $this->type,
             'is_locked' => $this->is_locked,
             'cycle' => $this->cycle,
+            'payrolls' => PayrollResource::collection($this->payrolls),
             'created_at' => $this->created_at
         ];
     }

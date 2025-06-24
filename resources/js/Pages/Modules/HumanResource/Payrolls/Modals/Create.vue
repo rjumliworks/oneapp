@@ -5,7 +5,7 @@
             <BRow>
                 <BCol lg="6" class="mt-1">
                     <InputLabel for="name" value="Month" :message="form.errors.month"/>
-                    <Multiselect :options="months" :searchable="true" label="name" v-model="form.month" placeholder="Select Semester" @input="handleInput('semester_id')"/>
+                    <Multiselect :options="months" :searchable="true" label="name" v-model="form.month" placeholder="Select Semester" @input="handleInput('month')"/>
                 </BCol>
                 <BCol lg="6" class="mt-1 mb-3">
                     <InputLabel for="name" value="Year"  :message="form.errors.year"/>
@@ -30,11 +30,11 @@
                 </BCol>
                 <BCol lg="12"><hr class="text-muted mt-n2 mb-n4"/></BCol>
                 <BCol lg="6" class="mt-1">
-                    <InputLabel for="name" value="Start"  :message="form.errors.year"/>
+                    <InputLabel for="name" value="Start"  :message="form.errors.start"/>
                     <TextInput id="name" v-model="form.start" type="date" class="form-control" placeholder="Please enter start date" @input="handleInput('start')" :light="true"/>
                 </BCol>
                 <BCol lg="6" class="mt-1">
-                    <InputLabel for="name" value="End"  :message="form.errors.year"/>
+                    <InputLabel for="name" value="End"  :message="form.errors.end"/>
                     <TextInput id="name" v-model="form.end" type="date" class="form-control" placeholder="Please enter end date" @input="handleInput('end')" :light="true"/>
                 </BCol>
                 <BCol lg="12" v-if="form.is_regular === 0" class="mt-1">
@@ -91,6 +91,12 @@ export default {
         'form.is_regular': {
             handler: 'updateDates',
             immediate: false
+        },
+        "form.start"(){
+            this.form.errors.start = null;
+        },
+        "form.end"(){
+            this.form.errors.end = null;
         }
     },
     methods: {
@@ -102,6 +108,7 @@ export default {
             this.form.post('/payrolls',{
                 preserveScroll: true,
                 onSuccess: (response) => {
+                    this.$emit('success',true);
                     this.form.clearErrors();
                     this.form.reset();
                     this.hide();

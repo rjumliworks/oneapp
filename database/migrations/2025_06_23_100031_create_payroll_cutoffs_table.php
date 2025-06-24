@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('payroll_cutoffs', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
+            $table->string('code')->unique();
             $table->date('start');
             $table->date('end');
             $table->enum('type', ['1st','2nd'])->nullable();
@@ -21,6 +22,10 @@ return new class extends Migration
             $table->boolean('is_completed')->default(0);
             $table->integer('cycle_id')->unsigned()->index();
             $table->foreign('cycle_id')->references('id')->on('payroll_cycles')->onDelete('cascade');
+            $table->tinyInteger('status_id')->unsigned()->index();
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');
+            $table->integer('user_id')->unsigned()->index();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

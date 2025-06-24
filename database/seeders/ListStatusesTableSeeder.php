@@ -178,6 +178,46 @@ class ListStatusesTableSeeder extends Seeder
                 'others' => 'n/a',
                 'is_active' => 1,
             ),
+            16 => 
+            array (
+                'id' => 17,
+                'name' => 'Draft',
+                'classification' => 'Payroll',
+                'type' => 'bg-info',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            17 => 
+            array (
+                'id' => 18,
+                'name' => 'Pending',
+                'classification' => 'Payroll',
+                'type' => 'bg-warning',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            18 => 
+            array (
+                'id' => 19,
+                'name' => 'Completed',
+                'classification' => 'Payroll',
+                'type' => 'bg-success',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            19 => 
+            array (
+                'id' => 20,
+                'name' => 'Cancelled',
+                'classification' => 'Payroll',
+                'type' => 'bg-danger',
+                'color' => 'text-white',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
         ));
 
         

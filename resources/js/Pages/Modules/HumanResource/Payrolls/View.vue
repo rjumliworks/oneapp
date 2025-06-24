@@ -5,7 +5,7 @@
             <BRow>
                 <BCol lg="12">
                     <BCard no-body class="mt-n4 mx-n4">
-                        <div class="bg-info-subtle">
+                        <div class="bg-success-subtle">
                             <BCardBody class="pb-0 px-4">
                                 <BRow class="mb-3">
                                     <BCol md>
@@ -41,7 +41,7 @@
                                 </Link>
                                 <div class="vr" style="width: 1px;"></div>
                                 <div >  
-                                    <b-button @click="openSave(selected.id)" variant="primary" block><i class="ri-save-fill me-1"></i> Save</b-button>
+                                    <b-button @click="openSave(selected.id)" variant="success" block><i class="ri-save-fill me-1"></i> Save</b-button>
                                 </div>
                                  <!-- <div v-if="selected.status.name !== 'Pending'" @click="openPrint(selected.qr)">  
                                     <b-button variant="primary" block><i class="ri-printer-fill me-1"></i> Print</b-button>
@@ -54,7 +54,7 @@
                     </BCard>
                 </BCol>
                 <BCol lg="12">
-                    <Main :payroll="payroll_data.data" ref="main"/>
+                    <Main :dropdowns="dropdowns" :is_regular="payroll.cycle.is_regular" :payroll="payroll_data.data" ref="main"/>
                 </BCol>
             </BRow>
         </div>
@@ -63,7 +63,7 @@
 <script>
 import Main from './Components/Pages/Main.vue';
 export default {
-    props:['payroll_data'],
+    props:['payroll_data','dropdowns'],
     components: { Main },
     data(){
         return {
@@ -73,7 +73,7 @@ export default {
     },
     methods: {
         back(){
-            this.$inertia.visit('/employees');
+            this.$inertia.visit('/payrolls');
         }
     }
 }
