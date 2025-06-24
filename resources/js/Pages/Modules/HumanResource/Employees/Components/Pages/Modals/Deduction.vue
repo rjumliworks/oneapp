@@ -4,14 +4,13 @@
             <BRow>
                 <BCol lg="12">
                     <BRow class="g-3 mt-2">
-                        
-                        <BCol lg="12" class="mt-n1">
-                            <InputLabel value="Amount" :message="form.errors.amount"/>
-                            <Amount @amount="amount" ref="testing" :readonly="false" @input="handleInput('amount')"/>
-                        </BCol>
                         <BCol lg="12" class="mt-0 mb-2">
                             <InputLabel value="Deduction" :message="form.errors.deduction"/>
                             <Multiselect :options="deductions" object :searchable="true" label="name" v-model="form.deduction" placeholder="Select Deduction" @input="handleInput('deduction')"/>
+                        </BCol>
+                        <BCol lg="12" class="mt-n1">
+                            <InputLabel value="Amount" :message="form.errors.amount"/>
+                            <Amount @amount="amount" ref="testing" :readonly="false" @input="handleInput('amount')"/>
                         </BCol>
                         <BCol lg="12"><hr class="text-muted mt-n1 mb-n4"/></BCol>
                         <BCol lg="12" style="margin-top: 13px; margin-bottom: -10px;">
@@ -110,10 +109,10 @@ export default {
                 this.form.post('/employees',{
                     preserveScroll: true,
                     onSuccess: (response) => {
+                        this.$refs.testing.empty();
                         this.$emit('success',this.$page.props.flash.data);
                         this.form.reset();
                         this.hide();
-                        this.$emit('success',true);
                     },
                 });
             }

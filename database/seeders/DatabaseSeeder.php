@@ -88,5 +88,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DtrsTableSeeder::class);
         // $this->call(ListPosition2sTableSeeder::class);
         $this->call(ListDeductionsTableSeeder::class);
+        $this->call(UserDeductionsTableSeeder::class);
     }
 }

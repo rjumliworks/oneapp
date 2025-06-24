@@ -308,6 +308,16 @@ class ListSalariesTableSeeder extends Seeder
                 'created_at' => '2024-08-17 20:03:41',
                 'updated_at' => '2024-08-17 20:03:41',
             ),
+            29 => 
+            array (
+                'id' => 30,
+                'grade' => '16.5',
+                'amount' => '45338.00',
+                'is_regular' => 1,
+                'year' => '2025',
+                'created_at' => '2024-08-17 20:03:41',
+                'updated_at' => '2024-08-17 20:03:41',
+            ),
         ));
 
         

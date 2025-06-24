@@ -30,6 +30,9 @@ class PayrollController extends Controller
             case 'payrolls':
                 return $this->view->payroll($request);
             break;
+            case 'print':
+                return $this->view->print($request);
+            break;
             default:
                 return inertia('Modules/HumanResource/Payrolls/Index'); 
         }   

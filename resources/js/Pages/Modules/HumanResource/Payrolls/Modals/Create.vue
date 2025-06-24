@@ -1,6 +1,6 @@
 <template>
      <!-- style="--vz-modal-width: 750px;" -->
-    <b-modal v-model="showModal" header-class="p-3 bg-light" title="Create Payroll Cycle" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+    <b-modal v-model="showModal" style="--vz-modal-width: 600px;" header-class="p-3 bg-light" title="Create Payroll Cycle" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform">
             <BRow>
                 <BCol lg="6" class="mt-1">

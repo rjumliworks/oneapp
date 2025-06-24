@@ -53,10 +53,10 @@
                             </tr>
                         </thead>
                         <tbody class="table-white fs-12">
-                            <tr v-for="(list,index) in payroll.payrolls" v-bind:key="index" >
+                            <tr v-for="(list,index) in sortedPayrolls" v-bind:key="index" @click="selectRow(index)" :class="{ 'bg-info-subtle': selectedRow === index }">
                                 <td class="text-center">{{ index + 1 }}.</td>
                                 <td>
-                                    <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.name}}.</h5>
+                                    <h5 class="fs-13 mb-0 fw-semibold text-primary text-uppercase">{{list.name}}</h5>
                                     <p class="fs-12 text-muted mb-0">{{list.position}}</p>
                                 </td>
                                 <td class="text-center">{{ list.salary }}</td>
@@ -93,6 +93,7 @@ export default {
         return {
             lists: [],
             index: null,
+            selectedRow: null
         }
     },
     computed: {
@@ -101,6 +102,11 @@ export default {
                 value: user.id,
                 name: user.name
             })) || [];
+        },
+        sortedPayrolls() {
+            return this.payroll?.payrolls?.slice().sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            }) || [];
         }
     },
     methods: {
@@ -109,6 +115,9 @@ export default {
         },
         openUser(){
             this.$refs.user.show();
+        },
+        selectRow(index) {
+            this.selectedRow = index;
         }
     }
 }

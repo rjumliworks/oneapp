@@ -84,7 +84,11 @@
                                 </tr>
                             </thead>
                             <tbody class="table-white fs-12">
-                                <tr v-for="(list,index) in lists" v-bind:key="index" >
+                                <tr v-for="(list,index) in lists" v-bind:key="index" @click="selectRow(index)"
+                                 :class="filter.status === null ? {
+                                    'bg-info-subtle': selectedRow === index,
+                                    'bg-danger-subtle': list.organization.status.name === 'Retired',
+                                } : ''">
                                     <td class="text-center"> 
                                         <div class="avatar-xs chat-user-img online">
                                             <img :src="list.avatar" alt="" class="avatar-xs rounded-circle">
@@ -150,6 +154,7 @@ export default {
                 unit: null
             },
             index: null,
+            selectedRow: null,
             units: []
         }
     },
@@ -233,6 +238,9 @@ export default {
         },
         updateUser(data){
             this.lists[this.index] = data;
+        },
+        selectRow(index) {
+            this.selectedRow = index;
         }
     }
 }

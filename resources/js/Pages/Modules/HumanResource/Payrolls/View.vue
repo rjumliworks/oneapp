@@ -34,19 +34,22 @@
                                     </BCol>
                                     <BCol md="auto">
                                         <div class="hstack gap-4 flex-wrap mt-2">
-                                <Link href="/tsrs">
-                                    <div class="text-muted" @click="hide()">  
-                                        <i class="ri-close-circle-fill fs-16"></i> Close
-                                    </div>
-                                </Link>
-                                <div class="vr" style="width: 1px;"></div>
-                                <div >  
-                                    <b-button @click="openSave(selected.id)" variant="success" block><i class="ri-save-fill me-1"></i> Save</b-button>
-                                </div>
-                                 <!-- <div v-if="selected.status.name !== 'Pending'" @click="openPrint(selected.qr)">  
-                                    <b-button variant="primary" block><i class="ri-printer-fill me-1"></i> Print</b-button>
-                                </div> -->
-                            </div>
+                                            <div class="text-muted" @click="back()" >  
+                                                <i class="ri-close-circle-fill fs-16"></i> Close
+                                            </div>
+                                            <a :href="`/payrolls?option=print&code=${payroll.code}`" target="_blank">
+                                                <div class="text-muted" style="cursor: pointer;">  
+                                                    <i class="ri-printer-fill fs-16"></i> Print Preview
+                                                </div>
+                                            </a>
+                                            <div class="vr" style="width: 1px;"></div>
+                                            <div >  
+                                                <b-button @click="openSave(selected.id)" variant="success" block><i class="ri-save-fill me-1"></i> Save</b-button>
+                                            </div>
+                                            <!-- <div v-if="selected.status.name !== 'Pending'" @click="openPrint(selected.qr)">  
+                                                <b-button variant="primary" block><i class="ri-printer-fill me-1"></i> Print</b-button>
+                                            </div> -->
+                                        </div>
                                     </BCol>
                                 </BRow>
                             </BCardBody>
@@ -74,6 +77,9 @@ export default {
     methods: {
         back(){
             this.$inertia.visit('/payrolls');
+        },
+        openPrint(){
+            window.open('/print/'+id);
         }
     }
 }

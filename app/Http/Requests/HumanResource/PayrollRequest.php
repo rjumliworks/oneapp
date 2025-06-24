@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\HumanResource;
 
+use App\Rules\NotZeroPeso;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,6 +30,22 @@ class PayrollRequest extends FormRequest
                     'start' => 'sometimes|required',
                     'end' => 'sometimes|required',
                     'is_regular' => 'sometimes|required',
+                ];
+            break;
+            case 'deduction':
+                return [
+                    'payroll_id' => [
+                        'sometimes',
+                        'required',
+                    ],
+                    'deduction_id' => [
+                        'sometimes',
+                        'required',
+                        Rule::unique('payroll_deductions')->where(function ($query) {
+                            return $query->where('payroll_id', $this->payroll_id);
+                        }),
+                    ],
+                    'amount' => ['sometimes','required', new NotZeroPeso],
                 ];
             break;
             default: 

@@ -15,6 +15,10 @@ AOS.init({
 
 const appName = import.meta.env.VITE_APP_NAME || 'LIMS';
 
+if (window.history.state === null) {
+  window.history.replaceState({}, '');
+}
+
 createInertiaApp({
     resolve: (name) => {
         const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
