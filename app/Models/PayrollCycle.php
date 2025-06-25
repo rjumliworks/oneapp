@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class PayrollCycle extends Model
 {
-    protected $fillable = ['code','month','year','is_regular','is_locked','user_id'];
+    protected $fillable = ['code','month','year','is_regular','is_locked','user_id','payroll_id'];
 
     public function user()
     {
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
+    }
+
+    public function payroll()
+    {
+        return $this->belongsTo('App\Models\ListDropdown', 'payroll_id', 'id');
     }
 
     public function cutoffs()

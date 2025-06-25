@@ -11,14 +11,35 @@ class SaveClass
 {
     public function store($request){
         $date = Carbon::now();
-        $time = Carbon::now()->toTimeString();
+        $time = Carbon::now();
         $type = $request->type;
+        $minutes = 0;
+        switch($type){
+            case 'Time In (am)':
+                $officialStart = Carbon::createFromTimeString('08:00:00');
+                $flexibleCutoff = Carbon::createFromTimeString('08:30:00');
+                $minutes = ($time->greaterThan($flexibleCutoff)) ? (int) $officialStart->diffInMinutes($time) : 0;
+            break;
+            case 'Time Out (am)':
+                $officialMorningOut = Carbon::createFromTimeString('12:00:00');
+                $minutes = ($time->lessThan($officialMorningOut)) ? (int) $time->diffInMinutes($officialMorningOut) : 0;
+            break;
+            case 'Time In (pm)':
+                $officialAfternoonTimeIn = Carbon::createFromTimeString('13:00:00');
+                $minutes = ($time->greaterThan($officialAfternoonTimeIn)) ? (int) $officialAfternoonTimeIn->diffInMinutes($time) : 0;
+            break;
+            case 'Time Out (pm)':
+                $officialAfternoonOut = Carbon::createFromTimeString('17:00:00');
+                $minutes = ($time->lessThan($officialAfternoonOut)) ? (int) $time->diffInMinutes($officialAfternoonOut) : 0;
+            break;
+        }
         $info = [
             'ip' => \Request::ip(), 
             'pcname' => gethostname(),
             'browser' => $request->header('User-Agent'),
-            'time' =>  $time,
+            'time' =>  $time->toTimeString(),
             'date' => $date,
+            'minutes' => $minutes,
             'is_updated' => false,
             'changes' => []
         ];
@@ -34,15 +55,15 @@ class SaveClass
             if($dtr){
                 switch($type){
                     case 'Time In (am)':
-                        if($date->hour >= 12){
-                            $status = 'Disabled';
-                        }else if($dtr->am_in_at){
-                            $status = 'Duplicate';
-                        }else{
+                        // if($date->hour >= 12){
+                        //     $status = 'Disabled';
+                        // }else if($dtr->am_in_at){
+                        //     $status = 'Duplicate';
+                        // }else{
                             $status = 'Success';
                             $dtr->am_in_at = json_encode($info);
                             $dtr->save();
-                        }
+                        // }
                     break;
                     case 'Time Out (am)':
                         if($dtr->am_out_at){

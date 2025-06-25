@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payroll extends Model
 {
-    protected $fillable = ['user_id','cutoff_id','netpay','deduction','gross'];
+    protected $fillable = ['user_id','cutoff_id','netpay','deduction','gross','tardiness','mins','days'];
 
     public function cutoff()
     {

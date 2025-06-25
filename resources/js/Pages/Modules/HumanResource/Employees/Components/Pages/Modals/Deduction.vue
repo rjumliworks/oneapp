@@ -6,7 +6,7 @@
                     <BRow class="g-3 mt-2">
                         <BCol lg="12" class="mt-0 mb-2">
                             <InputLabel value="Deduction" :message="form.errors.deduction"/>
-                            <Multiselect :options="deductions" object :searchable="true" label="name" v-model="form.deduction" placeholder="Select Deduction" @input="handleInput('deduction')"/>
+                            <Multiselect :options="filteredDeductions" object :searchable="true" label="name" v-model="form.deduction" placeholder="Select Deduction" @input="handleInput('deduction')"/>
                         </BCol>
                         <BCol lg="12" class="mt-n1">
                             <InputLabel value="Amount" :message="form.errors.amount"/>
@@ -48,7 +48,7 @@ import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
     components: {InputLabel, TextInput, Multiselect, Amount },
-    props: ['deductions'],
+    props: ['deductions','type'],
     data(){
         return {
             currentUrl: window.location.origin,
@@ -74,6 +74,15 @@ export default {
                 this.form.deduction_id = null;
             }
         },
+    },
+    computed: {
+        filteredDeductions() {
+            if (this.type === 'Regular') {
+            return this.deductions.filter(d => d.is_regular === 1);
+            } else {
+            return this.deductions.filter(d => d.is_regular === 0);
+            }
+        }
     },
     methods: { 
         amount(val){

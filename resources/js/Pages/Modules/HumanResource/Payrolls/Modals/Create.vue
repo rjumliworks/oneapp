@@ -3,6 +3,10 @@
     <b-modal v-model="showModal" style="--vz-modal-width: 600px;" header-class="p-3 bg-light" title="Create Payroll Cycle" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform">
             <BRow>
+                <BCol lg="12" class="mt-1">
+                    <InputLabel for="name" value="Type" :message="form.errors.payroll_id"/>
+                    <Multiselect :options="payrolls" :searchable="true" label="name" v-model="form.payroll_id" placeholder="Select Payroll type" @input="handleInput('payroll_id')"/>
+                </BCol>
                 <BCol lg="6" class="mt-1">
                     <InputLabel for="name" value="Month" :message="form.errors.month"/>
                     <Multiselect :options="months" :searchable="true" label="name" v-model="form.month" placeholder="Select Semester" @input="handleInput('month')"/>
@@ -56,6 +60,7 @@ import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
     components: { Multiselect, InputLabel, TextInput },
+    props: ['payrolls'],
     data(){
         return {
             currentUrl: window.location.origin,
@@ -63,6 +68,7 @@ export default {
                 month: null,
                 year: new Date().getFullYear(),
                 is_regular: null,
+                payroll_id: null,
                 start: null,
                 end: null,
                 type: null,

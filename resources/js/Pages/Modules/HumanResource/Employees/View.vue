@@ -23,6 +23,8 @@
                                                     <div class="hstack gap-3 flex-wrap">
                                                         <div><i class="ri-qr-code-fill align-bottom me-1"></i> {{employee.username}}</div>
                                                         <div class="vr" style="width: 1px;"></div>
+                                                        <div><span class="text-muted">Status :</span> <span class="fw-medium">{{employee.organization.type.name}}</span></div>
+                                                        <div class="vr" style="width: 1px;"></div>
                                                         <div><span class="text-muted">Sex :</span> <span class="fw-medium">{{employee.profile.sex}}</span></div>
                                                         <div class="vr" style="width: 1px;"></div>
                                                         <div><span class="text-muted">Birthdate :</span> <span class="fw-medium">{{employee.profile.birthdate}}</span></div>

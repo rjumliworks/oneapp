@@ -19,6 +19,8 @@ return new class extends Migration
             $table->year('year');
             $table->boolean('is_regular');
             $table->boolean('is_locked')->default(0);
+            $table->tinyInteger('payroll_id')->unsigned()->index();
+            $table->foreign('payroll_id')->references('id')->on('list_dropdowns')->onDelete('cascade');
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

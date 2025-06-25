@@ -40,7 +40,7 @@
                                     <Overview :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Overview'" />
                                     <Credits :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credits'" />
                                     <Contracts :dropdowns="dropdowns" :lists="employee.contracts" :id="employee.id" v-if="menu == 'Contracts'" />
-                                    <Deductions :dropdowns="dropdowns" :lists="employee.deductions" :id="employee.id" v-if="menu == 'Deductions'" />
+                                    <Deductions :type="employee.organization.type.name" :dropdowns="dropdowns" :lists="employee.deductions" :id="employee.id" v-if="menu == 'Deductions'" />
                                     <Eligibility :dropdowns="dropdowns" :lists="employee.credentials" :id="employee.id" v-if="menu == 'Credentials'" />
                                     <Academic :dropdowns="dropdowns" :lists="employee.academics" :id="employee.id" v-if="menu == 'Academics'"/>
                                     <Background :marital="employee.profile.marital.name" :dropdowns="dropdowns" :information="employee.information" :id="employee.id" v-if="menu == 'Informations'"/>

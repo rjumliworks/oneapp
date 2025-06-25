@@ -34,7 +34,11 @@ class PayrollController extends Controller
                 return $this->view->print($request);
             break;
             default:
-                return inertia('Modules/HumanResource/Payrolls/Index'); 
+                return inertia('Modules/HumanResource/Payrolls/Index',[
+                    'dropdowns' => [
+                        'payrolls' => $this->dropdown->dropdowns('Payroll')
+                    ]
+                ]); 
         }   
     }
 

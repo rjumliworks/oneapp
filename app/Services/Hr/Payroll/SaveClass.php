@@ -2,6 +2,9 @@
 
 namespace App\Services\Hr\Payroll;
 
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use App\Models\Dtr;
 use App\Models\User;
 use App\Models\Payroll;
 use App\Models\PayrollCycle;
@@ -18,15 +21,13 @@ class SaveClass
             'code' => $this->generateCode(),
             'user_id' => \Auth::user()->id
         ]));
-        if($data->is_regular){
-            $data->cutoffs()->create(
-                array_merge($request->all(), [
-                    'code' => $this->generateCode2(),
-                    'user_id' => \Auth::user()->id,
-                    'status_id' => 1
-                ])
-            );
-        }
+        $data->cutoffs()->create(
+            array_merge($request->all(), [
+                'code' => $this->generateCode2(),
+                'user_id' => \Auth::user()->id,
+                'status_id' => 1
+            ])
+        );
         return [
             'data' => new CycleResource($data),
             'message' => 'Cycle creation was successful!', 
@@ -51,6 +52,7 @@ class SaveClass
 
     public function users($request){
         $data = PayrollCutoff::where('id',$request->id)->first();
+
         switch($request->type){
             case 'All Regular Employees':
                 $users = User::whereHas('organization', function ($query) {$query->where('type_id', 15)->where('status_id',2);})->pluck('id');
@@ -80,10 +82,18 @@ class SaveClass
                     $cleanAmount = floatval(str_replace(['₱', ','], '', $deduction->amount));
                     $total += $cleanAmount;
                 }
-                $amount = floatval(str_replace(['₱', ','], '', optional(UserOrganization::with('salary')->where('user_id', $user)->first())->salary?->amount));
-                $payroll->gross = $amount;
+
+                $salary = floatval(str_replace(['₱', ','], '', optional(UserOrganization::with('salary')->where('user_id', $user)->first())->salary?->amount));
+                $payroll->gross = $salary;
                 $payroll->deduction = $total;
-                $payroll->netpay = $amount - $total;
+                $payroll->netpay = $salary - $total;
+                if(!$data->cycle->is_regular){
+                    $tardiness = $this->tardiness($data,$user,$salary);
+                    $payroll->mins = $tardiness['mins'];
+                    $payroll->days = $tardiness['days'];
+                    $payroll->tardiness = $tardiness['total'];
+                    $payroll->netpay = ($salary/2) - ($tardiness['total'] + $total);
+                }
                 $payroll->save();
             }
         }
@@ -92,6 +102,61 @@ class SaveClass
             'data' => $data,
             'message' => 'Cycle creation was successful!', 
             'info' => "You've successfully created a new cycle."
+        ];
+    }
+
+    private function tardiness($data,$user,$salary){
+        $start = Carbon::parse($data->start);
+        $end = Carbon::parse($data->end);
+        $period = CarbonPeriod::create($start, $end);
+        
+        $lateMinutes = 0;
+        $undertimeMinutes = 0;
+        $absentDays = 0;
+
+        $dtrs = Dtr::where('user_id',$user)
+        ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
+        ->get()
+        ->keyBy(fn ($dtr) => Carbon::parse($dtr->date)->toDateString());
+   
+        foreach ($period as $day) {
+            if ($day->isWeekend()) {
+                continue;
+            }
+
+            $dayString = $day->toDateString();
+            $dtr = $dtrs[$dayString] ?? null;
+
+            $hasAmLogs = !empty($dtr->am_in_at) && !empty($dtr->am_out_at);
+            $hasPmLogs = !empty($dtr->pm_in_at) && !empty($dtr->pm_out_at);
+            
+            if (!$hasAmLogs && !$hasPmLogs) {
+                $absentDays += 1;
+            }elseif(!$hasAmLogs || !$hasPmLogs) {
+                $absentDays += 0.5;
+            }else{
+                $amin = json_decode($dtr->am_in_at);
+                $amout = json_decode($dtr->am_out_at);
+                $pmin = json_decode($dtr->pm_in_at);
+                $pmout = json_decode($dtr->pm_out_at);
+
+                $lateMinutes += $amin->minutes + $pmin->minutes;
+                $undertimeMinutes += $amout->minutes + $pmout->minutes;
+            }
+        }
+
+        $dailyRate = $salary / 22;
+        $perMinuteRate = $dailyRate / 480;
+
+        $absenceDeduction = round($dailyRate * $absentDays, 2);
+        $lateDeduction = round($perMinuteRate * $lateMinutes, 2);
+        $undertimeDeduction = round($perMinuteRate * $undertimeMinutes, 2);
+        $totalDeduction = $absenceDeduction + $lateDeduction + $undertimeDeduction;
+
+        return [
+            'days' => $absentDays,
+            'mins' => $undertimeMinutes + $lateMinutes,
+            'total' => $totalDeduction
         ];
     }
 

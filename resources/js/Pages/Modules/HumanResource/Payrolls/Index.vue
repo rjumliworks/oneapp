@@ -103,7 +103,7 @@
             </div>
         </div>
     </div>
-    <Create @success="fetch()" ref="create"/>
+    <Create :payrolls="dropdowns.payrolls" @success="fetch()" ref="create"/>
 </BRow>
 </template>
 <script>
@@ -113,6 +113,7 @@ import PageHeader from '@/Shared/Components/PageHeader.vue';
 import Pagination from "@/Shared/Components/Pagination.vue";
 export default {
     components: { PageHeader, Pagination, Create },
+    props: ['dropdowns'],
     data(){
         return {
             currentUrl: window.location.origin,

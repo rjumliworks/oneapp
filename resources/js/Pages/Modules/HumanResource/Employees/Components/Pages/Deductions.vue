@@ -52,14 +52,14 @@
            </table>
        </simplebar>
    </div>
-   <Create @success="updateData" :deductions="dropdowns.deductions" ref="create"/>
+   <Create @success="updateData" :type="type" :deductions="dropdowns.deductions" ref="create"/>
 </template>
 <script>
 import simplebar from "simplebar-vue";
 import Create from './Modals/Deduction.vue';
 export default {
     components: { simplebar, Create },
-    props: ['id','dropdowns','lists'],
+    props: ['id','dropdowns','lists','type'],
    data(){
        return {
            filter: {

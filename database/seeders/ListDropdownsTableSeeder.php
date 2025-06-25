@@ -358,6 +358,76 @@ class ListDropdownsTableSeeder extends Seeder
                 'others' => 'Agency',
                 'is_active' => 1,
             ),
+            34 => 
+            array (
+                'id' => 36,
+                'name' => 'Regular Salary ',
+                'classification' => 'Payroll',
+                'type' => 'monthly',
+                'color' => 'n/a',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            35 => 
+            array (
+                'id' => 37,
+                'name' => 'Contractual Salary',
+                'classification' => 'Payroll',
+                'type' => 'monthly',
+                'color' => 'n/a',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            36 => 
+            array (
+                'id' => 38,
+                'name' => 'Subsistence Allowance',
+                'classification' => 'Payroll',
+                'type' => 'monthly',
+                'color' => 'n/a',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            37 => 
+            array (
+                'id' => 39,
+                'name' => 'Hazard Pay',
+                'classification' => 'Payroll',
+                'type' => 'monthly',
+                'color' => 'n/a',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            38 => 
+            array (
+                'id' => 40,
+                'name' => 'Longevity Pay',
+                'classification' => 'Payroll',
+                'type' => 'monthly',
+                'color' => 'n/a',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            39 => 
+            array (
+                'id' => 41,
+                'name' => 'PERA/RATA',
+                'classification' => 'Payroll',
+                'type' => 'monthly',
+                'color' => 'n/a',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
+            40 => 
+            array (
+                'id' => 42,
+                'name' => 'Performance Based Bonus',
+                'classification' => 'Payroll',
+                'type' => 'yearly',
+                'color' => 'n/a',
+                'others' => 'n/a',
+                'is_active' => 1,
+            ),
         ));
 
         

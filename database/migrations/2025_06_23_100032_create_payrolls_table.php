@@ -17,6 +17,9 @@ return new class extends Migration
             $table->decimal('gross',12,2)->default(0.00);
             $table->decimal('deduction',12,2)->default(0.00);
             $table->decimal('netpay',12,2)->default(0.00);
+            $table->decimal('tardiness',12,2)->default(0.00);
+            $table->integer('mins')->nullable();
+            $table->integer('days')->nullable();
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('cutoff_id')->unsigned()->index();

@@ -15,6 +15,7 @@ class UpdateClass
             'pcname' => gethostname(),
             'browser' => $request->header('User-Agent'),
             'time' =>  $request->time,
+            'minutes' => 0,
             'date' => $dtr->date,
             'is_updated' => true,
             'changes' => [

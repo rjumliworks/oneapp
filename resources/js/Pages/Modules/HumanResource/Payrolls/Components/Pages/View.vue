@@ -1,5 +1,5 @@
 <template lang="">
-    <Head title="Technical Service Requests"/>
+    <Head title="PAYROLL"/>
     <div class="auth-page-wrapper d-flex min-vh-100">
         <div class="auth-page-content">
             <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
