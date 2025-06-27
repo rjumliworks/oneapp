@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->boolean('is_active');
+            $table->boolean('is_automatic');
             $table->timestamps();
         });
     }

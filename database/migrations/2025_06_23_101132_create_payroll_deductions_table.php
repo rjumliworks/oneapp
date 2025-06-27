@@ -15,8 +15,8 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->decimal('amount',12,2)->default(0.00);
-            $table->integer('deduction_id')->unsigned()->index();
-            $table->foreign('deduction_id')->references('id')->on('user_deductions')->onDelete('cascade');
+            $table->tinyInteger('deduction_id')->unsigned()->index();
+            $table->foreign('deduction_id')->references('id')->on('list_deductions')->onDelete('cascade');
             $table->integer('payroll_id')->unsigned()->index();
             $table->foreign('payroll_id')->references('id')->on('payrolls')->onDelete('cascade');
             $table->timestamps();

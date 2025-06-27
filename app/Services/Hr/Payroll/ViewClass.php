@@ -167,13 +167,19 @@ class ViewClass
     }
 
     private function nonregular($data){
-        $deductionNames = [
-            'SSS Contribution',
-            'ECC-SSS',
-            'Pag-Ibig Contribution',
-            'Pag-Ibig II',
-            'Philhealth'
-        ];
+        if($data->type == '1st'){
+            $deductionNames = [
+                'SSS Contribution',
+                'ECC-SSS',
+                'Pag-Ibig Contribution',
+                'Pag-Ibig II',
+                'Philhealth'
+            ];
+        }else{
+            $deductionNames = [
+                'Withholding Tax',
+            ];
+        }
 
         $totalSalary = 0;
         $totalDeductions = array_fill_keys($deductionNames, 0);
@@ -192,7 +198,7 @@ class ViewClass
             $deductions = array_fill_keys($deductionNames, 0);
 
             foreach ($payroll->deductions as $d) {
-                $name = optional($d->deduction->deduction)->name;
+                $name = optional($d->deduction)->name;
                 if (isset($deductions[$name])) {
                     $deductions[$name] += floatval(str_replace(['₱', ','], '', $d->amount));
                     $totalDeductions[$name] += floatval(str_replace(['₱', ','], '', $d->amount));
@@ -207,8 +213,14 @@ class ViewClass
             $totalFirstAmount += floatval(str_replace(['₱', ','], '', $firstHalf));
             $totalSecondAmount += floatval(str_replace(['₱', ','], '', $secondHalf));
 
-            $tardiness = $this->tardiness($data,$payroll);
-            
+            // $tardiness = $this->tardiness($data,$payroll);
+
+            $dailyRate = $sal / 22;
+            $perMinuteRate = $dailyRate / 480;
+
+            $absenceDeduction = round($dailyRate * $payroll->days, 2);
+            $lateDeduction = round($perMinuteRate * $payroll->mins, 2);
+           
             return [
                 'id' => $payroll->id,
                 'username' => $payroll->user->username ?? '',
@@ -223,7 +235,9 @@ class ViewClass
                 'deductions' => $deductions,
                 'first' => $firstHalf,
                 'second' => $secondHalf,
-                'tardiness' => $tardiness
+                'tardiness' => $payroll->tardiness,
+                'absence' =>  $absenceDeduction,
+                'late' => $lateDeduction
             ];
         });
 
@@ -300,14 +314,12 @@ class ViewClass
         $absenceDeduction = round($dailyRate * $absentDays, 2);
         $lateDeduction = round($perMinuteRate * $lateMinutes, 2);
         $undertimeDeduction = round($perMinuteRate * $undertimeMinutes, 2);
-        $totalDeduction = $absenceDeduction + $lateDeduction + $undertimeDeduction;
 
         return  [
             'days' => $absentDays,
             'mins' => $undertimeMinutes + $lateMinutes,
             'absence_deduction' => $absenceDeduction,
-            'late_deduction' => $lateDeduction + $undertimeDeduction,
-            'total' => $totalDeduction
+            'late_deduction' => $lateDeduction + $undertimeDeduction
         ];
     }
 }

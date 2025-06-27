@@ -20,7 +20,7 @@ class PayrollCycle extends Model
 
     public function cutoffs()
     {
-        return $this->hasOne('App\Models\PayrollCutoff', 'cycle_id');
+        return $this->hasMany('App\Models\PayrollCutoff', 'cycle_id');
     }
 
     public function getMonthAttribute() 

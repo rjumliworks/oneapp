@@ -33,6 +33,16 @@ class Payroll extends Model
         return '₱'.number_format($value,2,'.',',');
     }
 
+    public function getMinsAttribute($value)
+    {
+        return floatval($value);
+    }
+
+    public function getDaysAttribute($value)
+    {
+        return floatval($value);
+    }
+
     public function setNetpayAttribute($value)
     {
         $this->attributes['netpay'] = trim(str_replace(',','',$value),'₱');

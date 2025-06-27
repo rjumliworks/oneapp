@@ -36,8 +36,8 @@
                                     <td class="text-center"> {{ list.salary}}</td>
                                     <td class="text-center"> {{ formatMoney(list.first)}}</td>
                                     <td class="text-center">{{list.mins}} mins <br />{{list.days}} days</td>
-                                    <td class="text-center">{{formatMoney(list.tardiness.late_deduction)}} <br />{{formatMoney(list.tardiness.absence_deduction)}}</td>
-                                    <td class="text-center text-danger">{{formatMoney(list.tardiness.total)}}</td>
+                                    <td class="text-center">{{formatMoney(list.late)}} <br />{{formatMoney(list.absence)}}</td>
+                                    <td class="text-center text-danger">{{formatMoney(list.tardiness)}}</td>
                                     <td class="text-center" v-for="(name, i) in deductionHeaders" :key="'deduction-' + i">
                                        {{ (parseFloat(list.deductions[name]) !== 0) ? formatMoney(list.deductions[name]) : '-' }}
                                     </td>
