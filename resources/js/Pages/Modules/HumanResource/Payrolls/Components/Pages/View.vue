@@ -4,15 +4,16 @@
         <div class="auth-page-content">
             <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
                 <div class="file-manager-content w-100 p-4 pb-0" ref="box">
+                    
+                    <div class="table-responsive">
                         <table class="table table-bordered table-nowrap align-middle">
-                            <thead class="bg-primary text-white">
-                                <tr>
-                                    <th colspan="23" class="text-center align-middle">{{ cutoff.title }}</th>
+                            <thead class="text-white">
+                                <tr class="bg-primary">
+                                    <th colspan="22" class="text-center align-middle">{{ cutoff.title }}</th>
                                 </tr>
-                                <tr class="fs-10">
-                                    <th class="text-center align-middle" rowspan="3" style="width: 3%;">No.</th>
+                                <tr class="fs-11 bg-info">
+                                    <th class="text-center align-middle" rowspan="3" style="width: 5%;">No.</th>
                                     <th class="text-center align-middle" rowspan="3" style="width: 11%;">Name</th>
-                                    <th class="text-center align-middle" rowspan="3" style="width: 4%;">Employee no.</th>
                                     <!-- <th class="text-center align-middle" rowspan="2" style="width: 12%;">Position</th> -->
                                     <th class="text-center align-middle" rowspan="3" style="width: 3%;">SG</th>
                                     <th class="text-center" colspan="2"  style="width: 12%;">COMPENSATION</th>
@@ -20,7 +21,7 @@
                                     <th class="text-center align-middle" rowspan="3" style="width: 4%;">Net Amount Due</th>
                                     <th class="text-center align-middle" rowspan="3" style="width: 4%;">1st Quicena</th>
                                 </tr>
-                                <tr style="font-size: 8px;">
+                                <tr style="font-size: 9px;" class="bg-info">
                                     <th class="text-center align-middle" rowspan="2">Salary</th>
                                     <th class="text-center align-middle" rowspan="2">Gross</th>
                                     <th class="text-center align-middle" rowspan="2">Philhealth</th>
@@ -37,7 +38,7 @@
                                     <th class="text-center align-middle" rowspan="2">Withholding Tax</th>
                                     <th class="text-center align-middle" rowspan="2">Total Deduction</th>
                                 </tr>
-                                <tr style="font-size: 8px;">
+                                <tr style="font-size: 8px;" class="bg-info">
                                     <th class="text-center align-middle">MPL</th>
                                     <th class="text-center align-middle">CAL</th>
                                     <th class="text-center align-middle">CM</th>
@@ -45,13 +46,12 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white fs-10">
-                                <tr v-for="(list,index) in cutoff.payrolls" v-bind:key="index" @click="selectRow(index)" :class="{ 'bg-info-subtle': selectedRow === index }">
+                                <tr v-for="(list,index) in cutoff.payrolls" v-bind:key="index" @click="selectRow(index)" style="cursor: pointer;" :class="{ 'bg-info-subtle fw-semibold': selectedRow === index }">
                                     <td class="text-center"> {{ index+1}}</td>
                                     <td class="align-middle">
                                         <h5 class="fs-10 mb-0 fw-semibold text-primary text-uppercase">{{list.name}}.</h5>
                                         <p class="fs-10 text-muted mb-0">{{list.position}}</p>
                                     </td>
-                                    <td class="text-center"> {{ list.username}}</td>
                                     <td class="text-center"> {{ list.grade}}</td>
                                     <td class="text-center"> {{ list.salary}}</td>
                                     <td class="text-center"> {{ list.salary}}</td>
@@ -63,9 +63,9 @@
                                     <td class="text-center text-primary"> {{ formatMoney(list.first)}}</td>
                                 </tr>
                             </tbody>
-                            <tfoot class="bg-light fw-bold fs-10">
+                            <tfoot class="bg-light tfoot-fixed fw-bold fs-10">
                                 <tr>
-                                    <td colspan="4">Grand Total</td>
+                                    <td colspan="3">Grand Total</td>
                                     <td class="text-center">{{ formatMoney(cutoff.totals.salary.toFixed(2)) }}</td>
                                     <td class="text-center">{{ formatMoney(cutoff.totals.salary.toFixed(2))}}</td>
                                     <td class="text-center" v-for="(name, i) in deductionHeaders" :key="'footer-' + i">
@@ -77,6 +77,7 @@
                                 </tr>
                             </tfoot>
                         </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,7 +98,7 @@ export default {
             return '₱'+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         },
         selectRow(index) {
-            this.selectedRow = index;
+            this.selectedRow = (this.selectedRow == index) ? null : index;
         }
     }
 }
@@ -114,4 +115,5 @@ export default {
   max-width: 24%;
   height: calc(100vh - 92px);
 }
+
 </style>

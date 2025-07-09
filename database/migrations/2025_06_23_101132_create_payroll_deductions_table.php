@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('deduction_id')->references('id')->on('list_deductions')->onDelete('cascade');
             $table->integer('payroll_id')->unsigned()->index();
             $table->foreign('payroll_id')->references('id')->on('payrolls')->onDelete('cascade');
+            $table->boolean('is_plus')->default(0);
             $table->timestamps();
         });
     }

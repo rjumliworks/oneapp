@@ -362,7 +362,7 @@ class DropdownClass
         ->limit(5)->get()->map(function ($item) {
             return [
                 'value' => $item->id,
-                'name' => $item->profile->lastname.' '.$item->profile->firstname.', '.$item->profile->middlename.'.',
+                'name' => $item->profile->lastname . ', ' . $item->profile->firstname . ' ' . $item->profile->middlename . '.',
                 'position' => $item->organization->position->name,
                 'avatar' => ($item->profile->avatar != 'avatar.jpg') ? '/storage/profile-pictures/'.$item->profile->avatar : '/images/avatars/avatar.jpg'
             ];

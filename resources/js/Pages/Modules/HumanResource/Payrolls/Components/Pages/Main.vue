@@ -27,10 +27,10 @@
                             <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
                             <input type="text" placeholder="Search Employee" class="form-control" style="width: 20%;">
                             
-                            <span @click="openDeduction()" class="input-group-text" v-b-tooltip.hover title="Add Deduction" style="cursor: pointer;"> 
+                            <!-- <span @click="openDeduction()" class="input-group-text" v-b-tooltip.hover title="Add Deduction" style="cursor: pointer;"> 
                                 <i class="ri-add-circle-fill search-icon"></i>
-                            </span>
-                            <b-button type="button" variant="primary" @click="openUser">
+                            </span> -->
+                            <b-button v-if="payroll.status.name == 'Draft'" type="button" variant="primary" @click="openUser">
                                 <i class="ri-user-add-fill align-bottom me-1"></i> Create
                             </b-button>
                         </div>
@@ -38,17 +38,18 @@
                 </b-row>
             </div>
             <div class="card-body bg-white rounded-bottom">
-                <div class="table-responsive table-card" style="margin-top: -39px; height: calc(100vh - 440px); overflow: auto;">
+                <div class="table-responsive table-card" style="margin-top: -39px; height: calc(100vh - 420px); overflow: auto;">
                     <table class="table align-middle table-striped table-centered mb-0">
                         <thead class="table-light thead-fixed">
                             <tr class="fs-11">
                                 <th style="width: 3%;"></th>
                                 <th>Name</th>
-                                <th style="width: 15%;" class="text-center">Compensation</th>
-                                <th style="width: 15%;" class="text-center">Deductions</th>
-                                <th style="width: 15%;" class="text-center">Net Amount Due</th>
-                                <th style="width: 10%;" class="text-center">1st Quincena</th>
-                                <th style="width: 10%;" class="text-center">2nd Quincena</th>
+                                <th style="width: 11%;" class="text-center">Salary</th>
+                                <th style="width: 11%;" class="text-center">Tardiness</th>
+                                <th style="width: 11%;" class="text-center">Deductions</th>
+                                <th v-if="payroll.cycle.is_regular" style="width: 10%;" class="text-center">1st Quincena</th>
+                                <th v-if="payroll.cycle.is_regular" style="width: 10%;" class="text-center">2nd Quincena</th>
+                                <th style="width: 13%;" class="text-center">Net Amount Due</th>
                                 <th style="width: 6%;"></th>
                             </tr>
                         </thead>
@@ -60,17 +61,29 @@
                                     <p class="fs-12 text-muted mb-0">{{list.position}}</p>
                                 </td>
                                 <td class="text-center">{{ list.salary }}</td>
+                                <td class="text-center">{{ list.tardiness }}</td>
                                 <td class="text-center">{{ list.deduction }}</td>
+                                <td v-if="payroll.cycle.is_regular" class="text-center">{{ list.first}}</td>
+                                <td v-if="payroll.cycle.is_regular" class="text-center">{{ list.second }}</td>
                                 <td class="text-center">{{ list.netpay }}</td>
-                                <td class="text-center">{{ list.first}}</td>
-                                <td class="text-center">{{ list.second }}</td>
                                 <td class="text-end">
-                                    <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
+                                    <b-button v-if="payroll.status.name == 'Draft'" @click="openView(list,'delete')" variant="soft-danger" class="me-1" v-b-tooltip.hover title="Remove" size="sm">
+                                        <i class="ri-delete-bin-fill align-bottom"></i>
+                                    </b-button>
+                                    <b-button @click="openView(list,'view')" variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
                                         <i class="ri-eye-fill align-bottom"></i>
                                     </b-button>
                                 </td>
                             </tr>
                         </tbody>
+                        <tfoot class="bg-light text-primary tfoot-fixed fw-bold fs-12">
+                            <tr>
+                                <td :colspan="(payroll.cycle.is_regular) ? 6 : 4"></td>
+                                <td class="text-center">Grand Total</td>
+                                <td class="text-center">{{ formatMoney(payroll.total) }}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -79,15 +92,15 @@
             </div>
         </div>
     </div>
-    <Deduction :deductions="dropdowns.deductions" :users="userOptions" ref="deduction"/>
     <User :is_regular="is_regular" :id="payroll.id" ref="user"/>
+    <View :type="payroll.type" :deductions="dropdowns.deductions" :status="payroll.status.name" ref="view"/>
 </template>
 <script>
 import simplebar from "simplebar-vue";
 import User from '../Modals/User.vue';
-import Deduction from '../Modals/Deduction.vue';
+import View from '../Modals/View.vue';
 export default {
-    components: { simplebar, User, Deduction },
+    components: { simplebar, User, View },
     props: ['payroll','is_regular','dropdowns'],
     data(){
         return {
@@ -100,7 +113,8 @@ export default {
         userOptions() {
             return this.payroll?.payrolls?.map(user => ({
                 value: user.id,
-                name: user.name
+                name: user.name,
+                type: user.type
             })) || [];
         },
         sortedPayrolls() {
@@ -116,9 +130,16 @@ export default {
         openUser(){
             this.$refs.user.show();
         },
+        openView(payroll,type){
+            this.$refs.view.show(payroll,type);
+        },
         selectRow(index) {
             this.selectedRow = index;
-        }
+        },
+        formatMoney(value) {
+            let val = (value/1).toFixed(2).replace(',', '.')
+            return '₱'+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        },
     }
 }
 </script>

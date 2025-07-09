@@ -15,10 +15,13 @@ class ViewClass
 {
     public function lists($request){
         $data = CutoffResource::collection(
-            PayrollCutoff::with('cycle')
-            ->with('payrolls.deductions.deduction.deduction')
+            PayrollCutoff::with('cycle','status')
+            ->with('user:id,username','user.profile:id,user_id,firstname,middlename,lastname,suffix')
+            ->with('payrolls.deductions.deduction')
             ->with('payrolls.user.profile:id,user_id,firstname,middlename,lastname,suffix')
-            ->with('payrolls.user:id,username','payrolls.user.organization:id,user_id,position_id,salary_id','payrolls.user.organization.position:id,name','payrolls.user.organization.salary:id,grade,amount')
+            ->with('payrolls.user:id,username','payrolls.user.organization:id,user_id,position_id,salary_id,type_id','payrolls.user.organization.position:id,name','payrolls.user.organization.type:id,name','payrolls.user.organization.salary:id,grade,amount')
+            ->withSum('payrolls as total', 'netpay')
+            ->withCount('payrolls as count')
             ->orderBy('created_at', 'DESC')
             ->paginate($request->count)
         );
@@ -60,8 +63,13 @@ class ViewClass
 
         $data = new CutoffResource(
             PayrollCutoff::query()
-            ->with('cycle')
-            ->with('payrolls')
+            ->with('cycle','status')
+            ->with('user:id,username','user.profile:id,user_id,firstname,middlename,lastname,suffix')
+            ->with('payrolls.deductions.deduction')
+            ->with('payrolls.user.profile:id,user_id,firstname,middlename,lastname,suffix')
+            ->with('payrolls.user:id,username','payrolls.user.organization:id,user_id,position_id,salary_id,type_id','payrolls.user.organization.type:id,name','payrolls.user.organization.position:id,name','payrolls.user.organization.salary:id,grade,amount')
+            ->withSum('payrolls as total', 'netpay')
+            ->withCount('payrolls as count')
             ->where('id',$id)->first()
         );
         return $data;
@@ -71,7 +79,7 @@ class ViewClass
         $hashids = new Hashids('krad',10);
         $id = $hashids->decode($request->code);
         $data = PayrollCutoff::with('cycle')
-        ->with('payrolls.deductions.deduction.deduction')
+        ->with('payrolls.deductions.deduction')
         ->with('payrolls.user.profile:id,user_id,firstname,middlename,lastname,suffix')
         ->with('payrolls.user:id,username','payrolls.user.organization:id,user_id,position_id,salary_id','payrolls.user.organization.position:id,name','payrolls.user.organization.salary:id,grade,amount')
         ->where('id',$id)
@@ -118,7 +126,7 @@ class ViewClass
             $deductions = array_fill_keys($deductionNames, 0);
 
             foreach ($payroll->deductions as $d) {
-                $name = optional($d->deduction->deduction)->name.' '.optional($d->deduction->deduction)->subtype;
+                $name = optional($d->deduction)->name.' '.optional($d->deduction)->subtype;
                 if (isset($deductions[$name])) {
                     $deductions[$name] += floatval(str_replace(['₱', ','], '', $d->amount));
                     $totalDeductions[$name] += floatval(str_replace(['₱', ','], '', $d->amount));
@@ -198,7 +206,7 @@ class ViewClass
             $deductions = array_fill_keys($deductionNames, 0);
 
             foreach ($payroll->deductions as $d) {
-                $name = optional($d->deduction)->name;
+                $name = $d->deduction->name;
                 if (isset($deductions[$name])) {
                     $deductions[$name] += floatval(str_replace(['₱', ','], '', $d->amount));
                     $totalDeductions[$name] += floatval(str_replace(['₱', ','], '', $d->amount));
@@ -245,8 +253,10 @@ class ViewClass
         $end = Carbon::parse($data->end);
 
         $cutoff = [
-            'title' => 'PAYROLL FOR THE PERIOD OF ' . strtoupper($start->format('F')) . ' ' . $start->format('d') . '-' . $end->format('d') . ', ' . $end->format('Y'),
+            'title' => 'PAYROLL FOR THE PERIOD OF ' . $this->getQuincenaDates($data->cycle->year,$data->cycle->month,$data->type),
             'payrolls' => $payrolls,
+            'type' => $data->type,
+            'date' => $this->getQuincenaDates($data->cycle->year,$data->cycle->month,$data->type),
             'totals' => [
                 'salary' => $totalSalary,
                 'deductions' => $totalDeductions,
@@ -255,10 +265,31 @@ class ViewClass
             ]
         ];
 
+
         return inertia('Modules/HumanResource/Payrolls/Components/Pages/Nonregular',[
             'cutoff' => $cutoff,
             'deductionHeaders' => $deductionNames,
         ]);
+    }
+
+    private function getQuincenaDates($year, $month, $half) {
+        // Ensure $month is a number (e.g., 6 for June)
+        if (!is_numeric($month)) {
+            $month = Carbon::parse("1 $month")->month;
+        }
+
+        if ($half === '1st') {
+            $start = Carbon::create($year, $month, 1)->startOfDay();
+            $end = Carbon::create($year, $month, 15)->endOfDay();
+        } else {
+            $start = Carbon::create($year, $month, 16)->startOfDay();
+            $end = Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
+        }
+
+        // Format output: July 1–15
+        $label = $start->format('F') . ' ' . $start->day . '–' . $end->day .', '.$start->format('Y');
+
+        return $label;
     }
 
     private function tardiness($data,$payroll){

@@ -15,7 +15,7 @@ class ListDeductionsTableSeeder extends Seeder
     {
         
 
-        \DB::table('list_deductions')->delete();
+        \DB::table('list_deductions')->truncate();
         
         \DB::table('list_deductions')->insert(array (
             0 => 
@@ -229,6 +229,54 @@ class ListDeductionsTableSeeder extends Seeder
                 'subtype' => 'n/a',
                 'is_regular' => 0,
                 'is_contribution' => 1,
+                'is_loan' => 0,
+                'is_enrollable' => 0,
+                'created_at' => '2025-06-20 14:50:44',
+                'updated_at' => '2025-06-20 14:50:44',
+            ),
+            18 => 
+            array (
+                'id' => 19,
+                'name' => 'ECC-SSS',
+                'subtype' => 'n/a',
+                'is_regular' => 0,
+                'is_contribution' => 1,
+                'is_loan' => 0,
+                'is_enrollable' => 0,
+                'created_at' => '2025-06-20 14:50:44',
+                'updated_at' => '2025-06-20 14:50:44',
+            ),
+            19 => 
+            array (
+                'id' => 20,
+                'name' => 'Withholding Tax',
+                'subtype' => 'n/a',
+                'is_regular' => 0,
+                'is_contribution' => 0,
+                'is_loan' => 0,
+                'is_enrollable' => 0,
+                'created_at' => '2025-06-20 14:50:44',
+                'updated_at' => '2025-06-20 14:50:44',
+            ),
+            20 => 
+            array (
+                'id' => 21,
+                'name' => 'Adjustment',
+                'subtype' => 'n/a',
+                'is_regular' => 0,
+                'is_contribution' => 0,
+                'is_loan' => 0,
+                'is_enrollable' => 0,
+                'created_at' => '2025-06-20 14:50:44',
+                'updated_at' => '2025-06-20 14:50:44',
+            ),
+            21 => 
+            array (
+                'id' => 22,
+                'name' => 'Adjustment',
+                'subtype' => 'n/a',
+                'is_regular' => 1,
+                'is_contribution' => 0,
                 'is_loan' => 0,
                 'is_enrollable' => 0,
                 'created_at' => '2025-06-20 14:50:44',

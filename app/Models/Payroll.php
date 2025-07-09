@@ -62,4 +62,14 @@ class Payroll extends Model
     {
         return '₱'.number_format($value,2,'.',',');
     }
+
+    public function setTardinessAttribute($value)
+    {
+        $this->attributes['tardiness'] = trim(str_replace(',','',$value),'₱');
+    }
+
+    public function getTardinessAttribute($value)
+    {
+        return '₱'.number_format($value,2,'.',',');
+    }
 }

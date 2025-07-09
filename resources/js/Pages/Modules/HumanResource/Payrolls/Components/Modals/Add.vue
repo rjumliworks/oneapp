@@ -4,7 +4,7 @@
         <form class="customform">
             <BRow class="g-3">
                 <BCol lg="12">
-                   <form class="app-search d-none d-md-block mb-n3 mt-n2">
+                   <form class="app-search d-none d-md-block mb-n3 mt-n3">
                         <div class="position-relative">
                             <input type="text" class="form-control" placeholder="Search Employee" autocomplete="off" id="search-options" />
                             <span class="mdi mdi-magnify search-widget-icon"></span>
@@ -94,7 +94,7 @@ export default {
             })
             .catch(err => console.log(err));
         },
-         chooseUser(data){
+        chooseUser(data){
             if (!this.form.users.some(user => user.value === data.value)) {
                 this.form.users.unshift(data);
             }

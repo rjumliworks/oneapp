@@ -15,12 +15,14 @@ class DeductionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
+            'deduction_id' => $this->deduction->id,
             'amount' => $this->amount,
-            'name' => $this->deduction->deduction->name,
-            'is_regular' => $this->deduction->deduction->is_regular,
-            'is_contribution' => $this->deduction->deduction->is_contribution,
-            'is_loan' => $this->deduction->deduction->is_loan,
-            'is_enrollable' => $this->deduction->deduction->is_enrollable,
+            'name' => $this->deduction->name,
+            'is_regular' => $this->deduction->is_regular,
+            'is_contribution' => $this->deduction->is_contribution,
+            'is_loan' => $this->deduction->is_loan,
+            'is_enrollable' => $this->deduction->is_enrollable,
         ]; 
     }
 }

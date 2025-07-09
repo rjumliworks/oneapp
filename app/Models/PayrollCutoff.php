@@ -18,6 +18,11 @@ class PayrollCutoff extends Model
         return $this->belongsTo('App\Models\ListStatus', 'status_id', 'id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id', 'id');
+    }
+
     public function payrolls()
     {
         return $this->hasMany('App\Models\Payroll', 'cutoff_id');

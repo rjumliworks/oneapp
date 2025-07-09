@@ -48,8 +48,27 @@ class PayrollRequest extends FormRequest
                     'amount' => ['sometimes','required', new NotZeroPeso],
                 ];
             break;
+            case 'users':  
+                return [
+                    'type' => ['required', 'string'],
+                    'users' => [
+                        'required_if:type,Custom Employees,Except Employees',
+                        'array',
+                    ],
+                    'users.*' => ['integer'],
+                ];
+            break;
             default: 
                 return [];
+        }
+    }
+
+    public function withValidator($validator)
+    {
+        if ($this->option === 'users') {
+            $validator->sometimes('users', ['min:1'], function ($input) {
+                return in_array($input->type, ['Custom Employees', 'Except Employees']);
+            });
         }
     }
 }

@@ -13,20 +13,21 @@
                                          
                                             <BCol md>
                                                 <div class="ms-2">
-                                                    <h4 class="fw-bold">{{ payroll.cycle.month }} {{ payroll.cycle.year }}</h4>
+                                                    <h4 class="fw-bold fs-21 d-inline-flex align-items-center">{{ payroll.cycle.month }} {{ payroll.cycle.year }} - {{ (payroll.type) ? payroll.type+' Quicena' : '' }} 
+                                                        <span :class="'ms-2 fs-10 badge ' + payroll.status.color">
+                                                            {{ payroll.status.name }}
+                                                        </span>
+                                                    </h4>        
                                                     <div class="hstack gap-3 flex-wrap">
-                                                        <div><i class="ri-qr-code-fill align-bottom me-1"></i> {{payroll.cycle.is_regular}}</div>
+                                                        <div><i class="ri-qr-code-fill align-bottom me-1"></i> {{payroll.unique}}</div>
                                                         <div class="vr" style="width: 1px;"></div>
-                                                        <div><span class="text-muted">Type :</span> <span class="fw-medium">{{(payroll.cycle.is_regular) ? 'Regular Employees' : 'Contractual'}}</span></div>
+                                                        <div><span class="fw-medium">{{(payroll.cycle.is_regular) ? 'Regular Employees' : 'Contractual of Service'}}</span></div>
                                                         <div class="vr" style="width: 1px;"></div>
-                                                        <div><span class="text-muted">Year :</span> <span class="fw-medium">{{payroll.cycle.year}}</span></div>
+                                                        <div><span class="text-muted">Pay Period :</span> <span class="fw-medium">{{payroll.start}} - {{payroll.end}}</span></div>
                                                         <div class="vr" style="width: 1px;"></div>
-                                                        <div><span class="text-muted">Start Date :</span> <span class="fw-medium">{{payroll.start}}</span></div>
+                                                        <div><span class="text-muted">Date Created :</span> <span class="fw-medium">{{payroll.created_at}}</span></div>
                                                         <div class="vr" style="width: 1px;"></div>
-                                                        <div><span class="text-muted">End Date :</span> <span class="fw-medium">{{payroll.end}}</span></div>
-                                                        <div class="vr" style="width: 1px;"></div>
-                                                         <div><span class="text-muted">Date Created :</span> <span class="fw-medium">{{payroll.created_at}}</span></div>
-                                                        <div class="vr" style="width: 1px;"></div>
+                                                        <div><span class="text-muted">Created By :</span> <span class="fw-medium">{{payroll.user.profile.firstname}} {{payroll.user.profile.lastname}}</span></div>
                                                     </div>
                                                 </div>
                                             </BCol>
@@ -34,21 +35,23 @@
                                     </BCol>
                                     <BCol md="auto">
                                         <div class="hstack gap-4 flex-wrap mt-2">
-                                            <div class="text-muted" @click="back()" >  
+                                            <div class="text-muted" @click="back()" style="cursor: pointer;">  
                                                 <i class="ri-close-circle-fill fs-16"></i> Close
                                             </div>
-                                            <a :href="`/payrolls?option=print&code=${payroll.code}`" target="_blank">
+                                            <a v-if="payroll.status.name == 'Draft'" :href="`/payrolls?option=print&code=${payroll.code}`" target="_blank">
                                                 <div class="text-muted" style="cursor: pointer;">  
                                                     <i class="ri-printer-fill fs-16"></i> Print Preview
                                                 </div>
                                             </a>
                                             <div class="vr" style="width: 1px;"></div>
-                                            <div >  
-                                                <b-button @click="openSave(selected.id)" variant="success" block><i class="ri-save-fill me-1"></i> Save</b-button>
+                                            <div v-if="payroll.status.name == 'Draft'">  
+                                                <b-button @click="openSave(payroll.id)" variant="success" block><i class="ri-save-fill me-1"></i> Save</b-button>
                                             </div>
-                                            <!-- <div v-if="selected.status.name !== 'Pending'" @click="openPrint(selected.qr)">  
-                                                <b-button variant="primary" block><i class="ri-printer-fill me-1"></i> Print</b-button>
-                                            </div> -->
+                                            <a v-if="payroll.status.name != 'Draft'" :href="`/payrolls?option=print&code=${payroll.code}`" target="_blank">
+                                                <div @click="openPrint(selected.qr)">  
+                                                    <b-button variant="primary" block><i class="ri-printer-fill me-1"></i> Print</b-button>
+                                                </div>
+                                            </a>
                                         </div>
                                     </BCol>
                                 </BRow>
@@ -62,12 +65,14 @@
             </BRow>
         </div>
     </div>
+    <Save @update="updateSelected" ref="save"/>
 </template>
 <script>
+import Save from './Modals/Save.vue';
 import Main from './Components/Pages/Main.vue';
 export default {
     props:['payroll_data','dropdowns'],
-    components: { Main },
+    components: { Main, Save },
     data(){
         return {
             currentUrl: window.location.origin,
@@ -80,6 +85,12 @@ export default {
         },
         openPrint(){
             window.open('/print/'+id);
+        },
+        updateSelected(data){
+            this.payroll = data;
+        },
+        openSave(id){
+            this.$refs.save.show(id);
         }
     }
 }

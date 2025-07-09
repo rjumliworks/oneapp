@@ -23,7 +23,7 @@ class DashboardController extends Controller
     }
 
     public function index(Request $request){
-        $this->dtr($request);
+        // $this->dtr($request);
         if(!\Auth::check()){
             return inertia('Auth/Login');
         }else{
@@ -277,7 +277,7 @@ class DashboardController extends Controller
         switch($type){
             case 'Time In (am)':
                 $officialStart = Carbon::createFromTimeString('08:00:00');
-                $flexibleCutoff = Carbon::createFromTimeString('08:30:00');
+                $flexibleCutoff = Carbon::createFromTimeString('08:30:59');
                 $minutes = ($time->greaterThan($flexibleCutoff)) ? (int) $officialStart->diffInMinutes($time) : 0;
             break;
             case 'Time Out (am)':
@@ -285,7 +285,7 @@ class DashboardController extends Controller
                 $minutes = ($time->lessThan($officialMorningOut)) ? ceil($time->diffInMinutes($officialMorningOut)) : 0;
             break;
             case 'Time In (pm)':
-                $officialAfternoonTimeIn = Carbon::createFromTimeString('13:00:00');
+                $officialAfternoonTimeIn = Carbon::createFromTimeString('13:00:59');
                 $minutes = ($time->greaterThan($officialAfternoonTimeIn)) ? (int) $officialAfternoonTimeIn->diffInMinutes($time) : 0;
             break;
             case 'Time Out (pm)':

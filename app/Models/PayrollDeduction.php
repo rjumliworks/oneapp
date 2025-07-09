@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PayrollDeduction extends Model
 {
-    protected $fillable = ['amount','deduction_id','payroll_id'];
+    protected $fillable = ['amount','deduction_id','payroll_id','is_plus'];
 
     public function setAmountAttribute($value)
     {
@@ -20,7 +20,7 @@ class PayrollDeduction extends Model
 
     public function deduction()
     {
-        return $this->belongsTo('App\Models\UserDeduction', 'deduction_id', 'id');
+        return $this->belongsTo('App\Models\ListDeduction', 'deduction_id', 'id');
     }
 
     public function payroll()

@@ -42,7 +42,7 @@
                         <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist">
                             <li class="nav-item">
                                 <BLink @click="viewStatus(null,null)" class="nav-link py-3 active" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                <i class="ri-apps-2-line me-1 align-bottom"></i> All Attendance
+                                <i class="ri-apps-2-line me-1 align-bottom"></i> All Payroll
                                 </BLink>
                             </li>
                             <li class="nav-item" v-for="(list,index) in counts" v-bind:key="index">
@@ -64,23 +64,28 @@
                             <tr class="fs-11">
                                 <th style="width: 3%;"></th>
                                 <th>Name</th>
-                                <th style="width: 20%;" class="text-center">Date</th>
-                                <th style="width: 10%;" class="text-center">year</th>
-                                <th style="width: 15%;" class="text-center">Type</th>
                                 <th style="width: 15%;" class="text-center">Employment</th>
-                                <th style="width: 15%;" class="text-center">Status</th>
+                                <th style="width: 13%;" class="text-center">Total</th>
+                                <th style="width: 8%;" class="text-center">Employee</th>
+                                <th style="width: 18%;" class="text-center">Date</th>
+                                <th style="width: 10%;" class="text-center">Status</th>
                                 <th style="width: 6%;"></th>
                             </tr>
                         </thead>
                         <tbody class="table-white fs-12" v-if="lists.length > 0">
                             <tr v-for="(list,index) in lists" v-bind:key="index" >
                                 <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
-                                <td>{{ list.cycle.month }} {{ list.cycle.year }} Payroll</td>
-                                <td class="text-center">{{ list.start }} to {{ list.end }}</td>
-                                <td class="text-center">{{ list.cycle.year }}</td>
-                                <td class="text-center">{{ (list.type) ? list.type : "-" }}</td>
+                                <td>
+                                    <h5 class="fs-12 text-primary mb-0">{{ list.cycle.month }} {{ list.cycle.year }} Payroll</h5>
+                                    <p class="fs-12 text-muted mb-0">{{ (list.type) ? list.type+' Quincena' : "-" }}</p>
+                                </td>
                                 <td class="text-center">{{ (list.cycle.is_regular) ? 'Regular' : "Contract of Service" }}</td>
-                                <td class="text-center">{{ list.is_locked }}</td>
+                                <td class="text-center">{{formatMoney(list.total)}}</td>
+                                <td class="text-center">{{list.count}}</td>
+                                <td class="text-center">{{ list.start }} to {{ list.end }}</td>
+                                <td class="text-center">
+                                    <span :class="'badge '+list.status.color">{{list.status.name}}</span>
+                                </td>
                                 <td class="text-end">
                                     <Link :href="`/payrolls/${list.code}`">
                                         <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
@@ -166,7 +171,11 @@ export default {
         },
         openCreate(){
             this.$refs.create.show();
-        }
+        },
+        formatMoney(value) {
+            let val = (value/1).toFixed(2).replace(',', '.')
+            return '₱'+val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        },
     }
 }
 </script>

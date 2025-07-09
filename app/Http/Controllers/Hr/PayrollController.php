@@ -54,6 +54,32 @@ class PayrollController extends Controller
                 case 'users':
                     return $this->save->users($request);
                 break;
+                case 'remove':
+                    return $this->save->remove($request);
+                break;
+            }
+        });
+
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function update(Request $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            switch($request->option){
+                case 'payroll':
+                    return $this->update->payroll($request);
+                break;
+                case 'deduction':
+                    return $this->update->deduction($request);
+                break;
+                 case 'delete':
+                    return $this->update->delete($request);
+                break;
             }
         });
 
