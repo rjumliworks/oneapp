@@ -27,9 +27,9 @@
                             <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
                             <input type="text" placeholder="Search Employee" class="form-control" style="width: 20%;">
                             
-                            <!-- <span @click="openDeduction()" class="input-group-text" v-b-tooltip.hover title="Add Deduction" style="cursor: pointer;"> 
+                            <span @click="openVerify()" class="input-group-text" v-b-tooltip.hover title="Verify Employee" style="cursor: pointer;"> 
                                 <i class="ri-add-circle-fill search-icon"></i>
-                            </span> -->
+                            </span>
                             <b-button v-if="payroll.status.name == 'Draft'" type="button" variant="primary" @click="openUser">
                                 <i class="ri-user-add-fill align-bottom me-1"></i> Create
                             </b-button>
@@ -124,8 +124,8 @@ export default {
         }
     },
     methods: {
-        openDeduction(){
-            this.$refs.deduction.show();
+        openVerify(){
+            this.$refs.verify.show();
         },
         openUser(){
             this.$refs.user.show();

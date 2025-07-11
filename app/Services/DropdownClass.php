@@ -37,6 +37,19 @@ class DropdownClass
         return $data;
     }
 
+    public function events(){
+        $data = ListDropdown::where('classification','Calendar')->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name,
+                'type' => $item->type,
+                'color' => $item->color,
+                'others' => $item->others
+            ];
+        });
+        return $data;
+    }
+
     public function leaves(){
        $data = ListLeave::where('is_active', 1)->get()->map(function ($item) {
             if ($item->requires_balance === 1) {

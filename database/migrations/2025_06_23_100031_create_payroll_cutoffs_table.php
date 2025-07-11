@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('start');
             $table->date('end');
             $table->enum('type', ['1st','2nd'])->nullable();
+            $table->integer('batch');
             $table->boolean('is_locked')->default(0);
             $table->boolean('is_completed')->default(0);
             $table->integer('cycle_id')->unsigned()->index();

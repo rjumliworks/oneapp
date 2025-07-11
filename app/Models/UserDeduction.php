@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserDeduction extends Model
 {
-    protected $fillable = ['amount','deduction_id','user_id','is_recurring','is_active'];
+    protected $fillable = ['amount','deduction_id','user_id','is_recurring','is_active','is_automatic'];
 
     public function user()
     {

@@ -16,21 +16,27 @@ class SaveClass
         $minutes = 0;
         switch($type){
             case 'Time In (am)':
-                $officialStart = Carbon::createFromTimeString('08:00:00');
-                $flexibleCutoff = Carbon::createFromTimeString('08:30:00');
-                $minutes = ($time->greaterThan($flexibleCutoff)) ? (int) $officialStart->diffInMinutes($time) : 0;
+                if ($date->isMonday()) {
+                    $officialStart = Carbon::createFromTimeString('08:00:00');
+                    $officialMorningTimeIn = Carbon::createFromTimeString('8:00:59');
+                    $minutes = ($time->greaterThan($officialMorningTimeIn)) ? (int)  $officialStart->diffInMinutes($time) : 0;
+                }else{
+                    $officialStart = Carbon::createFromTimeString('08:00:00');
+                    $flexibleCutoff = Carbon::createFromTimeString('08:30:59');
+                    $minutes = ($time->greaterThan($flexibleCutoff)) ? (int) $officialStart->diffInMinutes($time) : 0;
+                }
             break;
             case 'Time Out (am)':
                 $officialMorningOut = Carbon::createFromTimeString('12:00:00');
-                $minutes = ($time->lessThan($officialMorningOut)) ? (int) $time->diffInMinutes($officialMorningOut) : 0;
+                $minutes = ($time->lessThan($officialMorningOut)) ? ceil($time->diffInMinutes($officialMorningOut)) : 0;
             break;
             case 'Time In (pm)':
-                $officialAfternoonTimeIn = Carbon::createFromTimeString('13:00:00');
+                $officialAfternoonTimeIn = Carbon::createFromTimeString('13:00:59');
                 $minutes = ($time->greaterThan($officialAfternoonTimeIn)) ? (int) $officialAfternoonTimeIn->diffInMinutes($time) : 0;
             break;
             case 'Time Out (pm)':
                 $officialAfternoonOut = Carbon::createFromTimeString('17:00:00');
-                $minutes = ($time->lessThan($officialAfternoonOut)) ? (int) $time->diffInMinutes($officialAfternoonOut) : 0;
+                $minutes = ($time->lessThan($officialAfternoonOut)) ? ceil($time->floatDiffInMinutes($officialAfternoonOut)) : 0;
             break;
         }
         $info = [

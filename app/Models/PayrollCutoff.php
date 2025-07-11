@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PayrollCutoff extends Model
 {
-    protected $fillable = ['code','start','end','type','is_locked','cycle_id','user_id','status_id'];
+    protected $fillable = ['code','start','end','type','batch','is_locked','cycle_id','user_id','status_id'];
 
     public function cycle()
     {

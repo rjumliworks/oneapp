@@ -6,7 +6,7 @@
                     <div>
                         <h4 class="fw-semibold fs-16 mb-1">{{ selected.user.profile.firstname }} {{ selected.user.profile.lastname }}</h4>
                         <div class="hstack gap-3 flex-wrap fs-12">
-                            <div><span class="text-muted">Date :</span> {{selected.date}}</div>
+                            <div><span class="text-muted">Date :</span> {{ formatDateWithDay(selected.date) }}</div>
                             <div class="vr" style="width: 1px;"></div>
                             <div><span class="text-muted">Date Created :</span> {{selected.created_at}}</div>
                         </div>
@@ -39,9 +39,10 @@
                                     <thead class="bg-primary fs-11 thead-fixed">
                                         <tr class="text-white">
                                             <th class="text-center" style="width: 20%;">Type</th>
-                                            <th class="text-center" style="width: 20%;">Time</th>
-                                            <th class="text-center" style="width: 25%;">IP Address</th>
-                                            <th class="text-center" style="width: 25%;">PC Name</th>
+                                            <th class="text-center" style="width: 15%;">Time</th>
+                                            <th class="text-center" style="width: 15%;">Minutes</th>
+                                            <th class="text-center" style="width: 20%;">IP Address</th>
+                                            <th class="text-center" style="width: 20%;">PC Name</th>
                                             <th  style="width: 10%;"></th>
                                         </tr>
                                     </thead>
@@ -49,13 +50,14 @@
                                         <tr>
                                             <td class="text-center text-muted">Time In (AM)</td>
                                             <td class="text-center" :class="selected.am_in_at && selected.am_in_at.is_updated ? 'fst-italic' : ''">{{ (selected.am_in_at) ? selected.am_in_at.time : '-' }}</td>
+                                            <td class="text-center">{{ (selected.am_in_at) ? (selected.am_in_at.minutes == 0) ? '-' : selected.am_in_at.minutes : '-' }}</td>
                                             <td class="text-center">{{ (selected.am_in_at) ? selected.am_in_at.ip : '-' }}</td>
                                             <td class="text-center">{{ (selected.am_in_at) ? selected.am_in_at.pcname : '-' }}</td>
                                             <td class="text-center">
-                                                <b-button v-if="selected.am_in_at" @click="openEdit(selected.id,selected.am_in_at,'Time In (AM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-if="selected.am_in_at" @click="openEdit(selected.id,selected.am_in_at,'Time In (am)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
                                                     <i class="ri-pencil-fill align-bottom"></i>
                                                 </b-button>
-                                                <b-button v-else @click="openTime(selected.id,'Time In (am)')" variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-else @click="openTime(selected.id,'Time In (am)')" variant="soft-info" v-b-tooltip.hover title="Set" size="sm">
                                                     <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
                                             </td>
@@ -63,13 +65,14 @@
                                         <tr>
                                             <td class="text-center text-muted">Time Out (AM)</td>
                                             <td class="text-center" :class="selected.am_out_at && selected.am_out_at.is_updated ? 'fst-italic' : ''">{{ (selected.am_out_at) ? selected.am_out_at.time : '-' }}</td>
+                                            <td class="text-center">{{ (selected.am_out_at) ? (selected.am_out_at.minutes == 0) ? '-' : selected.am_out_at.minutes : '-' }}</td>
                                             <td class="text-center">{{ (selected.am_out_at) ? selected.am_out_at.ip : '-' }}</td>
                                             <td class="text-center">{{ (selected.am_out_at) ? selected.am_out_at.pcname : '-' }}</td>
                                             <td class="text-center">
-                                                <b-button v-if="selected.am_out_at" @click="openEdit(selected.id,selected.am_out_at,'Time Out (AM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-if="selected.am_out_at" @click="openEdit(selected.id,selected.am_out_at,'Time Out (am)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
                                                     <i class="ri-pencil-fill align-bottom"></i>
                                                 </b-button>
-                                                <b-button v-else @click="openTime(selected.id,'Time Out (am)')" variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-else @click="openTime(selected.id,'Time Out (am)')" variant="soft-info" v-b-tooltip.hover title="Set" size="sm">
                                                     <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
                                             </td>
@@ -77,13 +80,14 @@
                                         <tr>
                                             <td class="text-center text-muted">Time In (PM)</td>
                                             <td class="text-center" :class="selected.pm_in_at && selected.pm_in_at.is_updated ? 'fst-italic' : ''">{{ (selected.pm_in_at) ? selected.pm_in_at.time : '-' }}</td>
+                                            <td class="text-center">{{ (selected.pm_in_at) ? (selected.pm_in_at.minutes == 0) ? '-' : selected.pm_in_at.minutes : '-' }}</td>
                                             <td class="text-center">{{ (selected.pm_in_at) ? selected.pm_in_at.ip : '-' }}</td>
                                             <td class="text-center">{{ (selected.pm_in_at) ? selected.pm_in_at.pcname : '-' }}</td>
                                             <td class="text-center">
-                                                <b-button v-if="selected.pm_in_at" @click="openEdit(selected.id,selected.pm_in_at,'Time In (PM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-if="selected.pm_in_at" @click="openEdit(selected.id,selected.pm_in_at,'Time In (pm)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
                                                     <i class="ri-pencil-fill align-bottom"></i>
                                                 </b-button>
-                                                <b-button v-else @click="openTime(selected.id,'Time In (pm)')" variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-else @click="openTime(selected.id,'Time In (pm)')" variant="soft-info" v-b-tooltip.hover title="Set" size="sm">
                                                     <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
                                             </td>
@@ -91,13 +95,14 @@
                                         <tr>
                                             <td class="text-center text-muted">Time Out (PM)</td>
                                             <td class="text-center" :class="selected.pm_out_at && selected.pm_out_at.is_updated ? 'fst-italic' : ''">{{ (selected.pm_out_at) ? selected.pm_out_at.time : '-' }}</td>
+                                            <td class="text-center">{{ (selected.pm_out_at) ? (selected.pm_out_at.minutes == 0) ? '-' : selected.pm_out_at.minutes : '-' }}</td>
                                             <td class="text-center">{{ (selected.pm_out_at) ? selected.pm_out_at.ip : '-' }}</td>
                                             <td class="text-center">{{ (selected.pm_out_at) ? selected.pm_out_at.pcname : '-' }}</td>
                                             <td class="text-center">
-                                                <b-button v-if="selected.pm_out_at" @click="openEdit(selected.id,selected.pm_out_at,'Time Out (PM)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-if="selected.pm_out_at" @click="openEdit(selected.id,selected.pm_out_at,'Time Out (pm)')" variant="soft-warning" v-b-tooltip.hover title="Edit" size="sm">
                                                     <i class="ri-pencil-fill align-bottom"></i>
                                                 </b-button>
-                                                <b-button v-else @click="openTime(selected.id,'Time Out (pm)')" variant="soft-info" v-b-tooltip.hover title="Edit" size="sm">
+                                                <b-button v-else @click="openTime(selected.id,'Time Out (pm)')" variant="soft-info" v-b-tooltip.hover title="Set" size="sm">
                                                     <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
                                             </td>
@@ -144,7 +149,15 @@ export default {
             this.$refs.time.show(id,type);
         },
         updateData(data){
+            this.$emit('update',data);
             this.selected = data;
+        },
+        formatDateWithDay(date) {
+            if (!date) return '-';
+            const options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
+            const parsed = new Date(date);
+            const day = parsed.toLocaleDateString('en-US', { weekday: 'long' });
+            return `${day} - ${date}`;
         },
         hide(){
             this.showModal = false;

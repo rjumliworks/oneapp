@@ -19,8 +19,8 @@
                                                         </span>
                                                     </h4>        
                                                     <div class="hstack gap-3 flex-wrap">
-                                                        <div><i class="ri-qr-code-fill align-bottom me-1"></i> {{payroll.unique}}</div>
-                                                        <div class="vr" style="width: 1px;"></div>
+                                                        <!-- <div><i class="ri-qr-code-fill align-bottom me-1"></i> {{payroll.unique}}</div>
+                                                        <div class="vr" style="width: 1px;"></div> -->
                                                         <div><span class="fw-medium">{{(payroll.cycle.is_regular) ? 'Regular Employees' : 'Contractual of Service'}}</span></div>
                                                         <div class="vr" style="width: 1px;"></div>
                                                         <div><span class="text-muted">Pay Period :</span> <span class="fw-medium">{{payroll.start}} - {{payroll.end}}</span></div>

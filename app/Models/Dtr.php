@@ -17,6 +17,7 @@ class Dtr extends Model
         'pm_in_at',
         'pm_out_at',
         'is_updated',
+        'is_completed',
         'remarks',
         'date'
     ];

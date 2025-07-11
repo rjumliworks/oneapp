@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Dtr;
 use App\Models\User;
+use App\Models\Schedule;
 use App\Models\Payroll;
 use App\Models\PayrollCycle;
 use App\Models\PayrollCutoff;
@@ -18,13 +19,23 @@ use App\Http\Resources\Hr\CycleResource;
 
 class SaveClass
 {
+    public function __construct()
+    {
+        $this->holidays = Schedule::where('event_id', 31)->pluck('start')
+        ->map(function ($date) {
+            return Carbon::parse($date)->toDateString();
+        })->toArray();
+    }
+
     public function cycle($request){
         $cycle = PayrollCycle::where('month',$request->month)->where('year',$request->year)->where('is_regular',$request->is_regular)->first();
         if($cycle){
+            $batch = PayrollCutoff::where('type',$request->type)->where('cycle_id',$cycle->id)->count();
             $data = PayrollCutoff::create(
                 array_merge($request->all(), [
                     'code' => $this->generateCode2(),
                     'user_id' => \Auth::user()->id,
+                    'batch' => $batch + 1,
                     'cycle_id' => $cycle->id,
                     'status_id' => 17
                 ])
@@ -34,10 +45,11 @@ class SaveClass
                 'code' => $this->generateCode(),
                 'user_id' => \Auth::user()->id
             ]));
-            $data->cutoffs()->create(
+            $cutoff = $data->cutoffs()->create(
                 array_merge($request->all(), [
                     'code' => $this->generateCode2(),
                     'user_id' => \Auth::user()->id,
+                    'batch' => 1,
                     'status_id' => 17
                 ])
             );
@@ -121,11 +133,10 @@ class SaveClass
                 'user_id' => $user,
                 'cutoff_id' => $request->id
             ]);
-
             if ($payroll) {
                 $salary = floatval(str_replace(['₱', ','], '', optional(UserOrganization::with('salary')->where('user_id', $user)->first())->salary?->amount));
 
-                if ($data->type == '1st') {
+                if($data->type == '1st') {
                     $total = 0;
                     $deductions = UserDeduction::where('is_active', 1)->where('is_automatic', 1)->where('user_id', $user)->get();
 
@@ -153,7 +164,8 @@ class SaveClass
 
                     $payroll->save();
 
-                } elseif ($data->type == '2nd') {
+                }elseif($data->type == '2nd') {
+                    
                     $previous = Payroll::where('user_id', $user)
                         ->whereHas('cutoff', function ($query) use ($data) {
                             $query->where('cycle_id', $data->cycle_id);
@@ -173,6 +185,7 @@ class SaveClass
                     $payroll->save();
 
                     $deduction = UserDeduction::where('is_active', 1)->where('is_automatic', 0)->where('user_id', $user)->first();
+            
                     PayrollDeduction::create([
                         'amount' => $tax,
                         'deduction_id' => $deduction->deduction_id,
@@ -224,10 +237,25 @@ class SaveClass
     private function hasIncomplete($data,$user){
         $start = Carbon::parse($data->start);
         $end = Carbon::parse($data->end);
-        $holidays = ['2025-06-06', '2025-06-12'];
+        //  $holidays = [
+        //     '2025-06-06',
+        //     '2025-06-12',
+        //     '2025-06-23',
+        //     '2025-06-24',
+        //     '2025-06-25',
+        //     '2025-06-26',
+        //     '2025-06-27',
+        //     '2025-06-30',
+        //     '2025-07-01',
+        //     '2025-07-02',
+        //     '2025-07-03',
+        //     '2025-05-23',
+        //     '2025-05-27',
+        //     '2025-05-28'
+        // ];
         $incomplete = Dtr::where('user_id',$user)
         ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
-        ->whereNotIn('date', $holidays)
+        ->whereNotIn('date', $this->holidays)
         ->where('is_completed',0)
         ->count();
 
@@ -237,10 +265,25 @@ class SaveClass
     private function tardiness($data,$user,$salary){
         $start = Carbon::parse($data->start);
         $end = Carbon::parse($data->end);
-        $holidays = ['2025-06-06', '2025-06-12'];
+        // $holidays = [
+        //     '2025-05-23',
+        //     '2025-05-27',
+        //     '2025-05-28',
+        //     '2025-06-06',
+        //     '2025-06-12',
+        //     '2025-06-26',
+        //     '2025-06-23',
+        //     '2025-06-24',
+        //     '2025-06-25',
+        //     '2025-06-27',
+        //     '2025-06-30',
+        //     '2025-07-01',
+        //     '2025-07-02',
+        //     '2025-07-03',
+        // ];
         $period = CarbonPeriod::create($start, $end);
-        $filteredPeriod = collect($period)->reject(function ($date) use ($holidays) {
-            return in_array($date->toDateString(), $holidays);
+        $filteredPeriod = collect($period)->reject(function ($date){
+            return in_array($date->toDateString(), $this->holidays);
         });
         $lateMinutes = 0;
         $undertimeMinutes = 0;
@@ -248,7 +291,7 @@ class SaveClass
 
         $dtrs = Dtr::where('user_id',$user)
         ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
-        ->whereNotIn('date', $holidays)
+        ->whereNotIn('date', $this->holidays)
         ->get()
         ->keyBy(fn ($dtr) => Carbon::parse($dtr->date)->toDateString());
         $test = [];
@@ -291,15 +334,15 @@ class SaveClass
         $dailyRate = $salary / 22;
         $perMinuteRate = $dailyRate / 480;
 
-        $absenceDeduction = round($dailyRate * $absentDays, 2);
-        $lateDeduction = round($perMinuteRate * $lateMinutes, 2);
-        $undertimeDeduction = round($perMinuteRate * $undertimeMinutes, 2);
+        $absenceDeduction = round($dailyRate * $absentDays,2);
+        $lateDeduction = $perMinuteRate * $lateMinutes;
+        $undertimeDeduction = $perMinuteRate * $undertimeMinutes;
         $totalDeduction = $absenceDeduction + $lateDeduction + $undertimeDeduction;
 
         return [
             'days' => $absentDays,
             'mins' => $undertimeMinutes + $lateMinutes,
-            'total' => $totalDeduction
+            'total' => $this->truncateTwoDecimals($totalDeduction)
         ];
     }
 
@@ -315,5 +358,9 @@ class SaveClass
         $c = PayrollCutoff::whereYear('created_at',$year)->where('code','!=',NULL)->count();
         $code = 'R9CFF-'.date('m').date('Y').'-'.str_pad(($c+1), 4, '0', STR_PAD_LEFT); 
         return $code;
+    }
+
+    private function truncateTwoDecimals($value) {
+        return floor($value * 100) / 100;
     }
 }

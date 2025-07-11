@@ -38,7 +38,18 @@
                             </div>
                         </div>
                     </div>
-                  
+                    <div class="card bg-white border-bottom shadow-none mb-0" style="height: calc(100vh - 343px); overflow: auto;">
+                        <div id="external-events" class="p-3">
+                            <div v-for="(list,index) in dropdowns.events" 
+                            v-bind:key="index" 
+                            :class="'external-event fc-event '+list.color+' '+list.others" 
+                            style="cursor: pointer;"
+                            @click="openCreate(list)"
+                            >
+                            <i class="mdi mdi-checkbox-blank-circle me-2"></i>{{list.name}}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-9">
@@ -65,6 +76,8 @@
                 </div>
             </div>
         </BRow>
+        <Create @message="fetch()" ref="create"/>
+        <View @message="fetch()" ref="view"/>
     </template>
     <script>
     import _ from 'lodash';
@@ -78,8 +91,11 @@
     import Multiselect from "@vueform/multiselect";
     import PageHeader from '@/Shared/Components/PageHeader.vue';
     import Pagination from "@/Shared/Components/Pagination.vue";
+    import Create from './Modals/Create.vue';
+    import View from './Modals/View.vue';
     export default {
-        components: { PageHeader, Pagination, Multiselect, FullCalendar, },
+        components: { PageHeader, Pagination, Multiselect, FullCalendar, Create, View },
+        props: ['dropdowns'],
         data(){
             return {
                 currentUrl: window.location.origin,
@@ -135,26 +151,14 @@
            this.fetch();
         },
         methods: {
-            checkSearchStr: _.debounce(function(string) {
-                this.fetch();
-            }, 300),
-            fetch(page_url){
-                page_url = page_url || '/surveys';
-                axios.get(page_url,{
+            fetch(){
+                axios.get('/calendar',{
                     params : {
-                        keyword: this.filter.keyword,
-                        semester: this.filter.semester,
-                        year: this.filter.year,
-                        count: 10, //Math.floor((window.innerHeight-350)/59)
-                        option: 'lists'
+                        option: 'events' 
                     }
                 })
                 .then(response => {
-                    if(response){
-                        this.lists = response.data.data;
-                        this.meta = response.data.meta;
-                        this.links = response.data.links;          
-                    }
+                    this.calendarOptions.events = response.data.data;        
                 })
                 .catch(err => console.log(err));
             },
@@ -167,8 +171,11 @@
                     return "dayGridMonth";
                 }
             },
-            openCreate(){
-                this.$refs.create.show();
+            openCreate(data){
+                this.$refs.create.show(data);
+            },
+            editEvent(event){
+                this.$refs.view.show(event.event);
             }
         }
     }

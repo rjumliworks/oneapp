@@ -8,27 +8,69 @@ use Illuminate\Http\Request;
 use App\Services\DropdownClass;
 use App\Services\Hr\Calendar\SaveClass;
 use App\Services\Hr\Calendar\ViewClass;
+use App\Http\Requests\HumanResource\CalendarRequest;
 
 class CalendarController extends Controller
 {
     use HandlesTransaction;
 
-    public $view,$save,$dropdown;
-
-    public function __construct(SaveClass $save, ViewClass $view, DropdownClass $dropdown){
+    public function __construct(DropdownClass $dropdown, SaveClass $save, ViewClass $view){
+        $this->dropdown = $dropdown;
         $this->view = $view;
         $this->save = $save;
-        $this->dropdown = $dropdown;
     }
 
     public function index(Request $request){
         switch($request->option){
-            case 'lists':
-                // return $this->view->lists($request);
-                return [];
+            case 'events':
+                return $this->view->events($request);
             break;
-            default:
-                return inertia('Modules/HumanResource/Calendar/Index'); 
-        }   
+            default :
+            return inertia('Modules/HumanResource/Calendar/Index',[
+                'dropdowns' => [
+                    'events' => $this->dropdown->events()
+                ]
+            ]);
+        }
+    }
+
+    public function store(CalendarRequest $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            return $this->save->save($request);
+        });
+
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function update(Request $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            return $this->save->update($request);
+        });
+        
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $result = $this->handleTransaction(function () use ($id) {
+            return $this->save->delete($id);
+        });
+
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
     }
 }

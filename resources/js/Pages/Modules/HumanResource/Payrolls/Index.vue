@@ -77,7 +77,7 @@
                                 <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
                                 <td>
                                     <h5 class="fs-12 text-primary mb-0">{{ list.cycle.month }} {{ list.cycle.year }} Payroll</h5>
-                                    <p class="fs-12 text-muted mb-0">{{ (list.type) ? list.type+' Quincena' : "-" }}</p>
+                                    <p class="fs-12 text-muted mb-0">{{ (list.type) ? list.type+' Quincena' : "-" }} - Batch {{ list.batch }}</p>
                                 </td>
                                 <td class="text-center">{{ (list.cycle.is_regular) ? 'Regular' : "Contract of Service" }}</td>
                                 <td class="text-center">{{formatMoney(list.total)}}</td>

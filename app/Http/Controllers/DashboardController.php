@@ -17,7 +17,6 @@ class DashboardController extends Controller
 {
     public function __construct(
             DropdownClass $dropdown,
-
         ){
         $this->dropdown = $dropdown;
     }
@@ -155,76 +154,82 @@ class DashboardController extends Controller
         $dtrs = OldDtr::with('user')->whereBetween('date', [$startOfMonth,$endOfMonth])->get();
       
         foreach($dtrs as $dtr){
-            $user = User::with('profile','organization.division')->where('username',strtolower($dtr->user->username))->first();
-            if($user){
-                $remarks = [
-                    'tardiness' => null,
-                    'undertime' => null
-                ]; 
-                $amin = $dtr->inAM 
-                ? [
-                    'ip' => $dtr->ip,
-                    'pcname' => gethostname(),
-                    'browser' => $request->header('User-Agent'),
-                    'time' =>  date('H:i:s',$dtr->inAM),
-                    'date' => $dtr->date,
-                    'minutes' => $this->computeLateMinutes('Time In (am)',date('H:i:s',$dtr->inAM)),
-                    'is_updated' => false,
-                    'changes' => []
-                ] 
-                : null;
+            $username = $dtr->user?->username ?? null;
+            if($username){
+                $user = User::with('profile','organization.division')->where('username',strtolower($username))->first();
+                if($user){
+                    $remarks = [
+                        'tardiness' => null,
+                        'undertime' => null
+                    ]; 
+                    $amin = $dtr->inAM 
+                    ? [
+                        'ip' => $dtr->ip,
+                        'pcname' => gethostname(),
+                        'browser' => $request->header('User-Agent'),
+                        'time' =>  date('H:i:s',$dtr->inAM),
+                        'date' => $dtr->date,
+                        'minutes' => $this->computeLateMinutes($dtr->date,'Time In (am)',date('H:i:s',$dtr->inAM)),
+                        'is_updated' => false,
+                        'changes' => []
+                    ] 
+                    : null;
 
-                $amout = $dtr->outAM 
-                ? [
-                    'ip' => $dtr->ip,
-                    'pcname' => gethostname(),
-                    'browser' => $request->header('User-Agent'),
-                    'time' => date('H:i:s',$dtr->outAM),
-                    'date' => $dtr->date,
-                    'minutes' => $this->computeLateMinutes('Time Out (am)',date('H:i:s',$dtr->outAM)),
-                    'is_updated' => false,
-                    'changes' => []
-                ] 
-                : null;
+                    $amout = $dtr->outAM 
+                    ? [
+                        'ip' => $dtr->ip,
+                        'pcname' => gethostname(),
+                        'browser' => $request->header('User-Agent'),
+                        'time' => date('H:i:s',$dtr->outAM),
+                        'date' => $dtr->date,
+                        'minutes' => $this->computeLateMinutes($dtr->date,'Time Out (am)',date('H:i:s',$dtr->outAM)),
+                        'is_updated' => false,
+                        'changes' => []
+                    ] 
+                    : null;
 
-                $pmin = $dtr->inPM 
-                ? [
-                    'ip' => $dtr->ip,
-                    'pcname' => gethostname(),
-                    'browser' => $request->header('User-Agent'),
-                    'time' => date('H:i:s',$dtr->inPM),
-                    'date' => $dtr->date,
-                    'minutes' => $this->computeLateMinutes('Time In (pm)',date('H:i:s',$dtr->inPM)),
-                    'is_updated' => false,
-                    'changes' => []
-                ] 
-                : null;
+                    $pmin = $dtr->inPM 
+                    ? [
+                        'ip' => $dtr->ip,
+                        'pcname' => gethostname(),
+                        'browser' => $request->header('User-Agent'),
+                        'time' => date('H:i:s',$dtr->inPM),
+                        'date' => $dtr->date,
+                        'minutes' => $this->computeLateMinutes($dtr->date,'Time In (pm)',date('H:i:s',$dtr->inPM)),
+                        'is_updated' => false,
+                        'changes' => []
+                    ] 
+                    : null;
 
-                $pmout = $dtr->outPM 
-                ? [
-                    'ip' => $dtr->ip,
-                    'pcname' => gethostname(),
-                    'browser' => $request->header('User-Agent'),
-                    'time' => date('H:i:s',$dtr->outPM),
-                    'date' => $dtr->date,
-                    'minutes' => $this->computeLateMinutes('Time Out (pm)',date('H:i:s',$dtr->outPM)),
-                    'is_updated' => false,
-                    'changes' => []
-                ] 
-                : null;
+                    $pmout = $dtr->outPM 
+                    ? [
+                        'ip' => $dtr->ip,
+                        'pcname' => gethostname(),
+                        'browser' => $request->header('User-Agent'),
+                        'time' => date('H:i:s',$dtr->outPM),
+                        'date' => $dtr->date,
+                        'minutes' => $this->computeLateMinutes($dtr->date,'Time Out (pm)',date('H:i:s',$dtr->outPM),date('H:i:s',$dtr->inAM)),
+                        'is_updated' => false,
+                        'changes' => []
+                    ] 
+                    : null;
 
-                $data = new Dtr;
-                $data->date = $dtr->date;
-                $data->am_in_at = ($dtr->inAM) ? json_encode($amin) : null;
-                $data->am_out_at = ($dtr->outAM) ? json_encode($amout) : null;
-                $data->pm_in_at = ($dtr->inPM) ? json_encode($pmin) : null;
-                $data->pm_out_at =  ($dtr->outPM) ? json_encode($pmout) : null;
-                $data->remarks = json_encode($remarks);
-                $data->user_id = $user->id;
-                $data->save();
-                $success[] = $dtr->user->username;
+                    $data = new Dtr;
+                    $data->date = $dtr->date;
+                    $data->am_in_at = ($dtr->inAM) ? json_encode($amin) : null;
+                    $data->am_out_at = ($dtr->outAM) ? json_encode($amout) : null;
+                    $data->pm_in_at = ($dtr->inPM) ? json_encode($pmin) : null;
+                    $data->pm_out_at =  ($dtr->outPM) ? json_encode($pmout) : null;
+                    $data->remarks = json_encode($remarks);
+                    $data->user_id = $user->id;
+                    $data->is_completed = ($amin && $amout && $pmin && $pmout) ? 1 : 0;
+                    $data->save();
+                    $success[] = $dtr->user->username;
+                }else{
+                    $failed[] = $dtr->id;
+                }
             }else{
-                $failed[] = $dtr->user->username;
+                $failed[] = $dtr->id;
             }
         }
         return [$success,array_unique($failed)];
@@ -271,14 +276,21 @@ class DashboardController extends Controller
         // }
     }
 
-   public function computeLateMinutes($type,$time)
+    public function computeLateMinutes($date,$type,$time,$in = null)
     {
+        $date = Carbon::parse($date);
         $time = Carbon::createFromTimeString($time); 
         switch($type){
             case 'Time In (am)':
-                $officialStart = Carbon::createFromTimeString('08:00:00');
-                $flexibleCutoff = Carbon::createFromTimeString('08:30:59');
-                $minutes = ($time->greaterThan($flexibleCutoff)) ? (int) $officialStart->diffInMinutes($time) : 0;
+                if ($date->isMonday()) {
+                    $officialStart = Carbon::createFromTimeString('08:00:00');
+                    $officialMorningTimeIn = Carbon::createFromTimeString('8:00:59');
+                    $minutes = ($time->greaterThan($officialMorningTimeIn)) ? (int)  $officialStart->diffInMinutes($time) : 0;
+                }else{
+                    $officialStart = Carbon::createFromTimeString('08:00:00');
+                    $flexibleCutoff = Carbon::createFromTimeString('08:30:59');
+                    $minutes = ($time->greaterThan($flexibleCutoff)) ? (int) $officialStart->diffInMinutes($time) : 0;
+                }
             break;
             case 'Time Out (am)':
                 $officialMorningOut = Carbon::createFromTimeString('12:00:00');
@@ -289,8 +301,27 @@ class DashboardController extends Controller
                 $minutes = ($time->greaterThan($officialAfternoonTimeIn)) ? (int) $officialAfternoonTimeIn->diffInMinutes($time) : 0;
             break;
             case 'Time Out (pm)':
+                $officialStart = Carbon::createFromTimeString('08:00:00');
                 $officialAfternoonOut = Carbon::createFromTimeString('17:00:00');
-                $minutes = ($time->lessThan($officialAfternoonOut)) ? ceil($time->floatDiffInMinutes($officialAfternoonOut)) : 0;
+
+                if (!$date->isMonday() && $in !== null) {
+                    $timeIn = Carbon::createFromFormat('H:i:s', $in);
+
+                    if ($timeIn->between(
+                        Carbon::createFromTimeString('08:00:00'),
+                        Carbon::createFromTimeString('08:30:59')
+                    )) {
+                        $flexMinutes = $officialStart->diffInMinutes($timeIn);
+                        $officialAfternoonOut->addMinutes($flexMinutes);
+                    }
+                }
+
+                $actualOut = $time->copy()->setSeconds(0);
+                $adjustedOut = $officialAfternoonOut->copy()->setSeconds(0);
+
+                $minutes = ($actualOut->lessThan($adjustedOut))
+                ? $actualOut->diffInMinutes($adjustedOut)
+                : 0;
             break;
         }
         return $minutes;

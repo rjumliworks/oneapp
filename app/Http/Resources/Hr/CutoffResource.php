@@ -26,6 +26,7 @@ class CutoffResource extends JsonResource
             'total' => $this->total,
             'count' => $this->count,
             'user' => $this->user,
+            'batch' => $this->batch,
             'payrolls' => PayrollResource::collection($this->payrolls),
             'created_at' => $this->created_at
         ];

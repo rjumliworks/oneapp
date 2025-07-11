@@ -74,17 +74,20 @@
                             </tr>
                         </thead>
                         <tbody class="table-white fs-12">
-                            <tr v-for="(list,index) in lists" v-bind:key="index" >
+                            <tr v-for="(list,index) in lists" v-bind:key="index" :class="{ 
+                                'bg-success-subtle': list.is_completed === 1,
+                                'bg-warning-subtle': getTotalMinutes(list) > 0,
+                             }">
                                 <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
                                 <td>{{ list.user.profile.firstname }} {{ list.user.profile.lastname }}</td>
-                                <td class="text-center">{{ list.date }}</td>
+                                <td class="text-center">{{ formatDateWithDay(list.date) }}</td>
                                 <td class="text-center">{{ (list.am_in_at) ? list.am_in_at.time : '-' }}</td>
                                 <td class="text-center">{{ (list.am_out_at) ? list.am_out_at.time : '-' }}</td>
                                 <td class="text-center">{{ (list.pm_in_at) ? list.pm_in_at.time : '-' }}</td>
                                 <td class="text-center">{{ (list.pm_out_at) ? list.pm_out_at.time : '-' }}</td>
                                 <td class="text-center">-</td>
                                 <td class="text-end">
-                                    <b-button @click="openView(list)" variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
+                                    <b-button @click="openView(list,index)" variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
                                         <i class="ri-eye-fill align-bottom"></i>
                                     </b-button>
                                 </td>
@@ -98,7 +101,7 @@
             </div>
         </div>
     </div>
-    <View ref="view"/>
+    <View @update="updateList" ref="view"/>
     <Generate ref="generate"/>
 </BRow>
 </template>
@@ -157,11 +160,30 @@ export default {
             })
             .catch(err => console.log(err));
         },
-        openView(data){
+        getTotalMinutes(list) {
+            return (
+                (list.am_in_at?.minutes || 0) +
+                (list.am_out_at?.minutes || 0) +
+                (list.pm_in_at?.minutes || 0) +
+                (list.pm_out_at?.minutes || 0)
+            );
+        },
+        formatDateWithDay(date) {
+            if (!date) return '-';
+            const options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
+            const parsed = new Date(date);
+            const day = parsed.toLocaleDateString('en-US', { weekday: 'long' });
+            return `${day} - ${date}`;
+        },
+        openView(data,index){
+            this.index = index;
             this.$refs.view.show(data);
         },
         openGenerate(){
             this.$refs.generate.show();
+        },
+        updateList(data){
+            this.lists[this.index] = data;
         }
     }
 }

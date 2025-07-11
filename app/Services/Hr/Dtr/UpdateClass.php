@@ -10,12 +10,19 @@ class UpdateClass
 {   
     public function add($request){
         $dtr = Dtr::where('id',$request->id)->first();
+        if($request->type == 'Time Out (pm)'){
+            $timeIn = json_decode($dtr->am_in_at, true);
+            $minutes = $this->computeLateMinutes($dtr->date,$request->type,$request->time,$timeIn['time']);
+        }else{
+            $minutes = $this->computeLateMinutes($dtr->date,$request->type,$request->time);
+        }
+
         $info = [
             'ip' => \Request::ip(), 
             'pcname' => gethostname(),
             'browser' => $request->header('User-Agent'),
             'time' =>  $request->time,
-            'minutes' => 0,
+            'minutes' => $minutes,
             'date' => $dtr->date,
             'is_updated' => true,
             'changes' => [
@@ -24,27 +31,27 @@ class UpdateClass
         ];
 
         if($dtr){
+            $status = 'Success';
             switch($request->type){
                 case 'Time In (am)':
-                    $status = 'Success';
                     $dtr->am_in_at = json_encode($info);
-                    $dtr->save();
                 break;
                 case 'Time Out (am)':
-                    $status = 'Success';
                     $dtr->am_out_at = json_encode($info);
-                    $dtr->save();
                 break;
                 case 'Time In (pm)':
-                    $status = 'Success';
                     $dtr->pm_in_at = json_encode($info);
-                    $dtr->save();
                 break;
                 case 'Time Out (pm)':
-                    $status = 'Success';
                     $dtr->pm_out_at = json_encode($info);
-                    $dtr->save();
                 break;
+            }
+            if($dtr->save()){
+                $dtr = Dtr::where('id',$request->id)->first();
+                if ($dtr->am_in_at && $dtr->am_out_at && $dtr->pm_in_at && $dtr->pm_out_at) {
+                    $dtr->is_completed = 1;
+                    $dtr->save();
+                }
             }
         }
 
@@ -59,36 +66,39 @@ class UpdateClass
     public function save($request){
         $data = Dtr::where('id',$request->id)->first();
         switch($request->type){
-            case 'Time In (AM)':
+            case 'Time In (am)':
                 $column = 'am_in_at';
             break;
-            case 'Time Out (AM)':
+            case 'Time Out (am)':
                 $column = 'am_out_at';
             break;
-            case 'Time In (PM)':
+            case 'Time In (pm)':
                 $column = 'pm_in_at';
             break;
-            case 'Time Out (PM)':
+            case 'Time Out (pm)':
                 $column = 'pm_out_at';
             break;
         }
         $timeData = json_decode($data->$column, true);
         $timeData['time'] = $request->to_time;
+        if($request->type == 'Time Out (pm)'){
+            $timeIn = json_decode($data->am_in_at, true);
+            $timeData['minutes'] = $this->computeLateMinutes($data->date,$request->type,$request->to_time,$timeIn['time']);
+        }else{
+            $timeData['minutes'] = $this->computeLateMinutes($data->date,$request->type,$request->to_time);
+        }
+        
         $timeData['changes'][] = 
         \Auth::user()->profile->firstname.' '.\Auth::user()->profile->lastname." updated the time from {$request->from_time} to ".Carbon::parse($request->to_time)->format('h:i A')." with the following note : {$request->remarks}.";
         $timeData['is_updated'] = true;
-        // $remarks = json_decode($data->remarks, true);
-        // if (!is_array($remarks)) {
-        //     $remarks = ['tardiness' => null, 'undertime' => null, 'changes' => []];
-        // }
-
-        // if (!isset($remarks['changes']) || !is_array($remarks['changes'])) {
-        //     $remarks['changes'] = [];
-        // }
-        
-        
-        
-        $data->update([$column => json_encode($timeData),'is_updated' => 1]);
+        $update = $data->update([$column => json_encode($timeData),'is_updated' => 1]);
+        if($update){
+            $dtr = Dtr::where('id',$request->id)->first();
+            if ($dtr->am_in_at && $dtr->am_out_at && $dtr->pm_in_at && $dtr->pm_out_at) {
+                $dtr->is_completed = 1;
+                $dtr->save();
+            }
+        }
         $data =  new DtrResource(Dtr::with('user:id,email,username','user.profile:user_id,firstname,middlename,lastname')
         ->where('id',$request->id)->first());
 
@@ -97,5 +107,60 @@ class UpdateClass
             'message' => 'DTR Updated successfully.', 
             'info' => 'Your dtr was updated already.',
         ];
+    }
+
+    public function computeLateMinutes($date,$type,$time,$in = null)
+    {
+        $date = Carbon::parse($date);
+        $time = Carbon::createFromTimeString($time); 
+        switch($type){
+            case 'Time In (am)':
+                if ($date->isMonday()) {
+                    $officialStart = Carbon::createFromTimeString('08:00:00');
+                    $officialMorningTimeIn = Carbon::createFromTimeString('8:00:59');
+                    $minutes = ($time->greaterThan($officialMorningTimeIn)) ? (int)  $officialStart->diffInMinutes($time) : 0;
+                }else{
+                    $officialStart = Carbon::createFromTimeString('08:00:00');
+                    $flexibleCutoff = Carbon::createFromTimeString('08:30:59');
+                    $minutes = ($time->greaterThan($flexibleCutoff)) ? (int) $officialStart->diffInMinutes($time) : 0;
+                }
+            break;
+            case 'Time Out (am)':
+                $officialMorningOut = Carbon::createFromTimeString('12:00:00');
+                $minutes = ($time->lessThan($officialMorningOut)) ? ceil($time->diffInMinutes($officialMorningOut)) : 0;
+            break;
+            case 'Time In (pm)':
+                $officialAfternoonTimeIn = Carbon::createFromTimeString('13:00:00');
+                $minutes = ($time->greaterThan($officialAfternoonTimeIn)) ? (int) $officialAfternoonTimeIn->diffInMinutes($time) : 0;
+            break;
+            case 'Time Out (pm)':
+                $officialStart = Carbon::createFromTimeString('08:00:00');
+                $officialAfternoonOut = Carbon::createFromTimeString('17:00:00');
+
+                if (!$date->isMonday() && $in !== null) {
+                    if (strlen($in) === 5) {
+                        $timeIn = Carbon::createFromFormat('H:i', $in);
+                    } elseif (strlen($in) === 8) {
+                        $timeIn = Carbon::createFromFormat('H:i:s', $in);
+                    }
+
+                    if ($timeIn->between(
+                        Carbon::createFromTimeString('08:00:00'),
+                        Carbon::createFromTimeString('08:30:59')
+                    )) {
+                        $flexMinutes = $officialStart->diffInMinutes($timeIn);
+                        $officialAfternoonOut->addMinutes($flexMinutes);
+                    }
+                }
+
+                $actualOut = $time->copy()->setSeconds(0);
+                $adjustedOut = $officialAfternoonOut->copy()->setSeconds(0);
+
+                $minutes = ($actualOut->lessThan($adjustedOut))
+                ? $actualOut->diffInMinutes($adjustedOut)
+                : 0;
+            break;
+        }
+        return $minutes;
     }
 }

@@ -18,6 +18,7 @@ class DtrResource extends JsonResource
             'pm_in_at' => new TimeResource(json_decode($this->pm_in_at)),
             'pm_out_at' => new TimeResource(json_decode($this->pm_out_at)),
             'remarks' => json_decode($this->remarks),
+            'is_completed' => $this->is_completed,
             'created_at' => $this->created_at
         ];
     }
