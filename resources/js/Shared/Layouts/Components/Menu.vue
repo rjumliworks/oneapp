@@ -77,7 +77,7 @@
                     </Link>
                 </li>
             </tempalte>
-            <tempalte v-if="$page.props.roles.includes('Travel Controler Officer')">
+            <tempalte v-if="$page.props.roles.includes('Travel Officer')">
                 <li class="menu-title">
                     <i class="ri-more-fill" aria-expanded="false"></i>
                     <span data-key="t-menu">Transportation Management</span>

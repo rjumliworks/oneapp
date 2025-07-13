@@ -357,7 +357,7 @@ class ListDataTableSeeder extends Seeder
             48 => 
             array (
                 'id' => 49,
-                'name' => 'Certified Public Accountant (CPA)',
+            'name' => 'Certified Public Accountant (CPA)',
                 'type' => 'License',
                 'is_active' => 1,
             ),
@@ -567,7 +567,7 @@ class ListDataTableSeeder extends Seeder
             78 => 
             array (
                 'id' => 79,
-                'name' => 'Midwife (New)',
+            'name' => 'Midwife (New)',
                 'type' => 'License',
                 'is_active' => 1,
             ),
@@ -658,7 +658,7 @@ class ListDataTableSeeder extends Seeder
             91 => 
             array (
                 'id' => 92,
-                'name' => 'Professional Electronics Engineer (PECE)',
+            'name' => 'Professional Electronics Engineer (PECE)',
                 'type' => 'License',
                 'is_active' => 1,
             ),
@@ -1031,6 +1031,55 @@ class ListDataTableSeeder extends Seeder
                 'id' => 145,
                 'name' => 'Air Conditioner',
                 'type' => 'Asset',
+                'is_active' => 1,
+            ),
+            145 => 
+            array (
+                'id' => 146,
+                'name' => 'Philhealth',
+                'type' => 'Deduction',
+                'is_active' => 1,
+            ),
+            146 => 
+            array (
+                'id' => 147,
+                'name' => 'Pag-ibig I',
+                'type' => 'Deduction',
+                'is_active' => 1,
+            ),
+            147 => 
+            array (
+                'id' => 148,
+                'name' => 'Pag-ibig II',
+                'type' => 'Deduction',
+                'is_active' => 1,
+            ),
+            148 => 
+            array (
+                'id' => 149,
+                'name' => 'HDMF Housing Loan',
+                'type' => 'Deduction',
+                'is_active' => 1,
+            ),
+            149 => 
+            array (
+                'id' => 150,
+                'name' => 'Official Vehicle',
+                'type' => 'Travel',
+                'is_active' => 1,
+            ),
+            150 => 
+            array (
+                'id' => 151,
+                'name' => 'Public Conveyance',
+                'type' => 'Travel',
+                'is_active' => 1,
+            ),
+            151 => 
+            array (
+                'id' => 152,
+                'name' => 'Vehicle Rental',
+                'type' => 'Travel',
                 'is_active' => 1,
             ),
         ));

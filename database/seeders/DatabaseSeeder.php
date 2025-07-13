@@ -89,5 +89,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(ListPosition2sTableSeeder::class);
         $this->call(ListDeductionsTableSeeder::class);
         $this->call(UserDeductionsTableSeeder::class);
+        $this->call(ListVehiclesTableSeeder::class);
     }
 }

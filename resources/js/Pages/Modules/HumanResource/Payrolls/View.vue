@@ -1,5 +1,5 @@
 <template>
-    <Head title="Employee Profile" />
+    <Head title="Payroll" />
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
         <div class="w-100 p-4 pb-0" ref="box">
             <BRow>

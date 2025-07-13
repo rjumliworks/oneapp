@@ -38,7 +38,7 @@
                 </b-row>
             </div>
             <div class="card-body bg-white rounded-bottom">
-                <div class="table-responsive table-card" style="margin-top: -39px; height: calc(100vh - 420px); overflow: auto;">
+                <div class="table-responsive table-card" style="margin-top: -39px; height: calc(100vh - 440px); overflow: auto;">
                     <table class="table align-middle table-striped table-centered mb-0">
                         <thead class="table-light thead-fixed">
                             <tr class="fs-11">
