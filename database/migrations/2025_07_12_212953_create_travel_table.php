@@ -14,7 +14,14 @@ return new class extends Migration
         Schema::create('travel', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
-            
+            $table->date('start');
+            $table->date('end');
+            $table->string('time');
+            $table->string('document');
+            $table->tinyInteger('mode_id')->unsigned()->index();
+            $table->foreign('mode_id')->references('id')->on('list_data')->onDelete('cascade');
+            $table->tinyInteger('expense_id')->unsigned()->index();
+            $table->foreign('expense_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->bigInteger('request_id')->unsigned()->index();
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();

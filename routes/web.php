@@ -20,7 +20,7 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
     });
 
     Route::middleware(['role:Travel Officer'])->group(function () {
-        Route::resource('/documents', App\Http\Controllers\Trace\DocumentController::class);
+        Route::resource('/travels', App\Http\Controllers\Vrams\TravelController::class);
     });
 
     Route::middleware(['role:Document Control Officer'])->group(function () {

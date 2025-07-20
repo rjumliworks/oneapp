@@ -106,6 +106,15 @@ class DropdownClass
         return $grouped;
     }
 
+     public function travels(){
+        $data = ListData::where('type','Travel')->where('is_active',1)->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name
+            ];
+        });
+        return $data;
+    }
 
 
     public function doctypes(){

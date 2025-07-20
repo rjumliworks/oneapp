@@ -84,14 +84,14 @@
                 </li>
                 <li class="nav-item">
                     <Link href="/patients/create" class="nav-link menu-link"
-                    :class="{ 'active': $page.component === 'Patients/Create' }">
+                   :class="{'active': $page.component.startsWith('Modules/Vrams/Vehicle') }">
                     <i class="ri-taxi-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Vehicle Reservation</span>
                     </Link>
                 </li>
                 <li class="nav-item">
-                    <Link href="/patients/create" class="nav-link menu-link"
-                    :class="{ 'active': $page.component === 'Patients/Create' }">
+                    <Link href="/travels" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/Vrams/Travel') }">
                     <i class="ri-map-pin-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Travel Order</span>
                     </Link>
