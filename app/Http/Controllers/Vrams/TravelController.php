@@ -28,9 +28,23 @@ class TravelController extends Controller
             default:
                 return inertia('Modules/Vrams/Travels/Index',[
                     'dropdowns' => [
-                        'travels' => $this->dropdown->travels()
+                        'modes' => $this->dropdown->modes(),
+                        'expenses' => $this->dropdown->expenses()
                     ]
                 ]); 
         }   
+    }
+
+    public function store(Request $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            return $this->travel->save($request);
+        });
+
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
     }
 }

@@ -106,7 +106,7 @@ class DropdownClass
         return $grouped;
     }
 
-     public function travels(){
+    public function modes(){
         $data = ListData::where('type','Travel')->where('is_active',1)->get()->map(function ($item) {
             return [
                 'value' => $item->id,
@@ -116,6 +116,15 @@ class DropdownClass
         return $data;
     }
 
+    public function expenses(){
+        $data = ListData::where('type','Travel Expense')->where('is_active',1)->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name
+            ];
+        });
+        return $data;
+    }
 
     public function doctypes(){
         $data = ListData::where('type','Document Type')->where('is_active',1)->get()->map(function ($item) {

@@ -1,0 +1,312 @@
+<template>
+     <!-- style="--vz-modal-width: 750px;" -->
+    <b-modal v-model="showModal" style="--vz-modal-width: 900px;" header-class="p-3 bg-light" title="File Travel Order" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+            
+        <form class="customform">
+            <BRow class="g-3 mdiv">
+                <BCol lg="4" class="mt-2">
+                    <InputLabel for="name" value="Type"  :message="form.errors.dates"/>
+                    <Multiselect :options="['Single Day','Range','Multiple Dates (non-continuous)']" :searchable="true" label="name" v-model="dateType" placeholder="Select Date type"/>
+                </BCol>
+                <template v-if="dateType == 'Single Day'">
+                    <BCol lg="3" class="mt-2">
+                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
+                        <flat-pickr v-model="date" :config="single" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                    </BCol>
+                    <BCol lg="3" class="mt-2">
+                        <InputLabel for="name" value="Time of Day"  :message="form.errors.date"/>
+                        <Multiselect :options="['Whole Day','AM','PM']" label="name" v-model="form.timeOfDay" placeholder="Select Date type"/>
+                    </BCol>
+                </template>
+                <template v-if="dateType == 'Range'">
+                    <BCol lg="4" class="mt-2">
+                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
+                        <flat-pickr v-model="date" :config="range" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                    </BCol>
+                </template>
+                <template v-if="dateType == 'Multiple Dates (non-continuous)'">
+                    <BCol lg="4" class="mt-2">
+                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
+                        <flat-pickr v-model="date" :config="multiple" placeholder="Select dates" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                    </BCol>
+                </template>
+                 <BCol lg="4" class="mt-2">
+                    <InputLabel for="name" value="Time of Departure" />
+                    <TextInput id="name" v-model="form.to_time" type="time" class="form-control" placeholder="Please enter time" @input="handleInput('to_time')" :light="true"/>
+                </BCol>
+            </BRow>
+        </form>
+        <form>
+            <BRow>
+                <BCol lg="12" class="mt-2">
+                    <div class="mt-0 form-check fs-14">
+                        <input type="checkbox" v-model="check" class="form-check-input" id="checkTerms">
+                        <label class="form-check-label fs-12" for="checkTerms">Please check the box if you have dates selected that are AM or PM only, not whole day</label>
+                    </div>
+                </BCol>
+                <BCol lg="12" style="max-height: 250px; overflow: auto;"  id="my-modal-content"> 
+                    <div v-if="check" class="mt-3">
+                        <div v-for="(date, index) in form.dates" :key="index" class="mb-2">
+                            <div class="input-group mb-1">
+                                <span class="input-group-text"> <i class="ri-calendar-line search-icon"></i></span>
+                                <input type="text" :value="formatDateWithWeekday(date.date)" placeholder="Search Employee" class="form-control" style="width: 20%;" readonly>
+                                <Multiselect class="white" style="width: 30%;" :options="['Whole Day','AM','PM']" v-model="date.timeOfDay" 
+                                :searchable="true" 
+                                :allow-empty="false"  
+                                :can-clear="false"
+                                :append-to-body="true"
+                                 append-to="#my-modal-content"
+                                placeholder="Select Status" />
+                            </div>
+                        </div>
+                    </div>
+                </BCol>
+            </BRow>
+        </form>
+        <form class="customform">
+            <BRow class="g-3">
+                <BCol lg="12"><hr class="text-muted mt-2"/></BCol>
+                <BCol lg="12" class="mt-n2">
+                    <InputLabel for="name" value="Destination" :message="form.errors.destination"/>
+                    <TextInput id="name" v-model="form.destination" type="text" class="form-control" placeholder="Please enter destination" @input="handleInput('destination')" :light="true"/>
+                </BCol>
+                <BCol lg="6" class="mt-0">
+                    <InputLabel for="name" value="Purpose" :message="form.errors.purpose"/>
+                    <Textarea id="name" rows="3" v-model="form.purpose" type="text" class="form-control" placeholder="Please enter travel purpose" @input="handleInput('purpose')" :light="true"/>
+                </BCol>
+                <BCol lg="6" class="mt-0">
+                    <InputLabel for="name" value="Remarks" :message="form.errors.purpose"/>
+                    <Textarea id="name" rows="3" v-model="form.purpose" type="text" class="form-control" placeholder="Please enter anre remarks" @input="handleInput('purpose')" :light="true"/>
+                </BCol>
+                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
+                <BCol lg="4" class="mt-n2">
+                    <InputLabel for="name" value="Mode of Travel" :message="form.errors.type_id"/>
+                    <Multiselect
+                        v-model="form.type" 
+                        :options="dropdowns.travels"
+                        label="name"
+                        placeholder="Select type"
+                    />
+                </BCol>
+                <BCol lg="4" class="mt-n2">
+                    <InputLabel for="name" value="Travel Expense" :message="form.errors.expense_id"/>
+                    <Multiselect
+                        v-model="form.expense_id" 
+                        :options="['General Funds','Project Funds','Others']"
+                        label="name"
+                        placeholder="Select type"
+                    />
+                </BCol>
+                <BCol lg="4" class="mt-n2">
+                    <InputLabel for="name" value="Travel Document" />
+                    <TextInput id="name" v-model="form.to_time" type="file" class="form-control" placeholder="Please enter time" @input="handleInput('to_time')" :light="true"/>
+                </BCol>
+                <BCol lg="12">
+                    <BRow class="g-3">
+                        <BCol lg="12"><hr class="text-muted mb-n3 mt-0"/></BCol>
+                     
+                        <BCol lg="12" style="margin-top: 13px; margin-bottom: -12px;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="custom-control custom-radio mb-1">
+                                        <input type="checkbox" id="customRadio1" class="form-check-input me-2" value="1" v-model="form.expenses">
+                                        <label class="custom-control-label fw-normal fs-12" for="customRadio1">Accommodation <span class="text-muted">(Actual)</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="custom-control custom-radio mb-1">
+                                        <input type="checkbox" id="customRadio2" class="form-check-input me-2" value="2" v-model="form.expenses">
+                                        <label class="custom-control-label fw-normal fs-12" for="customRadio2">Accommodation <span class="text-muted">(Per Diem)</span></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="custom-control custom-radio">
+                                        <input type="checkbox" id="customRadio2" class="form-check-input me-2" value="3" v-model="form.expenses">
+                                        <label class="custom-control-label fw-normal fs-12" for="customRadio2">Incidental Expenses</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="custom-control custom-radio">
+                                        <input type="checkbox" id="customRadio2" class="form-check-input me-2" value="4" v-model="form.expenses">
+                                        <label class="custom-control-label fw-normal fs-12" for="customRadio2">Meals</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </BCol>
+                        <BCol lg="12"><hr class="text-muted mt-1"/></BCol>
+                    </BRow>
+                </BCol> 
+                
+            </BRow>
+        </form>
+        <template v-slot:footer>
+            <b-button @click="hide()" variant="light" block>Cancel</b-button>
+            <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
+        </template>
+    </b-modal>
+</template>
+<script>
+import { useForm } from '@inertiajs/vue3';
+import flatPickr from "vue-flatpickr-component";
+import Multiselect from "@vueform/multiselect";
+import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
+import TextInput from '@/Shared/Components/Forms/TextInput.vue';
+import Textarea from '@/Shared/Components/Forms/Textarea.vue';
+export default {
+    components: { Multiselect, InputLabel, TextInput, Textarea, flatPickr },
+    props: ['dropdowns'],
+    data(){
+        return {
+            currentUrl: window.location.origin,
+            form: useForm({
+                user_id: null,
+                type: null,
+                type_id: null,
+                detail_id: null,
+                details: null,
+                timeOfDay: 'Whole Day',
+                dates: [],
+                expenses: [],
+                option: 'leave'
+            }),
+            check: false,
+            date: null,
+            single:{
+                mode: "single",
+                dateFormat: 'Y-m-d',
+                altInput: true,
+                altFormat: 'F j, Y',
+                minDate: new Date().setDate(new Date().getDate() + 1),
+                disable: [
+                    function(date) {
+                        return (date.getDay() === 0 || date.getDay() === 6);
+                    }
+                ]
+            },
+            range: {
+                mode: "range",
+                dateFormat: 'Y-m-d',
+                altInput: true,
+                altFormat: 'F j, Y',
+                minDate:'',
+            },
+            multiple: {
+                mode: "multiple",
+                dateFormat: 'Y-m-d',
+                altInput: true,
+                altFormat: 'F j, Y',
+                minDate: new Date().setDate(new Date().getDate() + 1),
+                disable: [
+                    function(date) {
+                        return (date.getDay() === 0 || date.getDay() === 6);
+                    }
+                ]
+            },
+            dateType: null,
+            showModal: false
+        }
+    },
+    computed: {
+        filteredDetails() {
+            if (!this.form.type || !this.form.type.name) {
+                return [];
+            }
+            const selectedTypeName = this.form.type.name;
+            const matches = this.dropdowns.details.filter(detail => {
+                if (!detail.type) return false;
+                const typeArray = detail.type.split(',').map(val => val.trim());
+                return typeArray.includes(selectedTypeName);
+            });
+            if (matches.length === 0) {
+                const others = this.dropdowns.details.find(detail => detail.id === 24 || detail.value === 24);
+                return others ? [others] : [];
+            }
+            if (matches.length == 1) {
+                const others = this.dropdowns.details.find(detail => detail.type == this.form.type.name);
+                if(others){
+                    [others];
+                    this.form.detail = others;
+                }else{
+                    [];
+                }
+            }
+            return matches;
+        }
+    },
+    watch: {
+        date(newVal) {
+            if (!newVal) return;
+            if (this.dateType === 'Single Day') {
+                this.form.dates = [{
+                    date: this.formatDate(newVal),
+                    timeOfDay: this.form.timeOfDay || 'Whole Day'
+                }];
+            }else if (this.dateType === 'Range') {
+                const parts = newVal.split(' to ');
+                if (parts.length === 2) {
+                    const start = new Date(parts[0]);
+                    const end = new Date(parts[1]);
+                    const datesInRange = [];
+                    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                        if (d.getDay() !== 0 && d.getDay() !== 6) {
+                            datesInRange.push({
+                                date: this.formatDate(new Date(d)),
+                                timeOfDay: 'Whole Day'
+                            });
+                        }
+                    }
+                    this.form.dates = datesInRange;
+                }
+            }else if (this.dateType === 'Multiple Dates (non-continuous)') {
+                const dateStrings = newVal.split(',').map(str => str.trim());
+                this.form.dates = dateStrings.map(d => ({
+                    date: this.formatDate(new Date(d)),
+                    timeOfDay: 'Whole Day'
+                }));
+            }
+        },
+        'form.timeOfDay'(val) {
+            if (this.dateType === 'Single Day' && this.form.dates?.length === 1) {
+                this.form.dates[0].timeOfDay = val;
+            }
+        }
+    },
+    methods: { 
+        show(data){
+            this.selected = data;
+            this.showModal = true;
+        },
+        submit(){
+            this.form.post('/leaves',{
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    this.form.clearErrors();
+                    this.form.reset();
+                    this.hide();
+                },
+            });
+        },
+        formatDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        },
+        formatDateWithWeekday(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDate();
+            const month = date.toLocaleString('en-US', { month: 'short' });
+            const year = date.getFullYear();
+            const weekday = date.toLocaleString('en-US', { weekday: 'long' });
+            return `${month} ${day}, ${year} (${weekday})`;
+        },
+        handleInput(field) {
+            this.form.errors[field] = false;
+        },
+        hide(){
+            this.showModal = false;
+        }
+    }
+}
+</script>

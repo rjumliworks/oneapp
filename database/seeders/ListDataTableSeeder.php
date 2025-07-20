@@ -1082,6 +1082,34 @@ class ListDataTableSeeder extends Seeder
                 'type' => 'Travel',
                 'is_active' => 1,
             ),
+            152 => 
+            array (
+                'id' => 153,
+                'name' => 'General Funds',
+                'type' => 'Travel Expense',
+                'is_active' => 1,
+            ),
+            153 => 
+            array (
+                'id' => 154,
+                'name' => 'Project Funds',
+                'type' => 'Travel Expense',
+                'is_active' => 1,
+            ),
+            154 => 
+            array (
+                'id' => 155,
+                'name' => 'Others',
+                'type' => 'Travel Expense',
+                'is_active' => 1,
+            ),
+            155 => 
+            array (
+                'id' => 156,
+                'name' => 'Travel Order',
+                'type' => 'Request Type',
+                'is_active' => 1,
+            ),
         ));
 
         
