@@ -90,6 +90,10 @@
                         </div>
                     </div>
                 </BCol>
+
+                <BCol lg="12">
+                    <hr class="text-muted mt-0 mb-3"/>
+                </BCol>
             </BRow>
         </form> 
         
