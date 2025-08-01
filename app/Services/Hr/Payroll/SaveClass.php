@@ -118,15 +118,15 @@ class SaveClass
         foreach ($users as $user) {
             $exist = Payroll::where('user_id', $user)->where('cutoff_id', $request->id)->first();
 
-            if ($exist) {
-                $existingUserIds[] = $user;
-                continue; // Skip processing if already exists
-            }
+            // if ($exist) {
+            //     $existingUserIds[] = $user;
+            //     continue; // Skip processing if already exists
+            // }
 
-            if ($this->hasIncomplete($data, $user) > 0) {
-                $incompleteUserIds[] = $user;
-                continue; // Skip processing if has incomplete DTR
-            }
+            // if ($this->hasIncomplete($data, $user) > 0) {
+            //     $incompleteUserIds[] = $user;
+            //     continue; // Skip processing if has incomplete DTR
+            // }
 
             // ... proceed with payroll creation
             $payroll = $data->payrolls()->create([

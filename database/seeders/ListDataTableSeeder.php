@@ -1110,6 +1110,20 @@ class ListDataTableSeeder extends Seeder
                 'type' => 'Request Type',
                 'is_active' => 1,
             ),
+            156 => 
+            array (
+                'id' => 157,
+                'name' => 'Vehicle Reservation',
+                'type' => 'Request Type',
+                'is_active' => 1,
+            ),
+            157 => 
+            array (
+                'id' => 158,
+                'name' => 'Leave Form',
+                'type' => 'Request Type',
+                'is_active' => 1,
+            ),
         ));
 
         

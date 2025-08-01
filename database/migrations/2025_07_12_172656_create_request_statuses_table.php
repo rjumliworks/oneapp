@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->tinyInteger('status_id')->unsigned()->index();
-            $table->foreign('status_id')->references('id')->on('list_dropdowns')->onDelete('cascade');            
+            $table->foreign('status_id')->references('id')->on('list_statuses')->onDelete('cascade');            
             $table->bigInteger('request_id')->unsigned()->index();
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->boolean('is_final')->default(0);

@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('travel', function (Blueprint $table) {
+        Schema::create('travels', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->string('purpose');
             $table->string('destination');
+            $table->json('expenses');
             $table->string('remarks')->nullable();
             $table->date('start');
             $table->date('end');
             $table->string('time');
-            $table->string('document');
+            $table->string('document')->nullable();
             $table->smallInteger('mode_id')->unsigned()->index();
             $table->foreign('mode_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->smallInteger('expense_id')->unsigned()->index();
@@ -36,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('travel');
+        Schema::dropIfExists('travels');
     }
 };

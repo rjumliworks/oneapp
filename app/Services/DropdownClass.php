@@ -37,6 +37,16 @@ class DropdownClass
         return $data;
     }
 
+    public function datas($type){
+        $data = ListData::where('type',$type)->where('is_active',1)->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name
+            ];
+        });
+        return $data;
+    }
+
     public function events(){
         $data = ListDropdown::where('classification','Calendar')->get()->map(function ($item) {
             return [
@@ -104,26 +114,6 @@ class DropdownClass
         })->values();
 
         return $grouped;
-    }
-
-    public function modes(){
-        $data = ListData::where('type','Travel')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
-    public function expenses(){
-        $data = ListData::where('type','Travel Expense')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
     }
 
     public function doctypes(){
