@@ -30,9 +30,11 @@ class TravelController extends Controller
             break;
             default:
                 return inertia('Modules/Vrams/Travels/Index',[
+                    'counts' => $this->view->counts($this->dropdown->statuses('Request')),
                     'dropdowns' => [
                         'modes' => $this->dropdown->datas('Travel'),
-                        'expenses' => $this->dropdown->datas('Travel Expense')
+                        'expenses' => $this->dropdown->datas('Travel Expense'),
+                        'statuses' => $this->dropdown->statuses('Request')
                     ]
                 ]); 
         }   

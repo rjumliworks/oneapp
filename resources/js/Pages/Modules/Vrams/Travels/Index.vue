@@ -46,14 +46,13 @@
                             <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist">
                                 <li class="nav-item">
                                     <BLink @click="viewStatus(null,null)" class="nav-link py-3 active" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                    <i class="ri-apps-2-line me-1 align-bottom"></i> All Surveys
+                                    <i class="ri-apps-2-line me-1 align-bottom"></i> All Travel Request
                                     </BLink>
                                 </li>
-                                <li class="nav-item" v-for="(list,index) in counts" v-bind:key="index">
-                                    <BLink @click="viewStatus(index,list.value)" class="nav-link py-3" :class="(this.index == index) ? 'text-primary active' : ''" data-bs-toggle="tab" role="tab" aria-selected="false">
-                                        <i :class="list.icon" class="me-1 align-bottom"></i>
-                                        {{ list.name }} 
-                                        <BBadge v-if="list.count > 0" :class="(this.index == index) ? 'bg-primary text-white' : 'text-dark bg-primary-subtle'" class="align-middle ms-1">{{list.count}}</BBadge>
+                                <li class="nav-item" v-for="(list,index) in dropdowns.statuses" v-bind:key="index">
+                                    <BLink @click="viewStatus(index,list.value)" class="nav-link py-3" :class="(this.index == index) ? list.others+' active' : ''" data-bs-toggle="tab" role="tab" aria-selected="false">
+                                        <i :class="icons[index]" class="me-1 align-bottom"></i>
+                                        {{ list.name }} <BBadge v-if="counts[index] > 0" :class="list.color" class="align-middle ms-1">{{counts[index]}}</BBadge>
                                     </BLink>
                                 </li>
                             </ul>
@@ -132,8 +131,10 @@ export default {
             filter: {
                 keyword: null,
                 mode: null,
-                expense: null
+                expense: null,
+                status: null
             },
+            icons: ['ri-information-line','ri-wallet-3-line','ri-indeterminate-circle-line','ri-checkbox-circle-line','ri-close-circle-line','ri-pin-distance-fill'],
             index: null,
             units: []
         }
@@ -162,6 +163,7 @@ export default {
                 params : {
                     keyword: this.filter.keyword,
                     expense: this.filter.expense,
+                    status: this.filter.status,
                     mode: this.filter.mode,
                     count: 10, 
                     option: 'lists'
@@ -190,6 +192,11 @@ export default {
 
             const year = startDate.getFullYear(); // assume same year
             return `${startStr}-${endStr}, ${year}`;
+        },
+        viewStatus(index,status){
+            this.index = index;
+            this.filter.status = status;
+            this.fetch();
         },
         openCreate(){
             this.$refs.create.show();

@@ -30,23 +30,27 @@ class ViewClass
             ->orWhereRaw('LOWER(destination) LIKE ?', ['%' . strtolower($keyword) . '%'])
             ->orWhereRaw('LOWER(purpose) LIKE ?', ['%' . strtolower($keyword) . '%']);
         })
+        ->when($request->status, function ($query, $status) {
+            $query->whereHas('request', function ($query) use ($status) {
+               $query->where('status_id',$status);
+            });
+        })
         ->latest() 
         ->paginate($request->count ?? 10);
 
         return TravelResource::collection($data);
     }
+
+    public function counts($statuses){
+        foreach($statuses as $status){
+            $counts[] = Travel::
+            whereHas('request',function ($query) use ($status){
+                $query->where('status_id',$status['value']);
+            })
+            ->count();
+        }
+        return $counts;
+    }
 }
 
-//  ->when($request->date, function ($query, $date) {
-//                 $query ->where('date',$date);
-//             })
-//   ->when($request->keyword, function ($query, $keyword) {
-//                 $query->whereHas('user',function ($query) use ($keyword) {
-//                     $query->whereHas('profile',function ($query) use ($keyword) {
-//                         $query->when($keyword, function ($query, $keyword) {
-//                             $query->whereRaw('concat(firstname, " ", lastname) LIKE ?', ['%' . $keyword . '%'])
-//                             ->orWhereRaw('concat(lastname, " ", firstname) LIKE ?', ['%' . $keyword . '%']);
-//                         });
-//                     });
-//                 });
-//             })
+

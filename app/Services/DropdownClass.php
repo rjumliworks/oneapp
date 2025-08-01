@@ -176,14 +176,14 @@ class DropdownClass
         return $data;
     }
 
-    public function statuses(){
-        $data = ListStatus::where('classification','Status')->where('is_active',1)->get()->map(function ($item) {
+    public function statuses($type){
+        $data = ListStatus::where('classification',$type)->where('is_active',1)->get()->map(function ($item) {
             return [
                 'value' => $item->id,
                 'name' => $item->name,
                 'type' => $item->type,
                 'color' => $item->color,
-                'color' => $item->others,
+                'others' => $item->others,
             ];
         });
         return $data;
