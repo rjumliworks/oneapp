@@ -14,7 +14,7 @@ class SaveClass
             'user_id' => \Auth::user()->id
         ]);
         if($data){
-            foreach ($request->users ?? [] as $userId) {
+            foreach ($request->tags ?? [] as $userId) {
                 $data->tags()->create([
                     'user_id' => intval($userId),
                 ]);

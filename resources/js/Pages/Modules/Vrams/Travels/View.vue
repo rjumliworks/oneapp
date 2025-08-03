@@ -13,15 +13,13 @@
                                           
                                             <BCol md>
                                                 <div>
-                                                    <h4 class="fw-bold">{{ survey.year }} - {{ survey.semester.name }} </h4>
+                                                    <h4 class="fw-bold">{{ information.destination }} </h4>
                                                     <div class="hstack gap-3 flex-wrap">
-                                                        <div><i class="ri-qr-code-fill align-bottom me-1"></i> {{survey.year}}</div>
+                                                        <div><i class="ri-qr-code-fill align-bottom me-1"></i> {{information.code}}</div>
                                                         <div class="vr" style="width: 1px;"></div>
-                                                        <div><span class="text-muted">Date Finished: </span> <span class="fw-medium">{{survey.finished_at}}</span></div>
+                                                        <div><span class="text-muted">Date Created : </span> <span class="fw-medium">{{information.created_at}}</span></div>
                                                         <div class="vr" style="width: 1px;"></div>
-                                                        <div><span class="text-muted">Date Created: </span> <span class="fw-medium">{{survey.created_at}}</span></div>
-                                                        <div class="vr" style="width: 1px;"></div>
-                                                        <div><span class="text-muted">Created By: </span> <span class="fw-medium">{{survey.user.profile.firstname}} {{survey.user.profile.lastname}}</span></div>
+                                                        <div><span class="text-muted">Created By : </span> <span class="fw-medium">{{information.employee}}</span></div>
                                                         <div class="vr"></div>
                                                     </div>
                                                 </div>
@@ -40,11 +38,11 @@
                         </div>
                     </BCard>
                 </BCol>
-                <BCol lg="3">
-                    <Sidebar :survey="survey" :counts="counts"/>
+                <BCol lg="6">
+                    <Sidebar :information="information_data.data"/>
                 </BCol>
-                <BCol lg="9">
-                    <Main :divisions="divisions" :survey="survey"/>
+                <BCol lg="6">
+                    <Main :information="information_data"/>
                 </BCol>
             </BRow>
         </div>
@@ -54,17 +52,16 @@
 import Main from './Components/Main.vue';
 import Sidebar from './Components/Sidebar.vue';
 export default {
+    props: ['information_data'],
     components: { Main, Sidebar },
-    props:['survey_data','counts','divisions'],
     data(){
         return {
-            currentUrl: window.location.origin,
-            survey: this.survey_data.data
+            information: this.information_data.data
         }
     },
     methods: {
         back(){
-            this.$inertia.visit('/surveys');
+            this.$inertia.visit('/travels');
         }
     }
 }

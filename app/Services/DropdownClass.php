@@ -31,6 +31,7 @@ class DropdownClass
                 'value' => $item->id,
                 'name' => $item->name,
                 'others' => $item->others,
+                'color' => $item->color,
                 'type' => $item->type
             ];
         });
@@ -136,46 +137,6 @@ class DropdownClass
         return $data;
     }
 
-    public function levels(){
-        $data = ListData::where('type','Level')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
-    public function eligibilities(){
-        $data = ListData::where('type','Eligibility')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
-    public function licenses(){
-        $data = ListData::where('type','License')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
-    public function types(){
-        $data = ListData::where('type','Type')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
     public function statuses($type){
         $data = ListStatus::where('classification',$type)->where('is_active',1)->get()->map(function ($item) {
             return [
@@ -253,57 +214,6 @@ class DropdownClass
         return $data;
     }
 
-    public function divisions(){
-        $data = ListDropdown::where('classification','Division')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name,
-                'others' => $item->others
-            ];
-        });
-        return $data;
-    }
-
-    public function religions(){
-        $data = ListData::where('type','Religion')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
-    public function bloods(){
-        $data = ListData::where('type','Blood Type')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
-    public function maritals(){
-        $data = ListData::where('type','Marital Status')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
-    public function employment_statuses(){
-        $data = ListData::where('type','Employment Status')->where('is_active',1)->get()->map(function ($item) {
-            return [
-                'value' => $item->id,
-                'name' => $item->name
-            ];
-        });
-        return $data;
-    }
-
     public function roles(){
         $data = ListRole::where('is_active',1)->get()->map(function ($item) {
             return [
@@ -366,26 +276,31 @@ class DropdownClass
         return $data;
     }
 
-    public function users($keyword,$is_regular){
+    public function users($keyword,$is_regular = null){
         $data =  User::with('profile')
         ->with('organization.position')
-        ->when($is_regular == 1, function ($query) {
+        ->when(!is_null($is_regular) && $is_regular == 1, function ($query) {
             $query->whereHas('organization', function ($query) {
                 $query->where('type_id', 15);
             });
         })
         ->when($keyword, function ($query) use ($keyword){
-            $query->whereHas('profile', function ($query) use ($keyword) {
-                $query->whereRaw('concat(firstname, " ", lastname) LIKE ?', ['%' . $keyword . '%'])
-                    ->orWhereRaw('concat(lastname, " ", firstname) LIKE ?', ['%' . $keyword . '%']);
+            $query->whereHas('profile', function ($q) use ($keyword) {
+                $q->where('firstname', 'like', '%' . $keyword . '%')
+                ->orWhere('lastname', 'like', '%' . $keyword . '%')
+                ->orWhereRaw('concat(firstname, " ", lastname) LIKE ?', ['%' . $keyword . '%'])
+                ->orWhereRaw('concat(lastname, " ", firstname) LIKE ?', ['%' . $keyword . '%']);
             });
         })
         ->limit(5)->get()->map(function ($item) {
             return [
                 'value' => $item->id,
                 'name' => $item->profile->lastname . ', ' . $item->profile->firstname . ' ' . $item->profile->middlename . '.',
-                'position' => $item->organization->position->name,
-                'avatar' => ($item->profile->avatar != 'avatar.jpg') ? '/storage/profile-pictures/'.$item->profile->avatar : '/images/avatars/avatar.jpg'
+                'position' => optional($item->organization->position)->name,
+                'type' => $item->organization->type->name,
+                'avatar' => ($item->profile->avatar != 'avatar.jpg') 
+                            ? '/storage/profile-pictures/' . $item->profile->avatar 
+                            : '/images/avatars/avatar.jpg',
             ];
         });
         return $data;

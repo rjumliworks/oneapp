@@ -17,6 +17,7 @@ class TravelRequest extends FormRequest
             'purpose' => 'sometimes|required',
             'destination' => 'sometimes|required',
             'expenses' => 'required|array|min:1',
+            'tags' => 'required|array|min:1',
             'expense_id' => 'sometimes|required|integer',
             'mode_id' => 'sometimes|required|integer',
             'date' => 'sometimes|required',
@@ -54,6 +55,8 @@ class TravelRequest extends FormRequest
 
             'expenses.array' => 'Expenses must be a valid list.',
             'expenses.required' => 'Please select at least one expense.',
+
+            'tags.required' => 'Please select at least one employee.',
 
             'document.file' => 'The travel document must be a valid file.',
             'document.mimes' => 'The travel document must be a PDF file.',

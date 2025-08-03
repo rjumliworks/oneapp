@@ -72,7 +72,7 @@ class SurveyController extends Controller
         return inertia('Modules/HumanResource/Surveys/View',[
             'survey_data' => $this->view->view($code),
             'counts' => $this->view->counts($code),
-            'divisions' => $this->dropdown->divisions()
+            'divisions' => $this->dropdown->dropdowns('Division')
         ]);
     }
 }

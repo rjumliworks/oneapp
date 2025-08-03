@@ -30,15 +30,15 @@ class EmployeeController extends Controller
             default:
                 return inertia('Modules/HumanResource/Employees/Index',[
                     'dropdowns' => [
-                        'bloods' => $this->dropdown->bloods(),
-                        'religions' => $this->dropdown->religions(),
-                        'maritals' => $this->dropdown->maritals(),
-                        'divisions' => $this->dropdown->divisions(),
+                        'bloods' => $this->dropdown->datas('Blood Type'),
+                        'religions' => $this->dropdown->datas('Religion'),
+                        'maritals' => $this->dropdown->datas('Marital Status'),
+                        'divisions' => $this->dropdown->dropdowns('Division'),
                         'stations' => $this->dropdown->stations(),
                         'positions' => $this->dropdown->positions(),
                         'salaries' => $this->dropdown->salaries(),
-                        'statuses' => $this->dropdown->statuses(),
-                        'employment_statuses' => $this->dropdown->employment_statuses()
+                        'statuses' => $this->dropdown->statuses('Status'),
+                        'employment_statuses' => $this->dropdown->datas('Employment Status')
                     ],
                     'counts' => $this->view->counts()
                 ]); 
@@ -101,17 +101,18 @@ class EmployeeController extends Controller
         return inertia('Modules/HumanResource/Employees/View',[
             'employee_data' => $this->view->view($code),
             'dropdowns' => [
-                'eligibilities' => $this->dropdown->eligibilities(),
-                'licenses' => $this->dropdown->licenses(),
-                'levels' => $this->dropdown->levels(),
-                'types' => $this->dropdown->types(),
-                'divisions' => $this->dropdown->divisions(),
+                'eligibilities' => $this->dropdown->datas('Eligibility'),
+                'licenses' => $this->dropdown->datas('License'),
+                'levels' => $this->dropdown->datas('Level'),
+                'types' => $this->dropdown->datas('Type'),
+                'divisions' => $this->dropdown->dropdowns('Division'),
                 'stations' => $this->dropdown->stations(),
                 'positions' => $this->dropdown->positions(),
                 'salaries' => $this->dropdown->salaries(),
                 'deductions' => $this->dropdown->deductions(),
-                'employment_statuses' => $this->dropdown->employment_statuses()
+                'employment_statuses' => $this->dropdown->datas('Employment Status')
             ],
         ]);
     }
+
 }

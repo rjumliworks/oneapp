@@ -21,6 +21,27 @@ class DashboardController extends Controller
         $this->dropdown = $dropdown;
     }
 
+    public function search(Request $request){
+        $option = $request->option;
+        switch($option){
+            case 'provinces':
+                return $this->dropdown->provinces($request->code);
+            break;
+            case 'municipalities':
+                return $this->dropdown->municipalities($request->code);
+            break;
+            case 'barangays':
+                return $this->dropdown->barangays($request->code);
+            break;
+            case 'units':
+                return $this->dropdown->units($request->code);
+            break;
+            case 'users':
+                return $this->dropdown->users($request->keyword,$request->is_regular);
+            break;
+        }
+    }
+
     public function index(Request $request){
         // $this->dtr($request);
         if(!\Auth::check()){
@@ -121,26 +142,6 @@ class DashboardController extends Controller
         }
     }
 
-    public function search(Request $request){
-        $option = $request->option;
-        switch($option){
-            case 'provinces':
-                return $this->dropdown->provinces($request->code);
-            break;
-            case 'municipalities':
-                return $this->dropdown->municipalities($request->code);
-            break;
-            case 'barangays':
-                return $this->dropdown->barangays($request->code);
-            break;
-            case 'units':
-                return $this->dropdown->units($request->code);
-            break;
-            case 'users':
-                return $this->dropdown->users($request->keyword,$request->is_regular);
-            break;
-        }
-    }
 
     public function dtr($request){
         // $time = Carbon::createFromTimestamp(1750119565)->format('g:i A');

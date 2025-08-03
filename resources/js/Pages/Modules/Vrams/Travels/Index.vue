@@ -71,6 +71,7 @@
                                 <tr class="fs-11">
                                     <th style="width: 3%;" class="text-center">#</th>
                                     <th>Purpose & Destination</th>
+                                    <th style="width: 10%;" class="text-center">Personnel</th>
                                     <th style="width: 10%;" class="text-center">Travel Dates</th>
                                     <th style="width: 10%;" class="text-center">Mode of Travel</th>
                                     <th style="width: 10%;" class="text-center">Expense Type</th>
@@ -86,6 +87,7 @@
                                         <h5 class="fs-13 mb-0 fw-semibold text-primary">{{list.destination }}</h5>
                                         <p class="fs-12 text-muted mb-0">{{list.purpose}}</p>
                                     </td>
+                                    <td class="text-center">-</td>
                                     <td class="text-center">{{formatDateRange(list.start, list.end)}}</td>
                                     <td class="text-center">{{list.mode.name}}</td>
                                     <td class="text-center">{{list.expense.name}}</td>
@@ -94,7 +96,7 @@
                                         <span :class="'badge '+list.status.color">{{list.status.name}}</span>
                                     </td>
                                     <td class="text-end">
-                                        <Link :href="`/surveys/${list.code}`">
+                                        <Link :href="`/travels/${list.key}`">
                                             <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
                                                 <i class="ri-eye-fill align-bottom"></i>
                                             </b-button>

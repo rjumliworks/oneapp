@@ -52,4 +52,10 @@ class TravelController extends Controller
             'status' => $result['status'],
         ]);
     }
+
+    public function show($code){
+        return inertia('Modules/Vrams/Travels/View',[
+            'information_data' => $this->view->show($code)
+        ]);
+    }
 }

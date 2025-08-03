@@ -2,11 +2,34 @@
 
 namespace App\Services\Vrams\Travel;
 
+use Hashids\Hashids;
 use App\Models\Travel;
 use App\Http\Resources\Vrams\TravelResource;
 
 class ViewClass
-{
+{   
+    public function show($code){
+        $hashids = new Hashids('krad',10);
+        $id = $hashids->decode($code);
+
+        $data = Travel::with([
+            'mode',
+            'expense',
+            'request.tags.user:id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar',
+            'request.statuses.user:id',
+            'request.statuses.user.profile:user_id,firstname,middlename,lastname',
+            'request.statuses.status',
+            'request.status',
+            'request.user:id',
+            'request.user.profile:user_id,firstname,middlename,lastname',
+        ])
+        ->where('id',$id)
+        ->first();
+
+        return new TravelResource($data);
+    }
+
     public function travel($request){
         $data = Travel::with([
             'mode',

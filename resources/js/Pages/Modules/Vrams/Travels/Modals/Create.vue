@@ -15,6 +15,24 @@
                     <TextInput id="name" v-model="form.remarks" type="text" class="form-control" placeholder="Please enter remarks" @input="handleInput('remarks')" :light="true"/>
                 </BCol>
 
+                <BCol lg="12" class="mt-0 mb-0">
+                    <InputLabel for="role" value="Employees" :message="form.errors.tags"/>
+                    <Multiselect
+                        v-model="form.tags"
+                        :options="employees"
+                        mode="tags"
+                        @search-change="checkSearchStr"
+                        :multiple="true"
+                        :searchable="true"
+                        :loading="isLoading"
+                        label="name"
+                        :preserve-search="true"
+                        :filter-results="false"
+                        placeholder="Select Employee"
+                        ref="multiselect2"
+                        />
+                </BCol>
+
                 <BCol lg="12">
                     <hr class="text-muted mt-n1"/>
                 </BCol>
@@ -107,6 +125,7 @@
     </b-modal>
 </template>
 <script>
+import _ from 'lodash';
 import { useForm } from '@inertiajs/vue3';
 import flatPickr from "vue-flatpickr-component";
 import Multiselect from "@vueform/multiselect";
@@ -131,7 +150,8 @@ export default {
                 time: null,
                 mode_id: null,                
                 expense_id: null,
-                expenses: []
+                expenses: [],
+                tags: []
             }),
             config: {
                 enableTime: false,
@@ -140,6 +160,8 @@ export default {
                 altFormat: "M d, Y",
                 mode: "range"
             },
+            employees: [],
+            isLoading: false,
             showModal: false
         }
     },
@@ -173,7 +195,22 @@ export default {
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
-        },        
+        },  
+        checkSearchStr: _.debounce(function(string) {
+            (string) ? this.searchUser(string) : '';
+        }, 300),
+        searchUser(string){
+            axios.get('/search',{
+                params: {
+                    option: 'users',
+                    keyword: string
+                }
+            })
+            .then(response => {
+                this.employees = response.data;
+            })
+            .catch(err => console.log(err));
+        },      
         handleAddFile(error, fileItem) {
             if (error) return console.error('FilePond error:', error);
             this.form.document = fileItem.file;
