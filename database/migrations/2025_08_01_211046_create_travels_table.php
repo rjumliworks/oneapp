@@ -28,6 +28,11 @@ return new class extends Migration
             $table->foreign('expense_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->bigInteger('request_id')->unsigned()->index();
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
+            $table->unsignedInteger('recommended_id')->nullable();
+            $table->foreign('recommended_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedInteger('approved_id')->nullable();
+            $table->foreign('approved_id')->references('id')->on('users')->onDelete('cascade');
+            $table->boolean('is_ard')->default(0);
             $table->timestamps();
         });
     }

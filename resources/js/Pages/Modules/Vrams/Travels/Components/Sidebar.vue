@@ -24,7 +24,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 fs-12">Purpose :</p>
+                            <p class="mb-0 text-muted fs-12">Purpose :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.purpose }} </h6>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 fs-12">Destination :</p>
+                            <p class="mb-0 text-muted fs-12">Destination :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.destination }} </h6>
                         </div>
                     </div>
@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 fs-12">Travel Date(s) :</p>
+                            <p class="mb-0 text-muted fs-12">Travel Date(s) :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{formatDateRange(information.start, information.end)}} </h6>
                         </div>
                     </div>
@@ -61,7 +61,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 fs-12">Status :</p>
+                            <p class="mb-0 text-muted fs-12">Status :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{information.status.name}} </h6>
                         </div>
                     </div>
@@ -110,7 +110,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 fs-12">Expense Type :</p>
+                            <p class="mb-0 text-muted fs-12">Expense Type :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.expense.name }} </h6>
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0  fs-12">Mode of Travel :</p>
+                            <p class="mb-0 text-muted fs-12">Mode of Travel :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.mode.name }} </h6>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 fs-12">Departure Time :</p>
+                            <p class="mb-0 text-muted fs-12">Departure Time :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.time }} </h6>
                         </div>
                     </div>

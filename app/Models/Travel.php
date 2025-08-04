@@ -25,6 +25,8 @@ class Travel extends Model
         'mode_id',
         'expense_id',
         'request_id',
+        'recommended_id',
+        'approved_id',
         'expenses'
     ];
 
@@ -64,7 +66,17 @@ class Travel extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return date('F d, Y g:i a', strtotime($value));
+        return date('M d, Y g:i a', strtotime($value));
+    }
+
+    public function recommended()
+    {
+        return $this->belongsTo('App\Models\User', 'recommended_id', 'id');
+    }
+
+    public function approved()
+    {
+        return $this->belongsTo('App\Models\User', 'approved_id', 'id');
     }
 
     protected static $expenseLabels = [

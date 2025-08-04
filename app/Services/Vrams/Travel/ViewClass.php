@@ -15,6 +15,8 @@ class ViewClass
         $data = Travel::with([
             'mode',
             'expense',
+            'approved.user.profile:user_id,firstname,middlename,lastname',
+            'recommended.user.profile:user_id,firstname,middlename,lastname',
             'request.tags.user:id',
             'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar',
             'request.statuses.user:id',
@@ -34,6 +36,8 @@ class ViewClass
         $data = Travel::with([
             'mode',
             'expense',
+            'approved.user.profile:user_id,firstname,middlename,lastname',
+            'recommended.user.profile:user_id,firstname,middlename,lastname',
             'request.tags.user:id',
             'request.tags.user.profile:user_id,firstname,middlename,lastname',
             'request.statuses.user:id',

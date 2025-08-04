@@ -28,6 +28,8 @@ class TravelResource extends JsonResource
             'mode' => $this->mode,
             'tags' => TagResource::collection($this->request->tags),
             'expense' => $this->expense,
+            'recommended' => $this->recommended,
+            'approved' => $this->approved,
             'expenses' => $this->expense_items, 
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

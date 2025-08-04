@@ -1,16 +1,27 @@
 <template>
-    <b-modal v-model="showModal" style="--vz-modal-width: 750px;" header-class="p-3 bg-light" title="File Travel Order" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+    <b-modal v-model="showModal" style="--vz-modal-width: 950px;" header-class="p-3 bg-light" title="File Travel Order" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform">
             <BRow class="g-3">
                 <BCol lg="12" class="mt-2">
                     <InputLabel for="name" value="Purpose" :message="form.errors.purpose"/>
                     <TextInput id="name" v-model="form.purpose" type="text" class="form-control" placeholder="Please enter purpose" @input="handleInput('purpose')" :light="true"/>
                 </BCol>
-                <BCol lg="6" class="mt-0">
+                <BCol lg="4" class="mt-0">
                     <InputLabel for="name" value="Destination" :message="form.errors.destination"/>
                     <TextInput id="name" v-model="form.destination" type="text" class="form-control" placeholder="Please enter destination" @input="handleInput('destination')" :light="true"/>
                 </BCol>
-                <BCol lg="6" class="mt-0">
+                <BCol lg="4" class="mt-0"> 
+                    <label>Travel Date <span v-if="form.errors.date" class="text-danger" style="font-size: 9px;">({{ form.errors.date }})</span></label>
+                    <div>
+                        <flat-pickr ref="datepicker" 
+                        placeholder="Select date" 
+                        v-model="form.date" 
+                        :config="config"
+                        class="form-control flatpickr-input" id="calendar">
+                        </flat-pickr>
+                    </div>
+                </BCol>
+                <BCol lg="4" class="mt-0">
                     <InputLabel for="name" value="Remarks" :message="form.errors.remarks"/>
                     <TextInput id="name" v-model="form.remarks" type="text" class="form-control" placeholder="Please enter remarks" @input="handleInput('remarks')" :light="true"/>
                 </BCol>
@@ -37,22 +48,7 @@
                     <hr class="text-muted mt-n1"/>
                 </BCol>
 
-                <BCol lg="6" class="mt-n2"> 
-                    <label>Travel Date <span v-if="form.errors.date" class="text-danger" style="font-size: 9px;">({{ form.errors.date }})</span></label>
-                    <div>
-                        <flat-pickr ref="datepicker" 
-                        placeholder="Select date" 
-                        v-model="form.date" 
-                        :config="config"
-                        class="form-control flatpickr-input" id="calendar">
-                        </flat-pickr>
-                    </div>
-                </BCol>
-                <BCol lg="6" class="mt-n2">
-                    <InputLabel for="name" value="Time" :message="form.errors.time"/>
-                    <TextInput id="name" v-model="form.time" type="time" class="form-control" placeholder="Please enter time" @input="handleInput('time')" :light="true"/>
-                </BCol>
-                <BCol lg="6" class="mt-0">
+                <BCol lg="4" class="mt-n2">
                     <InputLabel for="name" value="Travel Expense" :message="form.errors.expense_id"/>
                     <Multiselect
                         v-model="form.expense_id" 
@@ -61,7 +57,7 @@
                         placeholder="Select type"
                     />
                 </BCol>
-                <BCol lg="6" class="mt-0">
+                <BCol lg="4" class="mt-n2">
                     <InputLabel for="name" value="Mode of Travel" :message="form.errors.mode_id"/>
                     <Multiselect
                         v-model="form.mode_id" 
@@ -69,6 +65,10 @@
                         label="name"
                         placeholder="Select type"
                     />
+                </BCol>
+                <BCol lg="4" class="mt-n2">
+                    <InputLabel for="name" value="Departure Time" :message="form.errors.time"/>
+                    <TextInput id="name" v-model="form.time" type="time" class="form-control" placeholder="Please enter time" @input="handleInput('time')" :light="true"/>
                 </BCol>
 
                 <BCol lg="12">
