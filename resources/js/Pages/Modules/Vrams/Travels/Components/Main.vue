@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 510px); overflow: auto;">
+        <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 517px); overflow: auto;">
             <div class="d-flex mb-4">
                 <div class="flex-shrink-0">
                     <img src="/assets/images/users/avatar-8.jpg" alt="" class="avatar-xs rounded-circle" />
