@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        <div class="card bg-white rounded-bottom shadow-none mb-0" style="height: calc(100vh - 340px); overflow-x: hidden; overflow-y: auto;">
+        <div class="card bg-white rounded-bottom shadow-none mb-0" style="height: calc(100vh - 342px); overflow-x: hidden; overflow-y: auto;">
             <div class="row g-3 p-3">
                 <div class="col-md-12">
                     <div class="d-flex border border-dashed rounded p-3">
@@ -29,7 +29,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-map-pin-fill"></i>
@@ -37,11 +37,11 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-0 text-muted fs-12">Destination :</p>
-                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.destination }} </h6>
+                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.location.name }} </h6>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-calendar-todo-fill"></i>
@@ -50,19 +50,6 @@
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-0 text-muted fs-12">Travel Date(s) :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{formatDateRange(information.start, information.end)}} </h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-flex border border-dashed rounded p-3">
-                        <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div v-if="information.status.name == 'Pending'" class="avatar-title bg-light rounded-circle fs-16 text-warning">
-                                <i class="ri-record-circle-fill"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Status :</p>
-                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{information.status.name}} </h6>
                         </div>
                     </div>
                 </div>

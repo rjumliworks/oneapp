@@ -46,9 +46,29 @@ class Request extends Model
         return $this->hasMany('App\Models\RequestTag', 'request_id');
     }
 
+    public function detail()
+    {
+        return $this->hasOne('App\Models\RequestDetail', 'request_id');
+    }
+
+    public function location()
+    {
+        return $this->hasOne('App\Models\RequestLocation', 'request_id');
+    }
+
+    public function dates()
+    {
+        return $this->hasMany('App\Models\RequestDate', 'request_id');
+    }
+
     public function travels()
     {
         return $this->hasMany('App\Models\Travel', 'request_id');
+    }
+
+    public function reservations()
+    {
+        return $this->hasMany('App\Models\Reservation', 'request_id');
     }
 
     public function updateIfDirty(array $attributes){

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -15,14 +14,8 @@ class Travel extends Model
     protected $table = 'travels';
 
     protected $fillable = [
-        'purpose',
-        'destination',
-        'remarks',
-        'start',
-        'end',
-        'time',
-        'document',
         'mode_id',
+        'transpo_id',
         'expense_id',
         'request_id',
         'recommended_id',
@@ -33,10 +26,15 @@ class Travel extends Model
     protected $casts = [
         'expenses' => 'array'
     ];
-    
+
     public function mode()
     {
         return $this->belongsTo('App\Models\ListData', 'mode_id', 'id');
+    }
+    
+    public function transpo()
+    {
+        return $this->belongsTo('App\Models\ListData', 'transpo_id', 'id');
     }
 
     public function expense()
@@ -47,16 +45,6 @@ class Travel extends Model
     public function request()
     {
         return $this->belongsTo('App\Models\Request', 'request_id', 'id');
-    }
-
-    public function getStartAttribute($value)
-    {
-        return date('F d, Y', strtotime($value));
-    }
-
-    public function getEndAttribute($value)
-    {
-        return date('F d, Y', strtotime($value));
     }
 
     public function getUpdatedAtAttribute($value)
@@ -95,11 +83,6 @@ class Travel extends Model
             ];
         });
     }
-
-    public function getTimeAttribute($value)
-    {
-        return Carbon::parse($value)->format('g:i A'); 
-    }
     
     public function updateIfDirty(array $attributes){
         $this->fill($attributes);
@@ -115,13 +98,6 @@ class Travel extends Model
     public function getActivitylogOptions(): LogOptions {
         return LogOptions::defaults()
         ->logOnly([
-            'purpose',
-            'destination',
-            'remarks',
-            'start',
-            'end',
-            'time',
-            'document',
             'mode_id',
             'expense_id',
             'request_id',

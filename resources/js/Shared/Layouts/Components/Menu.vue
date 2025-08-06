@@ -9,6 +9,13 @@
                 <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
                 </Link>
             </li>
+            <!-- <li class="nav-item">
+                <Link href="/schedules" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/Employee/Schedules') }">
+                <i class="ri-calendar-todo-fill"></i>
+                <span class="fw-semibold fs-14" data-key="t-dashboards">Schedules</span>
+                </Link>
+            </li> -->
             <tempalte v-if="$page.props.roles.includes('Travel Controler Officer')">
                 <li class="menu-title">
                     <i class="ri-more-fill" aria-expanded="false"></i>
@@ -69,7 +76,7 @@
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Morale Surveys</span>
                     </Link>
                 </li>
-                  <li class="nav-item">
+                <li class="nav-item">
                     <Link href="/calendar" class="nav-link menu-link"
                         :class="{'active': $page.component.startsWith('Modules/HumanResource/Calendar') }">
                     <i class="ri-calendar-fill"></i>
@@ -83,8 +90,8 @@
                     <span data-key="t-menu">Transportation Management</span>
                 </li>
                 <li class="nav-item">
-                    <Link href="/patients/create" class="nav-link menu-link"
-                   :class="{'active': $page.component.startsWith('Modules/Vrams/Vehicle') }">
+                    <Link href="/reservations" class="nav-link menu-link"
+                   :class="{'active': $page.component.startsWith('Modules/Vrams/Reservations') }">
                     <i class="ri-taxi-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Vehicle Reservation</span>
                     </Link>
@@ -97,9 +104,9 @@
                     </Link>
                 </li>
                 <li class="nav-item">
-                    <Link href="/appointments" class="nav-link menu-link"
-                        :class="{'active': $page.component.startsWith('Appointments') }">
-                    <i class="ri-calendar-todo-fill"></i>
+                    <Link href="/travels/calendar" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/Vrams/Calendar') }">
+                    <i class="ri-calendar-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Calendar</span>
                     </Link>
                 </li>

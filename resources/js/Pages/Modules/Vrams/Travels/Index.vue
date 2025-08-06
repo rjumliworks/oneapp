@@ -28,8 +28,8 @@
                             <div class="input-group mb-1">
                                 <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
                                 <input type="text" v-model="filter.keyword" placeholder="Search Travel Order" class="form-control" style="width: 40%;">
-                                <Multiselect class="white" style="width: 13%;" :options="dropdowns.modes" v-model="filter.mode" label="name" :searchable="true" placeholder="Select Travel Mode" />
-                                <Multiselect class="white" style="width: 13%;" :options="dropdowns.expenses" v-model="filter.expense" label="name" :searchable="true" placeholder="Select Expense Type" />
+                                <Multiselect class="white" style="width: 15%;" :options="dropdowns.modes" v-model="filter.mode" label="name" :searchable="true" placeholder="Select Travel Mode" />
+                                <Multiselect class="white" style="width: 15%;" :options="dropdowns.expenses" v-model="filter.expense" label="name" :searchable="true" placeholder="Select Expense Type" />
                                 <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                                     <i class="bx bx-refresh search-icon"></i>
                                 </span>
@@ -72,9 +72,9 @@
                                     <th style="width: 3%;" class="text-center">#</th>
                                     <th>Purpose & Destination</th>
                                     <th style="width: 10%;" class="text-center">Personnel</th>
-                                    <th style="width: 10%;" class="text-center">Travel Dates</th>
-                                    <th style="width: 10%;" class="text-center">Mode of Travel</th>
-                                    <th style="width: 10%;" class="text-center">Expense Type</th>
+                                    <th style="width: 15%;" class="text-center">Travel Dates</th>
+                                    <!-- <th style="width: 10%;" class="text-center">Mode of Travel</th>
+                                    <th style="width: 10%;" class="text-center">Expense Type</th> -->
                                     <th style="width: 10%;" class="text-center">Date Filed</th>
                                     <th style="width: 7%;" class="text-center">Status</th>
                                     <th style="width: 5%;"></th>
@@ -84,13 +84,22 @@
                                 <tr v-for="(list,index) in lists" v-bind:key="index" >
                                     <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
                                     <td>
-                                        <h5 class="fs-13 mb-0 fw-semibold text-primary">{{list.destination }}</h5>
+                                        <h5 class="fs-13 mb-0 fw-semibold text-primary">{{list.location.name }}</h5>
                                         <p class="fs-12 text-muted mb-0">{{list.purpose}}</p>
                                     </td>
-                                    <td class="text-center">-</td>
+                                    <td class="text-center align-middle">
+                                        <div class="avatar-group  d-inline-flex justify-content-center">
+                                            <div class="avatar-group-item material-shadow"  v-for="(list, index) of list.tags" :key="index">
+                                                <!-- <a href="javascript: void(0);" class="d-inline-block" 
+                                                v-b-tooltip.hover="{title: list.name,placement: 'top',customClass: 'my-tooltip-class'}"> -->
+                                                    <img :src="list.avatar" alt="" class="rounded-circle avatar-xs">
+                                                <!-- </a> -->
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td class="text-center">{{formatDateRange(list.start, list.end)}}</td>
-                                    <td class="text-center">{{list.mode.name}}</td>
-                                    <td class="text-center">{{list.expense.name}}</td>
+                                    <!-- <td class="text-center">{{list.mode.name}}</td>
+                                    <td class="text-center">{{list.expense.name}}</td> -->
                                     <td class="text-center">{{ list.created_at }}</td>
                                     <td class="text-center">
                                         <span :class="'badge '+list.status.color">{{list.status.name}}</span>

@@ -39,6 +39,9 @@ class DashboardController extends Controller
             case 'users':
                 return $this->dropdown->users($request->keyword,$request->is_regular);
             break;
+            case 'vehicles':
+                return $this->dropdown->vehicles($request->keyword);
+            break;
         }
     }
 

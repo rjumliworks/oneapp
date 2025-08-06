@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\ListUnit;
 use App\Models\ListData;
@@ -16,6 +17,7 @@ use App\Models\LocationRegion;
 use App\Models\LocationProvince;
 use App\Models\LocationMunicipality;
 use App\Models\LocationBarangay;
+use App\Models\ListVehicle;
 
 class DropdownClass
 {  
@@ -304,5 +306,34 @@ class DropdownClass
             ];
         });
         return $data;
+    }
+
+    public function vehicles($date){
+        if(strpos($date, ' to ') !== false) {
+            [$start, $end] = explode(' to ', $date);
+        } else {
+            $start = $end = $date;
+        }
+
+        $start = Carbon::parse($start)->startOfDay();
+        $end = Carbon::parse($end)->endOfDay();
+
+        $vehicles = ListVehicle::whereDoesntHave('reservations.request.dates', function ($query) use ($start, $end) {
+            $query->where(function ($q) use ($start, $end) {
+                $q->whereBetween('start', [$start, $end])
+                ->orWhereBetween('end', [$start, $end])
+                ->orWhere(function ($q2) use ($start, $end) {
+                    $q2->where('start', '<=', $start)
+                        ->where('end', '>=', $end);
+                });
+            });
+        })->get()->map(function ($item) {
+            return [
+                'value' => $item->id,
+                'name' => $item->name,
+            ];
+        });
+
+        return $vehicles;
     }
 }

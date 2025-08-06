@@ -1,14 +1,25 @@
 <template>
-    <b-modal v-model="showModal" style="--vz-modal-width: 950px;" header-class="p-3 bg-light" title="File Travel Order" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+    <b-modal v-model="showModal" style="--vz-modal-width: 1000px;" header-class="p-3 bg-light" title="File Travel Order" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform">
-            <BRow class="g-3">
+            <BRow class="g-3 p-2">
                 <BCol lg="12" class="mt-2">
                     <InputLabel for="name" value="Purpose" :message="form.errors.purpose"/>
                     <TextInput id="name" v-model="form.purpose" type="text" class="form-control" placeholder="Please enter purpose" @input="handleInput('purpose')" :light="true"/>
                 </BCol>
-                <BCol lg="4" class="mt-0">
+                <!-- <BCol lg="4" class="mt-0">
                     <InputLabel for="name" value="Destination" :message="form.errors.destination"/>
                     <TextInput id="name" v-model="form.destination" type="text" class="form-control" placeholder="Please enter destination" @input="handleInput('destination')" :light="true"/>
+                </BCol> -->
+                <BCol lg="6" class="mt-0">
+                    <div class="d-flex">
+                        <div style="width: 100%;">
+                            <InputLabel value="Destination" :message="form.errors.address"/>
+                            <TextInput readonly v-model="address" type="text" class="form-control" placeholder="Please enter address" @input="handleInput('address')" :light="true" />
+                        </div>
+                        <div class="flex-shrink-0">
+                            <b-button @click="addLocation(index)" style="margin-top: 20px;" variant="light" class="waves-effect waves-light ms-1"><i class="ri-map-pin-fill"></i></b-button>
+                        </div>
+                    </div>
                 </BCol>
                 <BCol lg="4" class="mt-0"> 
                     <label>Travel Date <span v-if="form.errors.date" class="text-danger" style="font-size: 9px;">({{ form.errors.date }})</span></label>
@@ -21,7 +32,12 @@
                         </flat-pickr>
                     </div>
                 </BCol>
-                <BCol lg="4" class="mt-0">
+                
+                <BCol lg="2" class="mt-0">
+                    <InputLabel for="name" value="Departure Time" :message="form.errors.time"/>
+                    <TextInput id="name" v-model="form.time" type="time" class="form-control" placeholder="Please enter time" @input="handleInput('time')" :light="true"/>
+                </BCol>
+                <BCol lg="12" class="mt-0">
                     <InputLabel for="name" value="Remarks" :message="form.errors.remarks"/>
                     <TextInput id="name" v-model="form.remarks" type="text" class="form-control" placeholder="Please enter remarks" @input="handleInput('remarks')" :light="true"/>
                 </BCol>
@@ -48,7 +64,7 @@
                     <hr class="text-muted mt-n1"/>
                 </BCol>
 
-                <BCol lg="4" class="mt-n2">
+                <BCol lg="6" class="mt-n2">
                     <InputLabel for="name" value="Travel Expense" :message="form.errors.expense_id"/>
                     <Multiselect
                         v-model="form.expense_id" 
@@ -57,7 +73,7 @@
                         placeholder="Select type"
                     />
                 </BCol>
-                <BCol lg="4" class="mt-n2">
+                <BCol :lg="(form.mode_id == 150 || form.mode_id == 151) ? 3 : 6" class="mt-n2">
                     <InputLabel for="name" value="Mode of Travel" :message="form.errors.mode_id"/>
                     <Multiselect
                         v-model="form.mode_id" 
@@ -66,15 +82,29 @@
                         placeholder="Select type"
                     />
                 </BCol>
-                <BCol lg="4" class="mt-n2">
-                    <InputLabel for="name" value="Departure Time" :message="form.errors.time"/>
-                    <TextInput id="name" v-model="form.time" type="time" class="form-control" placeholder="Please enter time" @input="handleInput('time')" :light="true"/>
+                <BCol v-if="form.mode_id == 151" lg="3" class="mt-n2">
+                    <InputLabel for="name" value="Transportation" :message="form.errors.transpo_id"/>
+                    <Multiselect
+                        v-model="form.transpo_id" 
+                        :options="dropdowns.transportations"
+                        label="name"
+                        placeholder="Select"
+                    />
                 </BCol>
-
+                <BCol v-if="form.mode_id == 150" lg="3" class="mt-n2">
+                    <InputLabel for="name" value="Vehicle" :message="form.errors.vehicle_id"/>
+                    <Multiselect
+                        v-model="form.vehicle_id" 
+                        :options="vehicles"
+                        label="name"
+                        @input="handleInput('vehicle_id')"
+                        placeholder="Select Vehicle"
+                    />
+                </BCol>
                 <BCol lg="12">
-                    <hr class="text-muted mt-0 mb-1"/>
-                    <span class="fs-11">Please check the expenses that apply to this travel request : <span class="text-danger">{{ form.errors.expenses }}</span></span>
-                    <hr class="text-muted mt-1 mb-3"/>
+                    <hr class="text-muted mt-0 mb-2"/>
+                    <span class="fs-11 text-muted">Please check the expenses that apply to this travel request : <span class="text-danger">{{ form.errors.expenses }}</span></span>
+                    <hr class="text-muted mt-2 mb-3"/>
                 </BCol>
 
                 <BCol lg="12" style="margin-top: 0px; margin-bottom: -5px;">
@@ -117,7 +147,7 @@
                 </BCol>
             </BRow>
         </form> 
-        
+        <Location :regions="dropdowns.regions" @submit="handleLocation" ref="location"/>
         <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Cancel</b-button>
             <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
@@ -126,6 +156,7 @@
 </template>
 <script>
 import _ from 'lodash';
+import Location from './Location.vue';
 import { useForm } from '@inertiajs/vue3';
 import flatPickr from "vue-flatpickr-component";
 import Multiselect from "@vueform/multiselect";
@@ -136,13 +167,12 @@ const FilePond = vueFilePond(FilePondPluginFileValidateType);
 import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
-    components: { Multiselect, InputLabel, TextInput, flatPickr, FilePond },
+    components: { Multiselect, InputLabel, TextInput, flatPickr, FilePond, Location },
     props: ['dropdowns'],
     data(){
         return {
             currentUrl: window.location.origin,
             form: useForm({
-                destination: null,
                 document: null,
                 purpose: null,
                 remarks: null,
@@ -150,8 +180,17 @@ export default {
                 time: null,
                 mode_id: null,                
                 expense_id: null,
+                transpo_id: null,
+                vehicle_id: null,
                 expenses: [],
-                tags: []
+                tags: [],
+                address: null,
+                region_code: null,
+                province_code: null,
+                municipality_code: null,
+                barangay_code: null,
+                latitude: null,
+                longitude: null
             }),
             config: {
                 enableTime: false,
@@ -160,7 +199,9 @@ export default {
                 altFormat: "M d, Y",
                 mode: "range"
             },
+            address: null,
             employees: [],
+            vehicles: [],
             isLoading: false,
             showModal: false
         }
@@ -171,7 +212,19 @@ export default {
                 const last = val[val.length - 1];
                 this.form.expenses = [last];
             }
-        }
+        },
+        'form.mode_id'(val) {
+            if (val == 150) {
+               
+            }
+        },
+        'form.date'(val) {
+            if(val) {
+                this.fetchVehicles(val);
+            }else{
+                this.vehicles = [];
+            }
+        },
     },
     methods: { 
         show(data){
@@ -189,13 +242,18 @@ export default {
                 },
             });
         },
-        formatDate(date) {
-            const d = new Date(date);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        },  
+        fetchVehicles(string){
+            axios.get('/search',{
+                params: {
+                    option: 'vehicles',
+                    keyword: string
+                }
+            })
+            .then(response => {
+                this.vehicles = response.data;
+            })
+            .catch(err => console.log(err));
+        }, 
         checkSearchStr: _.debounce(function(string) {
             (string) ? this.searchUser(string) : '';
         }, 300),
@@ -210,7 +268,24 @@ export default {
                 this.employees = response.data;
             })
             .catch(err => console.log(err));
-        },      
+        }, 
+        addLocation(index){
+            this.$refs.location.openEdit(this.region);
+        },
+        handleLocation(data) {
+            this.address = data.address;
+            const index = data.index;
+
+            if (index !== undefined) {
+                this.form.address = data.form.info;
+                this.form.region_code = data.form.region;
+                this.form.province_code = data.form.province.value;
+                this.form.municipality_code = data.form.municipality.value;
+                this.form.barangay_code = data.form.barangay.value;
+                this.form.latitude = data.form.latitude;
+                this.form.longitude = data.form.longitude;
+            }
+        },     
         handleAddFile(error, fileItem) {
             if (error) return console.error('FilePond error:', error);
             this.form.document = fileItem.file;

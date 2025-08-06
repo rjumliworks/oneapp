@@ -19,6 +19,7 @@ class SaveClass
                     'user_id' => intval($userId),
                 ]);
             }
+            
             if(strpos($request->date, ' to ') !== false) {
                 [$start, $end] = explode(' to ', $request->date);
             } else {
@@ -26,19 +27,25 @@ class SaveClass
             }
             $start = \Carbon\Carbon::parse($start)->toDateString();
             $end = \Carbon\Carbon::parse($end)->toDateString();
-            
-            $travelData = [
+            $data->dates()->create([
                 'start' => $start,
                 'end' => $end,
                 'time' => $request->time,
-                'purpose' => $request->purpose,
-                'destination' => $request->destination,
-                'remarks' => $request->remarks,
+            ]);
+
+            $data->detail()->create($request->all());
+            $data->location()->create($request->all());
+
+            $travelData = [
                 'mode_id' => $request->mode_id,
+                'transpo_id' => $request->transpo_id,
                 'expense_id' => $request->expense_id,
                 'expenses' => array_map('intval', $request->expenses)
             ];
-            $data->travels()->create($travelData);
+            $travel = $data->travels()->create($travelData);
+            if($request->mode_id == 150){
+                $data->reservations()->create(['vehicle_id' => $request->vehicle_id]);
+            }
         }
 
         return [
@@ -61,7 +68,7 @@ class SaveClass
                 ? (int) substr($latest->code, -4) + 1
                 : 1;
 
-            $code = 'REQUEST-' . now()->format('mY') . '-DOSTIX-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+            $code = 'REQUEST-' . now()->format('mY') . '-TRAVEL-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
             return $code;
         });

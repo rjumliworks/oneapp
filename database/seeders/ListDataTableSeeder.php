@@ -1124,6 +1124,27 @@ class ListDataTableSeeder extends Seeder
                 'type' => 'Request Type',
                 'is_active' => 1,
             ),
+            158 => 
+            array (
+                'id' => 159,
+            'name' => 'Air (Commercial Flight)',
+                'type' => 'Public Conveyance',
+                'is_active' => 1,
+            ),
+            159 => 
+            array (
+                'id' => 160,
+            'name' => 'Sea (Ferry)',
+                'type' => 'Public Conveyance',
+                'is_active' => 1,
+            ),
+            160 => 
+            array (
+                'id' => 161,
+            'name' => 'Land (Bus/Van)',
+                'type' => 'Public Conveyance',
+                'is_active' => 1,
+            ),
         ));
 
         

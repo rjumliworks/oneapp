@@ -28,13 +28,18 @@ class TravelController extends Controller
             case 'lists':
                 return $this->view->travel($request);
             break;
+            case 'schedules':
+                return $this->view->schedule($request);
+            break;
             default:
                 return inertia('Modules/Vrams/Travels/Index',[
                     'counts' => $this->view->counts($this->dropdown->statuses('Request')),
                     'dropdowns' => [
                         'modes' => $this->dropdown->datas('Travel'),
                         'expenses' => $this->dropdown->datas('Travel Expense'),
-                        'statuses' => $this->dropdown->statuses('Request')
+                        'transportations' => $this->dropdown->datas('Public Conveyance'),
+                        'statuses' => $this->dropdown->statuses('Request'),
+                        'regions' => $this->dropdown->regions()
                     ]
                 ]); 
         }   
@@ -54,8 +59,14 @@ class TravelController extends Controller
     }
 
     public function show($code){
-        return inertia('Modules/Vrams/Travels/View',[
-            'information_data' => $this->view->show($code)
-        ]);
+        switch($code){
+            case 'calendar':
+                return inertia('Modules/Vrams/Calendar/Index');
+            break;
+            default:
+                return inertia('Modules/Vrams/Travels/View',[
+                    'information_data' => $this->view->show($code)
+                ]);
+        }
     }
 }

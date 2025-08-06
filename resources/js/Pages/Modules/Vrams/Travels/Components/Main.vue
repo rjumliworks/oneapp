@@ -17,7 +17,20 @@
         </div>
         <div class="card-body bg-white border-bottom border-bottom">
             <div class="row g-3 p-0">
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <div class="d-flex border border-dashed rounded p-3">
+                        <div class="flex-shrink-0 avatar-xs align-self-center me-3">
+                            <div v-if="information.status.name == 'Pending'" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                                <i class="ri-record-circle-fill"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="mb-0 text-muted fs-12">Status :</p>
+                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{information.status.name}} </h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
@@ -31,7 +44,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
@@ -48,7 +61,7 @@
             </div>
         </div>
 
-        <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 510px); overflow: auto;">
+        <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 515px); overflow: auto;">
             <div class="d-flex mb-4">
                 <div class="flex-shrink-0">
                     <img src="/assets/images/users/avatar-8.jpg" alt="" class="avatar-xs rounded-circle" />

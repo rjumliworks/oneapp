@@ -4,7 +4,9 @@ namespace App\Services\Vrams\Travel;
 
 use Hashids\Hashids;
 use App\Models\Travel;
+use App\Models\RequestDate;
 use App\Http\Resources\Vrams\TravelResource;
+use App\Http\Resources\Vrams\ScheduleResource;
 
 class ViewClass
 {   
@@ -23,8 +25,12 @@ class ViewClass
             'request.statuses.user.profile:user_id,firstname,middlename,lastname',
             'request.statuses.status',
             'request.status',
+            'request.type',
+            'request.dates',
+            'request.detail',
             'request.user:id',
             'request.user.profile:user_id,firstname,middlename,lastname',
+            'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name'
         ])
         ->where('id',$id)
         ->first();
@@ -39,13 +45,17 @@ class ViewClass
             'approved.user.profile:user_id,firstname,middlename,lastname',
             'recommended.user.profile:user_id,firstname,middlename,lastname',
             'request.tags.user:id',
-            'request.tags.user.profile:user_id,firstname,middlename,lastname',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar',
             'request.statuses.user:id',
             'request.statuses.user.profile:user_id,firstname,middlename,lastname',
             'request.statuses.status',
             'request.status',
+            'request.type',
+            'request.dates',
+            'request.detail',
             'request.user:id',
             'request.user.profile:user_id,firstname,middlename,lastname',
+            'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name'
         ])
         ->when($request->mode, fn($q, $mode) => $q->where('mode_id', $mode))
         ->when($request->expense, fn($q, $expense) => $q->where('expense_id', $expense))
@@ -77,6 +87,27 @@ class ViewClass
             ->count();
         }
         return $counts;
+    }
+
+    public function schedule(){
+        $data = RequestDate::with([
+            'request.tags.user:id',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar',
+            'request.statuses.user:id',
+            'request.statuses.user.profile:user_id,firstname,middlename,lastname',
+            'request.statuses.status',
+            'request.status',
+            'request.type',
+            'request.dates',
+            'request.detail',
+            'request.user:id',
+            'request.user.profile:user_id,firstname,middlename,lastname',
+            'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name',
+            'request.travels',
+            'request.reservations.vehicle'    
+        ])->get();
+
+        return ScheduleResource::collection($data);
     }
 }
 
