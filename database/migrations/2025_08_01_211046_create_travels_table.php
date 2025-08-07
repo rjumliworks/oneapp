@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('travels', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
+            $table->string('code',30)->unique()->index();
             $table->json('expenses');
             $table->smallInteger('mode_id')->unsigned()->index();
             $table->foreign('mode_id')->references('id')->on('list_data')->onDelete('cascade');

@@ -18,10 +18,13 @@ return new class extends Migration
             $table->foreign('division_id')->references('id')->on('list_dropdowns')->onDelete('cascade');    
             $table->unsignedInteger('recommended_id')->nullable();
             $table->foreign('recommended_id')->references('id')->on('users')->onDelete('cascade');
+            $table->datetime('recommended_date')->nullable();
             $table->unsignedInteger('approved_id')->nullable();
             $table->foreign('approved_id')->references('id')->on('users')->onDelete('cascade');
+            $table->datetime('approved_date')->nullable();
             $table->bigInteger('request_id')->unsigned()->index();
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
+            $table->boolean('is_approval_only')->default(0);
             $table->boolean('is_completed')->default(0);
             $table->timestamps();
         });

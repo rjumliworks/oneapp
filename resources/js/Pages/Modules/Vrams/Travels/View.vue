@@ -27,10 +27,19 @@
                                         </BRow>
                                     </BCol>
                                     <BCol md="auto">
-                                        <div class="hstack gap-1 flex-wrap">
-                                            <button @click="back()" type="button" class="btn py-0 fs-16 text-body">
-                                                <i class="ri-share-line"></i>
-                                            </button>
+                                        <div class="hstack gap-4 flex-wrap mt-2">
+                                            <Link href="/travels">
+                                                <div class="text-muted" @click="hide()">  
+                                                    <i class="ri-close-circle-fill fs-16"></i> Close
+                                                </div>
+                                            </Link>
+                                            <div class="text-muted" @click="openEdit(information)" style="cursor: pointer;">  
+                                                <i class="ri-edit-box-fill fs-16"></i> Update
+                                            </div>
+                                            <div class="vr" style="width: 1px;"></div>
+                                            <div @click="openPrint(information.key)">  
+                                                <b-button variant="primary" block><i class="ri-printer-fill me-1"></i> Print</b-button>
+                                            </div>
                                         </div>
                                     </BCol>
                                 </BRow>
@@ -47,13 +56,15 @@
             </BRow>
         </div>
     </div>
+    <Edit ref="edit"/>
 </template>
 <script>
 import Main from './Components/Main.vue';
+import Edit from './Modals/Edit.vue';
 import Sidebar from './Components/Sidebar.vue';
 export default {
     props: ['information_data'],
-    components: { Main, Sidebar },
+    components: { Main, Sidebar, Edit },
     data(){
         return {
             information: this.information_data.data
@@ -62,7 +73,13 @@ export default {
     methods: {
         back(){
             this.$inertia.visit('/travels');
-        }
+        },
+        openPrint(id){
+            window.open('/travels?option=print&id='+id);
+        },
+        openEdit(selected){
+            this.$refs.edit.show(selected);
+        },
     }
 }
 </script>

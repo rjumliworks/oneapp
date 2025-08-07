@@ -280,7 +280,7 @@ class DropdownClass
 
     public function users($keyword,$is_regular = null){
         $data =  User::with('profile')
-        ->with('organization.position')
+        ->with('organization.position','organization.division')
         ->when(!is_null($is_regular) && $is_regular == 1, function ($query) {
             $query->whereHas('organization', function ($query) {
                 $query->where('type_id', 15);
@@ -299,6 +299,8 @@ class DropdownClass
                 'value' => $item->id,
                 'name' => $item->profile->lastname . ', ' . $item->profile->firstname . ' ' . $item->profile->middlename . '.',
                 'position' => optional($item->organization->position)->name,
+                'division' => optional($item->organization->division)->name,
+                'division_id' => optional($item->organization->division)->id,
                 'type' => $item->organization->type->name,
                 'avatar' => ($item->profile->avatar != 'avatar.jpg') 
                             ? '/storage/profile-pictures/' . $item->profile->avatar 
@@ -318,7 +320,8 @@ class DropdownClass
         $start = Carbon::parse($start)->startOfDay();
         $end = Carbon::parse($end)->endOfDay();
 
-        $vehicles = ListVehicle::whereDoesntHave('reservations.request.dates', function ($query) use ($start, $end) {
+        $vehicles = ListVehicle::with('driver.organization.division')
+        ->whereDoesntHave('reservations.request.dates', function ($query) use ($start, $end) {
             $query->where(function ($q) use ($start, $end) {
                 $q->whereBetween('start', [$start, $end])
                 ->orWhereBetween('end', [$start, $end])
@@ -327,10 +330,14 @@ class DropdownClass
                         ->where('end', '>=', $end);
                 });
             });
-        })->get()->map(function ($item) {
+        })
+        ->where('is_available',1)
+        ->get()->map(function ($item) {
             return [
                 'value' => $item->id,
                 'name' => $item->name,
+                'driver_id' => $item->driver_id,
+                'division_id' => optional($item->driver->organization->division)->id,
             ];
         });
 

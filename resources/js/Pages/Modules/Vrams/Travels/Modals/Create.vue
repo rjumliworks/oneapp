@@ -53,6 +53,7 @@
                         :searchable="true"
                         :loading="isLoading"
                         label="name"
+                        object
                         :preserve-search="true"
                         :filter-results="false"
                         placeholder="Select Employee"

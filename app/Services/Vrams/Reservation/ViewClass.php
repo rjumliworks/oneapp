@@ -26,7 +26,8 @@ class ViewClass
             'request.detail',
             'request.user:id',
             'request.user.profile:user_id,firstname,middlename,lastname',
-            'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name'
+            'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name',
+            'request.signatories.division','request.signatories.approved','request.signatories.recommended'
         ])
         ->where('id',$id)
         ->first();
@@ -49,7 +50,8 @@ class ViewClass
             'request.detail',
             'request.user:id',
             'request.user.profile:user_id,firstname,middlename,lastname',
-            'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name'
+            'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name',
+            'request.signatories.division','request.signatories.approved','request.signatories.recommended'
         ])
         ->when($request->keyword, function ($query, $keyword) {
             $query->whereHas('request.user.profile', function ($q) use ($keyword) {

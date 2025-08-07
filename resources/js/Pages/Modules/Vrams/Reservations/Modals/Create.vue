@@ -20,6 +20,7 @@
                         v-model="form.vehicle_id" 
                         :options="vehicles"
                         label="name"
+                        object
                         @input="handleInput('vehicle_id')"
                         placeholder="Select Vehicle"
                     />
@@ -64,6 +65,7 @@
                         :searchable="true"
                         :loading="isLoading"
                         label="name"
+                        object
                         :preserve-search="true"
                         :filter-results="false"
                         placeholder="Select Employee"

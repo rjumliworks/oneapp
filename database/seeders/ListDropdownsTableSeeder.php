@@ -428,6 +428,26 @@ class ListDropdownsTableSeeder extends Seeder
                 'others' => 'n/a',
                 'is_active' => 1,
             ),
+            41 => 
+            array (
+                'id' => 43,
+                'name' => 'Regional Director',
+                'classification' => 'Designation',
+                'type' => 'n/a',
+                'color' => 'n/a',
+                'others' => 'RD',
+                'is_active' => 1,
+            ),
+            42 => 
+            array (
+                'id' => 44,
+                'name' => 'Assistant Regional Director',
+                'classification' => 'Designation',
+                'type' => 'n/a',
+                'color' => 'n/a',
+                'others' => 'ARD',
+                'is_active' => 1,
+            ),
         ));
 
         

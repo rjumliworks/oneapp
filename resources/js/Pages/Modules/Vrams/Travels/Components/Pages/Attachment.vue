@@ -1,13 +1,16 @@
 <template>
-    <div style="height: calc(100vh - 429px);">
+    <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 522px); overflow: auto;">
+        
 
+      
+            
     </div>
 </template>
 <script>
 import simplebar from "simplebar-vue";
 export default {
     components: { simplebar },
-    props: ['id','dropdowns','lists'],
+    props: ['information'],
    data(){
        return {
            filter: {

@@ -14,6 +14,7 @@ class Travel extends Model
     protected $table = 'travels';
 
     protected $fillable = [
+        'code',
         'mode_id',
         'transpo_id',
         'expense_id',

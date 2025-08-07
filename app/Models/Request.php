@@ -61,14 +61,19 @@ class Request extends Model
         return $this->hasMany('App\Models\RequestDate', 'request_id');
     }
 
-    public function travels()
+    public function signatories()
     {
-        return $this->hasMany('App\Models\Travel', 'request_id');
+        return $this->hasMany('App\Models\RequestSignatory', 'request_id');
     }
 
-    public function reservations()
+    public function travel()
     {
-        return $this->hasMany('App\Models\Reservation', 'request_id');
+        return $this->hasOne('App\Models\Travel', 'request_id');
+    }
+
+    public function reservation()
+    {
+        return $this->hasOne('App\Models\Reservation', 'request_id');
     }
 
     public function updateIfDirty(array $attributes){

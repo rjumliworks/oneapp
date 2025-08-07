@@ -2,7 +2,11 @@
 
 namespace App\Services\Vrams\Travel;
 
+use Hashids\Hashids;
+use Carbon\Carbon;
+use App\Models\Travel;
 use App\Models\Request;
+use App\Models\RequestReport;
 
 class SaveClass
 {
@@ -14,9 +18,22 @@ class SaveClass
             'user_id' => \Auth::user()->id
         ]);
         if($data){
-            foreach ($request->tags ?? [] as $userId) {
+            $divisionIds = [];
+            foreach ($request->tags ?? [] as $user) {
+                $divisionId = intval($user['division_id']);
                 $data->tags()->create([
-                    'user_id' => intval($userId),
+                    'user_id' => intval($user['value']),
+                    'division_id' => $divisionId,
+                ]);
+                $divisionIds[] = $divisionId;
+            }
+
+            $uniqueDivisionIds = collect($divisionIds)->unique()->values()->toArray();
+
+            foreach($uniqueDivisionIds as $division){
+                $data->signatories()->create([
+                    'division_id' => $division,
+                    'is_approval_only' => ($division == 2) ? 1 : 0
                 ]);
             }
             
@@ -25,27 +42,38 @@ class SaveClass
             } else {
                 $start = $end = $request->date;
             }
+
             $start = \Carbon\Carbon::parse($start)->toDateString();
             $end = \Carbon\Carbon::parse($end)->toDateString();
+
             $data->dates()->create([
                 'start' => $start,
                 'end' => $end,
                 'time' => $request->time,
             ]);
 
-            $data->detail()->create($request->all());
-            $data->location()->create($request->all());
+            $data->detail()->create($request->only([
+                'purpose', 'remarks'
+            ]));
+            $data->location()->create($request->only([
+                'address','longitude','latitude','barangay_code','municipality_code','province_code','region_code'
+            ]));
 
             $travelData = [
+                'code' => $this->generateTravelCode(),
                 'mode_id' => $request->mode_id,
                 'transpo_id' => $request->transpo_id,
                 'expense_id' => $request->expense_id,
                 'expenses' => array_map('intval', $request->expenses)
             ];
-            $travel = $data->travels()->create($travelData);
+            $travel = $data->travel()->create($travelData);
             if($request->mode_id == 150){
-                $data->reservations()->create(['vehicle_id' => $request->vehicle_id]);
+                $data->reservation()->create([
+                    'vehicle_id' => $request->vehicle_id,
+                    'driver_id' => $request->driver_id
+                ]);
             }
+            $this->report($data->id);
         }
 
         return [
@@ -54,7 +82,7 @@ class SaveClass
             'info' => "Your travel schedule has been submitted. Keep an eye on your notifications for any approvals or updates."
         ];
     }
-
+    
     private function generateCode()
     {
         return \DB::transaction(function () {
@@ -72,5 +100,106 @@ class SaveClass
 
             return $code;
         });
+    }
+
+    private function generateTravelCode()
+    {
+        return \DB::transaction(function () {
+            $latest = Travel::lockForUpdate()
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->orderByDesc('id')
+                ->first();
+
+            $count = $latest
+                ? (int) substr($latest->code, -4) + 1
+                : 1;
+
+            $code = now()->format('Y') .'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
+
+            return $code;
+        });
+    }
+
+    public function update($request){
+        dd('wew');
+        $this->report($request->id);
+    }
+
+    public function report($id){
+        $data = Request::with([
+            'travel.mode',
+            'travel.expense',
+            'type',
+            'dates',
+            'detail',
+            'tags.user:id','tags.user.profile:user_id,firstname,middlename,lastname,avatar','tags.user.organization.division','tags.user.organization.position','tags.user.organization.unit',
+            'signatories.division','signatories.approved.user.profile:user_id,firstname,middlename,lastname','signatories.recommended.user.profile:user_id,firstname,middlename,lastname',
+            'location.region:code,name,region','location.province:code,name','location.municipality:code,name','location.barangay:code,name'
+        ])
+        ->where('id',$id)
+        ->first();
+
+        $users = $data->tags;
+        foreach ($users as $tag) {
+            $user = $tag->user;
+
+            $profile = $user->profile;
+            $middleInitial = $profile->middlename ? strtoupper(substr($profile->middlename, 0, 1)) . '.' : '';
+            $fullName = "{$profile->firstname} {$middleInitial} {$profile->lastname}";
+
+            $position = $user->organization->position->name ?? 'n/a';
+            $division = $user->organization->division->name ?? 'n/a';
+            $unit = $user->organization->unit->name ?? 'n/a';
+
+            $employees[] = [
+                'name' => $fullName,
+                'position' => $position,
+                'unit' => $unit,
+                'division' => $division,
+            ];
+
+            $divisions[] = $division;
+        }
+
+        $start = Carbon::parse($data->dates[0]->start);
+        $end = Carbon::parse($data->dates[0]->end);
+
+        if ($start->format('F Y') === $end->format('F Y')) {
+            $formattedDateRange = $start->format('F j') . '–' . $end->format('j, Y');
+        } else {
+            $formattedDateRange = $start->format('F j, Y') . ' – ' . $end->format('F j, Y');
+        }
+
+        $information = [
+            'code' => $data->code,
+            'travel_code' => $data->travel->code,
+            'purpose' => $data->detail->purpose,
+            'remarks' => $data->detail->remarks,
+            'mode' => $data->travel->mode->name,
+            'expense' => $data->travel->expense->name,
+            'transpo' => $data->travel->transpo?->name ?? '-',
+            'time' => $data->dates[0]->time,
+            'date' => $formattedDateRange,
+            'duration' => $dayDuration = ($start->diffInDays($end) + 1) . ' ' . (($start->diffInDays($end) + 1) === 1 ? 'day' : 'days'),
+            'expenses' => $data->travel->expense_items, 
+            'destination' => $data->location->barangay->name.', '.$data->location->municipality->name,
+            'venue' => $data->location->address,
+            'employees' => $employees,
+            'divisions' => $divisions,
+            'created_at' => $data->created_at
+        ];
+
+        if(RequestReport::where('request_id',$id)->count() > 0){
+            $data = RequestReport::where('request_id',$id)->first();
+            $data->information = json_encode($information);
+            $data->save();
+        }else{
+            $data = RequestReport::create([
+                'information' => json_encode($information,true),
+                'request_id' => $id
+            ]);
+        }
+        return true;
     }
 }

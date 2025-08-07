@@ -10,4 +10,9 @@ class ListVehicle extends Model
     {
        return $this->hasMany('App\Models\Reservation', 'vehicle_id');
     }
+
+    public function driver()
+    {
+        return $this->belongsTo('App\Models\User', 'driver_id', 'id');
+    }
 }

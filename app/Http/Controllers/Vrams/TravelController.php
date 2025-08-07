@@ -28,6 +28,9 @@ class TravelController extends Controller
             case 'lists':
                 return $this->view->travel($request);
             break;
+            case 'print':
+                return $this->view->print($request);
+            break;
             case 'schedules':
                 return $this->view->schedule($request);
             break;
@@ -68,5 +71,22 @@ class TravelController extends Controller
                     'information_data' => $this->view->show($code)
                 ]);
         }
+    }
+
+    public function update(Request $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            switch($request->option){
+                case 'Update':
+                    return $this->save->update($request);
+                break;
+            }
+        });
+        
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
     }
 }

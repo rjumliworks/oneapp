@@ -31,6 +31,7 @@ class TravelResource extends JsonResource
             'recommended' => $this->recommended,
             'approved' => $this->approved,
             'expenses' => $this->expense_items, 
+            'signatories' => $this->request->signatories,
             'location' => new LocationResource($this->request->location),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

@@ -14,11 +14,13 @@ class SaveClass
             'user_id' => \Auth::user()->id
         ]);
         if($data){
-            foreach ($request->tags ?? [] as $userId) {
+            foreach ($request->tags ?? [] as $user) {
                 $data->tags()->create([
-                    'user_id' => intval($userId),
+                    'user_id' => intval($user['value']),
+                    'division_id' => intval($user['division_id']),
                 ]);
             }
+
             if(strpos($request->date, ' to ') !== false) {
                 [$start, $end] = explode(' to ', $request->date);
             } else {
@@ -26,14 +28,24 @@ class SaveClass
             }
             $start = \Carbon\Carbon::parse($start)->toDateString();
             $end = \Carbon\Carbon::parse($end)->toDateString();
+
             $data->dates()->create([
                 'start' => $start,
                 'end' => $end,
                 'time' => $request->time,
             ]);
-            $data->detail()->create($request->all());
-            $data->location()->create($request->all());
-            $data->reservations()->create(['vehicle_id' => $request->vehicle_id]);
+
+            $data->detail()->create($request->only([
+                'purpose', 'remarks'
+            ]));
+            $data->location()->create($request->only([
+                'address','longitude','latitude','barangay_code','municipality_code','province_code','region_code'
+            ]));
+
+            $data->reservation()->create([
+                'vehicle_id' => $request->vehicle_id,
+                'driver_id' => $request->driver_id
+            ]);
         }
 
         return [
