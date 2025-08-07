@@ -122,7 +122,6 @@ class SaveClass
     }
 
     public function update($request){
-        dd('wew');
         $this->report($request->id);
     }
 
@@ -148,14 +147,14 @@ class SaveClass
             $middleInitial = $profile->middlename ? strtoupper(substr($profile->middlename, 0, 1)) . '.' : '';
             $fullName = "{$profile->firstname} {$middleInitial} {$profile->lastname}";
 
-            $position = $user->organization->position->name ?? 'n/a';
             $division = $user->organization->division->name ?? 'n/a';
-            $unit = $user->organization->unit->name ?? 'n/a';
 
             $employees[] = [
                 'name' => $fullName,
-                'position' => $position,
-                'unit' => $unit,
+                'position' => $user->organization->position->name ?? 'n/a',
+                'position_short' => $user->organization->position->short ?? 'n/a',
+                'unit' => $user->organization->unit->name ?? 'n/a',
+                'unit_short' => $user->organization->unit->short ?? 'n/a',
                 'division' => $division,
             ];
 

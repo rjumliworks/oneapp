@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report</title>
+   
     <style>
         /* Styles for the footer */
         @page {
@@ -135,10 +135,10 @@
                 </thead>
                 <tbody>
                     @foreach($divisionData['employees'] as $employee)
-                        <tr style="text-align: center; font-size: 11px; color: #072388;">
-                            <td style="text-align: center; padding: 5px;">{{$employee['name']}}</td>
-                            <td style="text-align: center; padding: 5px;">{{$employee['position']}}</td>
-                            <td style="text-align: center; padding: 5px;">{{$employee['unit']}}</td>
+                        <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
+                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['name']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['position']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 5x;">{{$employee['unit_short']}}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -168,9 +168,9 @@
                 </thead>
                 <tbody>
                     <tr style="text-align: center; font-size: 10px; color: #072388;">
-                        <td style="text-align: center; padding: 7px; text-transform: uppercase;">{{$travel['destination']}} <br/> <span style="font-size: 9px; color: gray;">({{$travel['venue']}})</span></td>
-                        <td style="text-align: center; padding: 7px; text-transform: uppercase;">{{$travel['date']}} <br/> <span style="font-size: 9px; color: gray;">({{$travel['duration']}})</span></td>
-                        <td style="text-align: center; padding: 7px; text-transform: uppercase;">{{$travel['mode']}} <br/> <span style="font-size: 9px; color: gray;">{{$travel['transpo']}}</span></td>
+                        <td style="text-align: center; padding: 7px; text-transform: uppercase;"><span style="font-weight: bold;">{{$travel['destination']}}</span> <br/> <span style="font-size: 9px; color: gray;">({{$travel['venue']}})</span></td>
+                        <td style="text-align: center; padding: 7px; text-transform: uppercase;"><span style="font-weight: bold;">{{$travel['date']}}</span> <br/> <span style="font-size: 9px; color: gray;">({{$travel['duration']}})</span></td>
+                        <td style="text-align: center; padding: 7px; text-transform: uppercase;"><span style="font-weight: bold;">{{$travel['mode']}}</span> <br/> <span style="font-size: 9px; color: gray;">{{$travel['transpo']}}</span></td>
                     </tr>
                 </tbody>
             </table>

@@ -25,7 +25,7 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-0 text-muted fs-12">Purpose :</p>
-                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.purpose }} </h6>
+                            <h6 class="fw-semibold fs-12 mb-0"> {{ information.purpose }} </h6>
                         </div>
                     </div>
                 </div>

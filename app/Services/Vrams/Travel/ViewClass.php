@@ -130,7 +130,6 @@ class ViewClass
         $base64Image = 'data:image/png;base64,' . base64_encode($qrCodeImageString);
 
         $travel = json_decode($data,true);
-        $divisions = $travel['divisions'];
         $groupedDivisions = [];
 
         foreach ($travel['employees'] as $employee) {
@@ -184,7 +183,6 @@ class ViewClass
             'travel' => json_decode($data),
         ]; 
 
-
         $pdf = \PDF::loadView('reports.tsr',$array)->setPaper('a4', 'portrait');
         $pdf->output();
         $dompdf = $pdf->getDomPDF();
@@ -199,7 +197,7 @@ class ViewClass
             $width = $fontMetrics->get_text_width($text, $font, $size);
             $canvas->text(106 - $width, 796, $text, $font, $size);
         });
-        return $pdf->stream('tet.pdf');
+        return $pdf->stream($travel['code'].'.pdf');
     }
 }
 
