@@ -1,7 +1,7 @@
 <template>
     <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 522px); overflow: auto;">
         
-
+{{ information.statuses }}
       
             
     </div>

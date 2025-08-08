@@ -83,26 +83,28 @@
                                 <div :key="index" class="tab-content">
                                     <template v-if="menu == 'Home'">
                                         <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 592px); overflow: auto;">
-                                            <div class="d-flex mb-4" v-for="(list,index) in information.comments" v-bind:key="index">
+                                            <div class="d-flex mb-4" :class="{ 'border-bottom': index !== information.comments.length - 1 }" v-for="(list,index) in information.comments" v-bind:key="index">
                                                 <div class="flex-shrink-0">
                                                     <img :src="list.avatar" alt="" class="avatar-xs rounded-circle" />
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
-                                                    <h5 class="fs-13">{{list.name}}
+                                                    <BLink  @click="setReply(list)" href="javascript: void(0);" class="badge text-muted bg-light float-end"><i class="mdi mdi-reply"></i>Reply</BLink>
+                                                    <h5 class="fs-13 mb-1">
+                                                        <span class="fw-semibold text-primary">{{list.name}}</span>
                                                         <small class="text-muted ms-2">{{timeAgo(list.created_at)}}</small>
                                                     </h5>
-                                                    <p class="text-muted">{{list.content}}</p>
-                                                    <BLink  @click="setReply(list)" href="javascript: void(0);" class="badge text-muted bg-light"><i class="mdi mdi-reply"></i>Reply</BLink>
+                                                    <p>{{list.content}}</p>
+                                                    
                                                     <div class="d-flex" :class="index2 === 0 ? 'mt-4' : 'mt-1'" v-for="(sub,index2) in list.replies" v-bind:key="index2">
                                                         <div class="flex-shrink-0">
                                                             <img :src="list.avatar" alt="" class="avatar-xs rounded-circle" />
                                                         </div>
                                                         
                                                         <div class="flex-grow-1 ms-3">
-                                                            <h5 class="fs-13">{{sub.name}}
-                                                                <small class="text-muted ms-2">{{timeAgo(sub.created_at)}}</small></h5>
-                                                             <p class="text-muted">{{sub.content}}</p>
-                                                        
+                                                            <h5 class="fs-13 mb-1">
+                                                            <span class="fw-semibold text-primary">{{sub.name}}</span>
+                                                            <small class="text-muted ms-2">{{timeAgo(sub.created_at)}}</small></h5>
+                                                            <p>{{sub.content}}</p>
                                                         </div>
                                                     </div>
                                                 </div>
