@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('request_comments', function (Blueprint $table) {
+        Schema::create('request_comment_views', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
-            $table->text('content');
-            $table->morphs('commentable');
-            $table->integer('user_id')->unsigned()->index();
+            $table->boolean('viewed')->default(false);
+            $table->timestamp('viewed_at')->nullable();
+            $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->bigInteger('comment_id')->unsigned();
+            $table->foreign('comment_id')->references('id')->on('request_comments')->onDelete('cascade');
+            $table->unique(['user_id', 'comment_id']);
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_comments');
+        Schema::dropIfExists('request_comment_views');
     }
 };

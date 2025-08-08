@@ -6,6 +6,7 @@ use Hashids\Hashids;
 use App\Models\Travel;
 use App\Models\Signatory;
 use App\Models\RequestDate;
+use App\Models\RequestComments;
 use App\Models\RequestReport;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
@@ -22,6 +23,7 @@ class ViewClass
             'mode',
             'expense',
             'approved.user.profile:user_id,firstname,middlename,lastname',
+            'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar','request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar',
             'recommended.user.profile:user_id,firstname,middlename,lastname',
             'request.tags.user:id',
             'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar',
@@ -47,6 +49,7 @@ class ViewClass
         $data = Travel::with([
             'mode',
             'expense',
+            'request.comments',
             'approved.user.profile:user_id,firstname,middlename,lastname',
             'recommended.user.profile:user_id,firstname,middlename,lastname',
             'request.tags.user:id',

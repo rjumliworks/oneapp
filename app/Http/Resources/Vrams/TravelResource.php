@@ -31,6 +31,7 @@ class TravelResource extends JsonResource
             'recommended' => $this->recommended,
             'approved' => $this->approved,
             'expenses' => $this->expense_items, 
+            'comments' => CommentResource::collection($this->request->comments),
             'signatories' => $this->request->signatories,
             'location' => new LocationResource($this->request->location),
             'created_at' => $this->created_at,

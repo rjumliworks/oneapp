@@ -76,6 +76,12 @@ class Request extends Model
         return $this->hasOne('App\Models\Reservation', 'request_id');
     }
 
+    public function comments()
+    {
+         return $this->morphMany(RequestComments::class, 'commentable')
+                ->with('replies');
+    }
+
     public function updateIfDirty(array $attributes){
         $this->fill($attributes);
         $dirtyAttributes = $this->getDirty();
