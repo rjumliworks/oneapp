@@ -69,8 +69,12 @@ class SaveClass
             $travel = $data->travel()->create($travelData);
             if($request->mode_id == 150){
                 $data->reservation()->create([
-                    'vehicle_id' => $request->vehicle_id,
-                    'driver_id' => $request->driver_id
+                    'vehicle_id' => $request->vehicle['value'],
+                    'driver_id' => $request->vehicle['driver_id']
+                ]);
+                $data->tags()->create([
+                    'user_id' => $request->vehicle['driver_id'],
+                    'division_id' => 3,
                 ]);
             }
             $this->report($data->id);
@@ -129,6 +133,7 @@ class SaveClass
         $data = Request::with([
             'travel.mode',
             'travel.expense',
+            'reservation.vehicle',
             'type',
             'dates',
             'detail',
@@ -176,6 +181,7 @@ class SaveClass
             'purpose' => $data->detail->purpose,
             'remarks' => $data->detail->remarks,
             'mode' => $data->travel->mode->name,
+            'vehicle' => ($data->travel->mode_id == 150) ? $data->reservation->vehicle->name.' ('.$data->reservation->vehicle->plate.')' : null, 
             'expense' => $data->travel->expense->name,
             'transpo' => $data->travel->transpo?->name ?? '-',
             'time' => $data->dates[0]->time,

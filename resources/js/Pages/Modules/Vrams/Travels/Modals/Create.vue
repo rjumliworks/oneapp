@@ -93,11 +93,12 @@
                     />
                 </BCol>
                 <BCol v-if="form.mode_id == 150" lg="3" class="mt-n2">
-                    <InputLabel for="name" value="Vehicle" :message="form.errors.vehicle_id"/>
+                    <InputLabel for="name" value="Vehicle" :message="form.errors.vehicle"/>
                     <Multiselect
-                        v-model="form.vehicle_id" 
+                        v-model="form.vehicle" 
                         :options="vehicles"
                         label="name"
+                        object
                         @input="handleInput('vehicle_id')"
                         placeholder="Select Vehicle"
                     />
@@ -182,7 +183,7 @@ export default {
                 mode_id: null,                
                 expense_id: null,
                 transpo_id: null,
-                vehicle_id: null,
+                vehicle: null,
                 expenses: [],
                 tags: [],
                 address: null,

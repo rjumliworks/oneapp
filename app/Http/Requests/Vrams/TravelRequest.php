@@ -21,7 +21,7 @@ class TravelRequest extends FormRequest
             'expense_id' => 'sometimes|required|integer',
             'mode_id' => 'sometimes|required|integer',
             'transpo_id' => 'required_if:mode_id,151',
-            'vehicle_id' => 'required_if:mode_id,150',
+            'vehicle' => 'required_if:mode_id,150',
             'date' => 'sometimes|required',
             'time' => 'sometimes|required',
             'remarks' => 'nullable|string',
@@ -53,7 +53,7 @@ class TravelRequest extends FormRequest
             'mode_id.exists' => 'The selected mode of travel is invalid.',
 
             'transpo_id.required_if' => 'Please select transpo.',
-            'vehicle_id.required_if' => 'Please select vehicle.',
+            'vehicle.required_if' => 'Please select vehicle.',
 
             'expense_id.required' => 'Please select a travel expense type.',
             'expense_id.exists' => 'The selected expense type is invalid.',

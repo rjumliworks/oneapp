@@ -109,8 +109,8 @@ class ViewClass
             'request.user:id',
             'request.user.profile:user_id,firstname,middlename,lastname',
             'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name',
-            'request.travels',
-            'request.reservations.vehicle'    
+            'request.travel',
+            'request.reservation.vehicle'    
         ])->get();
 
         return ScheduleResource::collection($data);

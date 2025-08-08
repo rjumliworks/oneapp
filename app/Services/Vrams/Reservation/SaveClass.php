@@ -41,10 +41,9 @@ class SaveClass
             $data->location()->create($request->only([
                 'address','longitude','latitude','barangay_code','municipality_code','province_code','region_code'
             ]));
-
             $data->reservation()->create([
-                'vehicle_id' => $request->vehicle_id,
-                'driver_id' => $request->driver_id
+                'vehicle_id' => $request->vehicle['value'],
+                'driver_id' => $request->vehicle['driver_id']
             ]);
         }
 

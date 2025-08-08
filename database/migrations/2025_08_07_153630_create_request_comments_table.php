@@ -16,6 +16,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->boolean('is_sender_viewed')->default(0);
             $table->boolean('is_receiver_viewed')->default(0);
+            $table->nullableMorphs('commentable');
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('request_id')->unsigned()->index();

@@ -14,12 +14,17 @@ class Reservation extends Model
     protected $fillable = [
         'vehicle_id',
         'request_id',
-        'approved_id'
+        'driver_id'
     ];
 
     public function vehicle()
     {
         return $this->belongsTo('App\Models\ListVehicle', 'vehicle_id', 'id');
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo('App\Models\User', 'driver_id', 'id');
     }
 
     public function request()

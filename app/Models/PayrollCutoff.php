@@ -38,7 +38,7 @@ class PayrollCutoff extends Model
         return date('F d, Y', strtotime($value));
     }
 
-     public function getUpdatedAtAttribute($value)
+    public function getUpdatedAtAttribute($value)
     {
         return date('M d, Y g:i a', strtotime($value));
     }

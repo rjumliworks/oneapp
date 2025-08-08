@@ -115,17 +115,31 @@
                 <center style="font-size: 11px; background-color: #097eeb; color:#fff; font-weight: bold; padding: 2px; text-transform: uppercase; ">{{$divisionData['division']}}</center>
             </div>
 
-            <table style="border: 1px solid black; font-size: 10px; margin-top: 15px;">
+            {{-- <table style="border: 1px solid black; font-size: 10px; margin-top: 15px;">
                 <tbody>
                     <tr>
                         <td width="25%">LOCAL TRAVEL ORDER NO. : {{$travel['travel_code']}}</td>
                         <td style="float: right;" width="25%">Date and Time :</td>
                     </tr>
                 </tbody>
+            </table> --}}
+            <table style="border: 1px solid black;">
+                <thead style="background-color:#c8c8c8; padding: 5px; font-size: 9px;">
+                    <tr>    
+                        <th style="vertical-align: middle;" width="50%">LOCAL TRAVEL ORDER NO.</th>
+                        <th style="vertical-align: middle;" width="50%">DATE AND TIME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
+                        <td style="text-align: center; padding: 5px; font-size: 10x;">{{$travel['travel_code']}}</td>
+                        <td style="text-align: center; padding: 5px; font-size: 10x;">{{$travel['created_at']}}</td>
+                    </tr>
+                </tbody>
             </table>
             
             <h6 style="font-size: 10px; margin-top: 12px;">AUTHORITY TO TRAVEL IS HEREBY GRANTED TO : </h6>
-            <table style="border: 1px solid black; font-size: 10px; margin-top: -22px;">
+            <table style="border: 1px solid black; margin-top: -22px;">
                 <thead style="background-color:#c8c8c8; padding: 5px; font-size: 9px;">
                     <tr>    
                         <th style="vertical-align: middle;" width="33.3%">NAME</th>
@@ -138,7 +152,7 @@
                         <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
                             <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['name']}}</td>
                             <td style="text-align: center; padding: 5px; font-size: 10x;">{{$employee['position']}}</td>
-                            <td style="text-align: center; padding: 5px; font-size: 5x;">{{$employee['unit_short']}}</td>
+                            <td style="text-align: center; padding: 5px; font-size: 5x;">{{ strlen($employee['unit']) > 37 ? $employee['unit_short'] : $employee['unit'] }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -168,12 +182,62 @@
                 </thead>
                 <tbody>
                     <tr style="text-align: center; font-size: 10px; color: #072388;">
-                        <td style="text-align: center; padding: 7px; text-transform: uppercase;"><span style="font-weight: bold;">{{$travel['destination']}}</span> <br/> <span style="font-size: 9px; color: gray;">({{$travel['venue']}})</span></td>
-                        <td style="text-align: center; padding: 7px; text-transform: uppercase;"><span style="font-weight: bold;">{{$travel['date']}}</span> <br/> <span style="font-size: 9px; color: gray;">({{$travel['duration']}})</span></td>
-                        <td style="text-align: center; padding: 7px; text-transform: uppercase;"><span style="font-weight: bold;">{{$travel['mode']}}</span> <br/> <span style="font-size: 9px; color: gray;">{{$travel['transpo']}}</span></td>
+                        <td style="text-align: center; padding: 7px; text-transform: uppercase;">
+                            <span style="font-weight: bold;">{{$travel['destination']}}</span> <br/> <span style="font-size: 9px; color: gray;">({{$travel['venue']}})</span>
+                        </td>
+                        <td style="text-align: center; padding: 7px; text-transform: uppercase;">
+                            <span style="font-weight: bold;">{{$travel['date']}}</span> <br/> <span style="font-size: 9px; color: gray;">(DEPARTURE TIME : {{$travel['time']}})</span>
+                        </td>
+                        <td style="text-align: center; padding: 7px; text-transform: uppercase;">
+                            <span style="font-weight: bold;">{{$travel['mode']}}</span> <br/> 
+                            @if($travel['mode'] == 'Official Vehicle')
+                                <span style="font-size: 9px; color: gray;">{{$travel['vehicle']}}</span>
+                            @else
+                                <span style="font-size: 9px; color: gray;">{{$travel['transpo']}}</span>
+                            @endif
+                        </td>
                     </tr>
                 </tbody>
             </table>
+            <h6 style="font-size: 10px; margin-top: 12px;">TRAVEL EXPENSE DETAILS :</h6>
+            <table style="border: 1px solid black; font-size: 12px; margin-top: -22px;">
+                <thead style="background-color:#c8c8c8; padding: 5px; font-size: 9px;">
+                    <tr>    
+                        <th style="vertical-align: middle;" width="33.3%">CHARGED TO</th>
+                        <th style="text-align: left;" width="66.7%">TRAVEL EXPENSES TO BE INCURRED</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="font-size: 10px; color: #072388;">
+                        <td style="text-align: center; padding: 7px; text-transform: uppercase;"><span style="font-weight: bold;">{{$travel['expense']}}</span> </td>
+                        <td style="text-align: left; padding: 7px;">
+                           <ul style="list-style: none; padding: 0; margin: 0; font-weight: bold;">
+                                @foreach ($travel['expenses'] as $expense)
+                                    <li style="display: inline; margin-right: 10px;">
+                                        &bull; {{ $expense['name'] }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table style="border: 1px solid black; font-size: 9px; margin-top: 15px;">
+                <tbody>
+                    <tr>
+                        <td style="padding: 10px;">
+                            <span>A report of your travel must be submitted to the Agency Head/Supervising Official within 7 days from completion of travel. Liquidation of
+                            cash advances should be in accordance with Executive Order No. 298: Rules and Regulations and New Rates of Allowances for Official
+                            Local and Foreign Travels of Government Personnel.</span>
+                          
+                            <br/><br/>
+                            <span style="margin-top: 10px; font-style: italic;">The undersigned certifies the appropriation of funds for actual cost of accommodation.</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+           
             <center style="margin-top: 15px; font-size: 8px; background-color: #000; color:#fff; font-weight: bold; padding: 2px;">FOR RECOMMENDATION AND APPROVAL SIGNATURE</center>
             <table style="border: 1px solid black; font-size: 10px; margin-top: 0px; page-break-inside: avoid;">
             <tbody>
