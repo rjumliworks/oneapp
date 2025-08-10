@@ -28,7 +28,7 @@ class ProfileController extends Controller
                 return $this->view->activitylogs($request);
             break;
             case 'statistics':
-                return $this->view->statistics();
+                return $this->view->statistics($request);
             break;
             case 'sessions':
                 return $this->view->sessions($request);
