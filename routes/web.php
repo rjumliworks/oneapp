@@ -19,6 +19,7 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
         Route::resource('/payrolls', App\Http\Controllers\Hr\PayrollController::class);
         Route::resource('/surveys', App\Http\Controllers\Hr\SurveyController::class);
         Route::resource('/leaves', App\Http\Controllers\Hr\LeaveController::class);
+        Route::resource('/credits', App\Http\Controllers\Hr\CreditController::class);
         Route::resource('/calendar', App\Http\Controllers\Hr\CalendarController::class);
     });
 

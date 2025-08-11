@@ -76,12 +76,94 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($lists as $list)
+                @php
+                    $travelGroups = [];
+                    $groupCount = 0;
+                    foreach ($lists as $index => $list) {
+                        if (isset($list['data']) && is_string($list['data']) && str_contains($list['data'], 'OFFICIAL TRAVEL')) {
+                            $groupCount++;
+                        } else {
+                            if ($groupCount > 0) {
+                                $travelGroups[] = [
+                                    'start' => $index - $groupCount,
+                                    'count' => $groupCount
+                                ];
+                                $groupCount = 0;
+                            }
+                        }
+                    }
+                    if ($groupCount > 0) {
+                        $travelGroups[] = [
+                            'start' => count($lists) - $groupCount,
+                            'count' => $groupCount
+                        ];
+                    }
+                @endphp
+                @foreach($lists as $loopIndex => $list)
                 <tr class="text-center">
                     <td>{{ $loop->iteration }}</td>
                     @if($loop->iteration <= 15)
                         @if(!$list['is_with'])
-                            <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px;">{{ $list['data'] }}</td>
+                            @php
+                                    $isGroupStart = collect($travelGroups)->firstWhere('start', $loopIndex);
+                                    $isInGroup = collect($travelGroups)->contains(function($g) use($loopIndex) {
+                                        return $loopIndex >= $g['start'] && $loopIndex < ($g['start'] + $g['count']);
+                                    });
+                                @endphp
+
+                                @if($isGroupStart)
+                                    @php
+                                        $count = $isGroupStart['count'];
+                                        $fontSize = 30;
+                                        if ($count == 2) $fontSize = 30;
+                                        elseif ($count == 3) $fontSize = 45;
+                                        elseif ($count == 4) $fontSize = 60;
+                                        elseif ($count == 5) $fontSize = 80;
+
+                                        $maxChars = 52 * $count;
+
+                                        // Truncate the destination text if longer than allowed
+                                        $text = ($isGroupStart['count'] == 1) ? $list['destination'] : $list['destination'].' '.$list['purpose'];
+                                        if (strlen($text) > $maxChars) {
+                                            $text = substr($text, 0, $maxChars) . '...';
+                                        }
+                                    @endphp
+                                    @if($isGroupStart['count'] == 1)
+                                        <td width="80%" colspan="6" rowspan="{{ $isGroupStart['count'] }}" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
+                                            Official Travel : {{ $text }}
+                                        </td>
+                                    @else
+                                        <td width="80%" colspan="6" rowspan="{{ $isGroupStart['count'] }}" 
+                                        style="position: relative; vertical-align: middle; text-align: center; font-size: 10px; color: gray; padding-left: 30px; overflow: visible;">
+
+                                            <span style="
+                                                position: absolute;
+                                                left: 1px;
+                                                top: 0;
+                                                bottom: 0;
+                                                font-size: {{ $fontSize }}px;
+                                                line-height: 1;
+                                                color: gray;
+                                                display: flex;
+                                                align-items: center;
+                                                pointer-events: none;
+                                                user-select: none;
+                                                font-weight: 100;
+                                                font-family: 'Segoe UI Thin', 'Arial', sans-serif;
+                                                ">
+                                                }
+                                            </span>
+
+                                            Official Travel : {{ $text }}
+                                        </td>
+                                    @endif
+                                @elseif($isInGroup)
+                                    {{-- Skip cell because it's already merged above --}}
+                                @else
+                                    <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px;">
+                                        {{ $list['data'] }}
+                                    </td>
+                                @endif
                         @else
                             <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_in'] : '' }}</td>
                             <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_out'] : '' }}</td>
@@ -148,17 +230,102 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($lists as $list)
+                    @php
+                        $travelGroups = [];
+                        $groupCount = 0;
+                        foreach ($lists as $index => $list) {
+                            if (isset($list['data']) && is_string($list['data']) && str_contains($list['data'], 'OFFICIAL TRAVEL')) {
+                                $groupCount++;
+                            } else {
+                                if ($groupCount > 0) {
+                                    $travelGroups[] = [
+                                        'start' => $index - $groupCount,
+                                        'count' => $groupCount
+                                    ];
+                                    $groupCount = 0;
+                                }
+                            }
+                        }
+                        if ($groupCount > 0) {
+                            $travelGroups[] = [
+                                'start' => count($lists) - $groupCount,
+                                'count' => $groupCount
+                            ];
+                        }
+                    @endphp
+
+                    @foreach($lists as $loopIndex => $list)
                     <tr class="text-center">
                         <td>{{ $loop->iteration }}</td>
+
                         @if($loop->iteration > 15)
                             @if(!$list['is_with'])
-                                <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px;">{{ $list['data'] }}</td>
+                                @php
+                                    $isGroupStart = collect($travelGroups)->firstWhere('start', $loopIndex);
+                                    $isInGroup = collect($travelGroups)->contains(function($g) use($loopIndex) {
+                                        return $loopIndex >= $g['start'] && $loopIndex < ($g['start'] + $g['count']);
+                                    });
+                                @endphp
+
+                                @if($isGroupStart)
+                                    @php
+                                        $count = $isGroupStart['count'];
+                                        $fontSize = 30;
+                                        if ($count == 2) $fontSize = 30;
+                                        elseif ($count == 3) $fontSize = 45;
+                                        elseif ($count == 4) $fontSize = 60;
+                                        elseif ($count == 5) $fontSize = 80;
+
+                                        $maxChars = 52 * $count;
+
+                                        // Truncate the destination text if longer than allowed
+                                         $text = ($isGroupStart['count'] == 1) ? $list['destination'] : $list['destination'].' '.$list['purpose'];
+                                        if (strlen($text) > $maxChars) {
+                                            $text = substr($text, 0, $maxChars) . '...';
+                                        }
+                                    @endphp
+
+                                   @if($isGroupStart['count'] == 1)
+                                        <td width="80%" colspan="6" rowspan="{{ $isGroupStart['count'] }}" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
+                                            Official Travel : {{ $text }}
+                                        </td>
+                                    @else
+                                        <td width="80%" colspan="6" rowspan="{{ $isGroupStart['count'] }}" 
+                                        style="position: relative; vertical-align: middle; text-align: center; font-size: 10px; color: gray; padding-left: 30px; overflow: visible;">
+
+                                            <span style="
+                                                position: absolute;
+                                                left: 1px;
+                                                top: 0;
+                                                bottom: 0;
+                                                font-size: {{ $fontSize }}px;
+                                                line-height: 1;
+                                                color: gray;
+                                                display: flex;
+                                                align-items: center;
+                                                pointer-events: none;
+                                                user-select: none;
+                                                font-weight: 100;
+                                                font-family: 'Segoe UI Thin', 'Arial', sans-serif;
+                                                ">
+                                                }
+                                            </span>
+
+                                            Official Travel : {{ $text }}
+                                        </td>
+                                    @endif
+                                @elseif($isInGroup)
+                                    {{-- Skip cell because it's already merged above --}}
+                                @else
+                                    <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px;">
+                                        {{ ($list['data'] != 'HOLIDAY') ? $list['data'] : $list['title'] }}
+                                    </td>
+                                @endif
                             @else
-                                <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_in'] : '' }}</td>
-                                <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_out'] : '' }}</td>
-                                <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['pm_in'] : '' }}</td>
-                                <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['pm_out'] : '' }}</td>
+                                <td style="font-size: 9px;">{{ $list['data']['am_in'] ?? '' }}</td>
+                                <td style="font-size: 9px;">{{ $list['data']['am_out'] ?? '' }}</td>
+                                <td style="font-size: 9px;">{{ $list['data']['pm_in'] ?? '' }}</td>
+                                <td style="font-size: 9px;">{{ $list['data']['pm_out'] ?? '' }}</td>
                                 <td></td>
                                 <td></td>
                             @endif
@@ -188,3 +355,19 @@
         
     </body>
 </html>
+<style>
+    .bracket {
+    position: relative;
+}
+.bracket::before {
+    content: "";
+    position: absolute;
+    left: -5px; /* adjust horizontal position */
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    border-left: 3px solid black; /* thickness and color of bracket */
+    border-top: 3px solid black;
+    border-bottom: 3px solid black;
+    border-radius: 10px; /* curve the bracket ends */
+}</style>

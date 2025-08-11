@@ -2,7 +2,10 @@
 
 namespace App\Services\Hr\Dtr;
 
+use Carbon\Carbon;
 use App\Models\Dtr;
+use App\Models\Request;
+use App\Models\Schedule;
 use App\Models\UserProfile;
 use App\Http\Resources\Hr\PrintDtrResource;
 
@@ -20,9 +23,54 @@ class PrintClass
         $start_time = strtotime("01-".$month_number."-".$year);
         $end_time = strtotime("+1 month", $start_time);
 
+        $startOfMonth = date("$year-$month_number-01");
+        $endOfMonth = date("Y-m-t", strtotime($startOfMonth));
+
+        $travels = Request::where('type_id',156)
+        ->whereHas('tags', function ($query) use ($user_id) {
+            $query->where('user_id', $user_id);
+        })
+        ->whereHas('dates', function ($q) use ($startOfMonth, $endOfMonth) {
+            $q->whereBetween('start', [$startOfMonth, $endOfMonth]) // starts this month
+            ->orWhereBetween('end', [$startOfMonth, $endOfMonth]) // ends this month
+            ->orWhere(function ($q2) use ($startOfMonth, $endOfMonth) { // spans whole month
+                $q2->where('start', '<', $startOfMonth)
+                    ->where('end', '>', $endOfMonth);
+            });
+        })
+        ->with('dates','detail')
+        ->get();
+
+        $holidays = Schedule::whereBetween('start', [$startOfMonth, $endOfMonth]) // starts this month
+            ->orWhereBetween('end', [$startOfMonth, $endOfMonth]) // ends this month
+            ->orWhere(function ($q2) use ($startOfMonth, $endOfMonth) { // spans whole month
+                $q2->where('start', '<', $startOfMonth)
+                    ->where('end', '>', $endOfMonth);
+            })
+            ->where('event_id',31)
+            ->get();
+
+
         for($i=$start_time; $i<$end_time; $i+=86400){
             $date = date('Y-m-d', $i);
             $day = date('l', $i);
+            $date2 = Carbon::createFromTimestamp($i);
+
+            $travelToday = $travels->first(function ($t) use ($date2) {
+                return $t->dates->contains(function ($d) use ($date2) {
+                    $start = Carbon::parse($d->start);
+                    $end   = Carbon::parse($d->end);
+                    return $date2->between($start, $end);
+                });
+            });
+
+            $holidayToday = $holidays->first(function ($t) use ($date2) {
+                $start = Carbon::parse($t->start)->startOfDay();
+                $end   = Carbon::parse($t->end)->endOfDay();
+                return $date2->between($start, $end, true);
+            });
+
+
 
             if($day == 'Saturday' || $day == 'Sunday'){
                 $array[] = [
@@ -33,6 +81,30 @@ class PrintClass
                     'bg' => 'bg bg-secondary bg-soft',
                     'is_with' => false
                 ];
+            }else if($travelToday){
+                $array[] = [
+                    'date' => date('Y-m-d', $i),
+                    'text' => date('F d, Y', $i),
+                    'day' => date('l', $i),
+                    'data' => 'OFFICIAL TRAVEL', // adjust if different
+                    'destination' => $travelToday->location->address.', '.$travelToday->location->municipality->name,
+                    'purpose' => $travelToday->detail->purpose,
+                    'bg' => 'bg bg-info bg-soft',
+                    'is_with' => false,
+                    'travel_group' => $travelToday->id
+                ];
+                continue;
+            }else if($holidayToday){
+                $array[] = [
+                    'date' => date('Y-m-d', $i),
+                    'text' => date('F d, Y', $i),
+                    'day' => date('l', $i),
+                    'data' => 'HOLIDAY', 
+                    'title' => $holidayToday->title,
+                    'bg' => 'bg bg-info bg-soft',
+                    'is_with' => false
+                ];
+                continue;
             }else{
                 $data = Dtr::whereDate('date',$date)->where('user_id',$user_id)->first();
           

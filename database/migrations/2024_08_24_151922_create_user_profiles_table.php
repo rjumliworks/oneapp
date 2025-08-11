@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('contact_no',20);
             $table->string('avatar', 200)->default('avatar.jpg');
             $table->string('signature', 200)->nullable();
+            $table->boolean('is_soloparent')->default(0);
             $table->smallInteger('marital_id')->unsigned()->index(); 
             $table->foreign('marital_id')->references('id')->on('list_data')->onDelete('cascade');
             $table->smallInteger('religion_id')->unsigned()->index();

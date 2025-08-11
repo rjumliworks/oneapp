@@ -15,12 +15,15 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->decimal('balance',12,2); 
+            $table->decimal('earned',12,2);
+            $table->decimal('used',12,2);
+            $table->decimal('carried_over', 12, 2)->default(0);
             $table->year('year');
             $table->tinyInteger('leave_id')->unsigned()->index();
             $table->foreign('leave_id')->references('id')->on('list_leaves')->onDelete('cascade');
             $table->integer('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unique(['employee_id', 'leave_type_id', 'year']);
+            $table->unique(['user_id', 'leave_id', 'year']);
             $table->timestamps();
         });
     }

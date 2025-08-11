@@ -1145,6 +1145,27 @@ class ListDataTableSeeder extends Seeder
                 'type' => 'Public Conveyance',
                 'is_active' => 1,
             ),
+            161 => 
+            array (
+                'id' => 162,
+                'name' => 'Earn',
+                'type' => 'Credit',
+                'is_active' => 1,
+            ),
+            162 => 
+            array (
+                'id' => 163,
+                'name' => 'Deduct',
+                'type' => 'Credit',
+                'is_active' => 1,
+            ),
+            163 => 
+            array (
+                'id' => 164,
+                'name' => 'Adjust',
+                'type' => 'Credit',
+                'is_active' => 1,
+            ),
         ));
 
         
