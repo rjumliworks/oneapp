@@ -32,6 +32,10 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
         Route::resource('/documents', App\Http\Controllers\Trace\DocumentController::class);
     });
 
+    Route::get('/keep-alive', function () {
+        return response()->json(['status' => 'ok']);
+    });
+
     // Route::resource('/executive', App\Http\Controllers\ExecutiveController::class);
 });
 

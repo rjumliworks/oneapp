@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\Hr\Payroll\SaveClass;
 use App\Services\Hr\Payroll\ViewClass;
+use App\Services\Hr\Payroll\SearchClass;
 use App\Services\Hr\Payroll\UpdateClass;
 use App\Http\Requests\HumanResource\PayrollRequest;
 
@@ -15,10 +16,11 @@ class PayrollController extends Controller
 {
     use HandlesTransaction;
 
-    public function __construct(SaveClass $save, ViewClass $view, UpdateClass $update, DropdownClass $dropdown){
+    public function __construct(SaveClass $save, ViewClass $view, UpdateClass $update, SearchClass $search, DropdownClass $dropdown){
         $this->save = $save;
         $this->view = $view;
         $this->update = $update;
+        $this->search = $search;
         $this->dropdown = $dropdown;
     }
 
@@ -32,6 +34,9 @@ class PayrollController extends Controller
             break;
             case 'print':
                 return $this->view->print($request);
+            break;
+            case 'search':
+                return $this->search->user($request);
             break;
             default:
                 return inertia('Modules/HumanResource/Payrolls/Index',[

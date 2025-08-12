@@ -60,7 +60,8 @@
                     </BCard>
                 </BCol>
                 <BCol lg="12">
-                    <Main :dropdowns="dropdowns" :is_regular="payroll.cycle.is_regular" :payroll="payroll_data.data" ref="main"/>
+                    <Regular v-if="payroll.cycle.is_regular" :dropdowns="dropdowns" :is_regular="payroll.cycle.is_regular" :payroll="payroll_data.data" ref="main"/>
+                    <Nonregular v-else :dropdowns="dropdowns" :is_regular="payroll.cycle.is_regular" :payroll="payroll_data.data" ref="main"/>
                 </BCol>
             </BRow>
         </div>
@@ -69,10 +70,11 @@
 </template>
 <script>
 import Save from './Modals/Save.vue';
-import Main from './Components/Pages/Main.vue';
+import Regular from './Components/Pages/Regular/Index.vue';
+import Nonregular from './Components/Pages/Nonregular/Index.vue';
 export default {
     props:['payroll_data','dropdowns'],
-    components: { Main, Save },
+    components: { Save, Regular, Nonregular },
     data(){
         return {
             currentUrl: window.location.origin,

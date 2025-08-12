@@ -92,17 +92,15 @@
             </div>
         </div>
     </div>
-    <!-- <User :is_regular="is_regular" :id="payroll.id" ref="user"/> -->
+    <User :is_regular="is_regular" :id="payroll.id" :start="payroll.start" :end="payroll.end" ref="user"/>
     <View :type="payroll.type" :deductions="dropdowns.deductions" :status="payroll.status.name" ref="view"/>
-    <Nonregular :is_regular="is_regular" :id="payroll.id" ref="nonregular"/>
 </template>
 <script>
 import simplebar from "simplebar-vue";
-import User from '../Modals/User.vue';
-import View from '../Modals/View.vue';
-import Nonregular from '../Modals/Nonregular.vue';
+import View from './Modals/View.vue';
+import User from './Modals/User.vue';
 export default {
-    components: { simplebar, User, View, Nonregular },
+    components: { simplebar, View, User },
     props: ['payroll','is_regular','dropdowns'],
     data(){
         return {
@@ -130,7 +128,7 @@ export default {
             this.$refs.verify.show();
         },
         openUser(){
-            (this.is_regular) ? this.$refs.user.show() : this.$refs.nonregular.show();
+            this.$refs.user.show();
         },
         openView(payroll,type){
             this.$refs.view.show(payroll,type);

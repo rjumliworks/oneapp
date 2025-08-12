@@ -33,10 +33,7 @@
         </style>
     </head>
     <body>
-        
         <?php 
-           
-
             $employee = json_encode($user); 
             $employee = json_decode($user, true);  
         ?>
@@ -79,7 +76,8 @@
                 @php
                     $travelGroups = [];
                     $groupCount = 0;
-                    foreach ($lists as $index => $list) {
+                    $firstHalf = array_slice($lists, 0, 15, true);
+                      foreach ($firstHalf as $index => $list) {
                         if (isset($list['data']) && is_string($list['data']) && str_contains($list['data'], 'OFFICIAL TRAVEL')) {
                             $groupCount++;
                         } else {
@@ -105,65 +103,79 @@
                     @if($loop->iteration <= 15)
                         @if(!$list['is_with'])
                             @php
-                                    $isGroupStart = collect($travelGroups)->firstWhere('start', $loopIndex);
-                                    $isInGroup = collect($travelGroups)->contains(function($g) use($loopIndex) {
-                                        return $loopIndex >= $g['start'] && $loopIndex < ($g['start'] + $g['count']);
-                                    });
+                                $isGroupStart = collect($travelGroups)->firstWhere('start', $loopIndex);
+                                $isInGroup = collect($travelGroups)->contains(function($g) use($loopIndex) {
+                                    return $loopIndex >= $g['start'] && $loopIndex < ($g['start'] + $g['count']);
+                                });
+                            @endphp
+
+                            @if($isGroupStart)
+                                @php
+                                    $count = $isGroupStart['count'];
+                                    $fontSize = 30;
+                                    if ($count == 2) $fontSize = 30;
+                                    elseif ($count == 3) $fontSize = 45;
+                                    elseif ($count == 4) $fontSize = 60;
+                                    elseif ($count == 5) $fontSize = 80;
+
+                                    $maxChars = 52 * $count;
+
+                                    // Truncate the destination text if longer than allowed
+                                    $text = ($isGroupStart['count'] == 1) ? $list['destination'] : $list['destination'].' '.$list['purpose'];
+                                    if (strlen($text) > $maxChars) {
+                                        $text = substr($text, 0, $maxChars) . '...';
+                                    }
                                 @endphp
-
-                                @if($isGroupStart)
-                                    @php
-                                        $count = $isGroupStart['count'];
-                                        $fontSize = 30;
-                                        if ($count == 2) $fontSize = 30;
-                                        elseif ($count == 3) $fontSize = 45;
-                                        elseif ($count == 4) $fontSize = 60;
-                                        elseif ($count == 5) $fontSize = 80;
-
-                                        $maxChars = 52 * $count;
-
-                                        // Truncate the destination text if longer than allowed
-                                        $text = ($isGroupStart['count'] == 1) ? $list['destination'] : $list['destination'].' '.$list['purpose'];
-                                        if (strlen($text) > $maxChars) {
-                                            $text = substr($text, 0, $maxChars) . '...';
-                                        }
-                                    @endphp
-                                    @if($isGroupStart['count'] == 1)
-                                        <td width="80%" colspan="6" rowspan="{{ $isGroupStart['count'] }}" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
-                                            Official Travel : {{ $text }}
-                                        </td>
-                                    @else
-                                        <td width="80%" colspan="6" rowspan="{{ $isGroupStart['count'] }}" 
-                                        style="position: relative; vertical-align: middle; text-align: center; font-size: 10px; color: gray; padding-left: 30px; overflow: visible;">
-
-                                            <span style="
-                                                position: absolute;
-                                                left: 1px;
-                                                top: 0;
-                                                bottom: 0;
-                                                font-size: {{ $fontSize }}px;
-                                                line-height: 1;
-                                                color: gray;
-                                                display: flex;
-                                                align-items: center;
-                                                pointer-events: none;
-                                                user-select: none;
-                                                font-weight: 100;
-                                                font-family: 'Segoe UI Thin', 'Arial', sans-serif;
-                                                ">
-                                                }
-                                            </span>
-
-                                            Official Travel : {{ $text }}
-                                        </td>
-                                    @endif
-                                @elseif($isInGroup)
-                                    {{-- Skip cell because it's already merged above --}}
+                                @if($isGroupStart['count'] == 1)
+                                    <td width="80%" colspan="6" rowspan="{{ $isGroupStart['count'] }}" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
+                                        Official Travel : {{ $text }}
+                                    </td>
                                 @else
-                                    <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px;">
-                                        {{ $list['data'] }}
+                                    <td width="80%" colspan="6" rowspan="{{ $isGroupStart['count'] }}" 
+                                    style="position: relative; vertical-align: middle; text-align: center; font-size: 10px; color: gray; padding-left: 30px; overflow: visible;">
+
+                                        <span style="
+                                            position: absolute;
+                                            left: 1px;
+                                            top: 0;
+                                            bottom: 0;
+                                            font-size: {{ $fontSize }}px;
+                                            line-height: 1;
+                                            color: gray;
+                                            display: flex;
+                                            align-items: center;
+                                            pointer-events: none;
+                                            user-select: none;
+                                            font-weight: 100;
+                                            font-family: 'Segoe UI Thin', 'Arial', sans-serif;
+                                            ">
+                                            }
+                                        </span>
+
+                                        Official Travel : {{ $text }}
                                     </td>
                                 @endif
+                            @elseif($isInGroup)
+                                {{-- Skip cell because it's already merged above --}}
+                            @else
+                                @if($list['data'] == 'HOLIDAY')
+                                    <td width="80%" colspan="6" style="text-transform: uppercase; letter-spacing: 2px; font-size: 8px; background: rgba(128,128,128, .5)">
+                                        {{$list['title']}}
+                                    </td>
+                                @elseif($list['data'] == 'NON-WORKING DAY')
+                                <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px; background: rgba(214, 214, 214, 0.5)">
+                                    {{$list['data']}}
+                                </td>
+                                @elseif($list['data'] == 'OFFICIAL TRAVEL')
+                                <td width="80%" colspan="6" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
+                                       Official Travel : {{ $list['destination'] }}
+                                    </td>
+                                @else
+                                <td width="80%" colspan="6" style="letter-spacing: 1px; text-transform: uppercase; font-size: 8px;">
+                                    {{ $list['data'] }}
+                                </td>
+                                @endif
+                            @endif
                         @else
                             <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_in'] : '' }}</td>
                             <td style="font-size: 9px;">{{ ($list['data']) ? $list['data']['am_out'] : '' }}</td>
@@ -233,7 +245,8 @@
                     @php
                         $travelGroups = [];
                         $groupCount = 0;
-                        foreach ($lists as $index => $list) {
+                        $secondHalf = array_slice($lists, 15, null, true);
+                          foreach ($secondHalf as $index => $list) {
                             if (isset($list['data']) && is_string($list['data']) && str_contains($list['data'], 'OFFICIAL TRAVEL')) {
                                 $groupCount++;
                             } else {
@@ -317,9 +330,23 @@
                                 @elseif($isInGroup)
                                     {{-- Skip cell because it's already merged above --}}
                                 @else
-                                    <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px;">
-                                        {{ ($list['data'] != 'HOLIDAY') ? $list['data'] : $list['title'] }}
+                                    @if($list['data'] == 'HOLIDAY')
+                                        <td width="80%" colspan="6" style="text-transform: uppercase; letter-spacing: 2px; font-size: 8px; background: rgba(128,128,128, .5)">
+                                            {{$list['title']}}
+                                        </td>
+                                    @elseif($list['data'] == 'NON-WORKING DAY')
+                                    <td width="80%" colspan="6" style="letter-spacing: 8px; font-size: 8px; background: rgba(214, 214, 214, 0.5)">
+                                        {{$list['data']}}
                                     </td>
+                                    @elseif($list['data'] == 'OFFICIAL TRAVEL')
+                                    <td width="80%" colspan="6" style="position: relative; vertical-align: middle;font-size: 10px; color: gray; overflow: visible;">
+                                            Official Travel : {{ $list['destination'] }}
+                                        </td>
+                                    @else
+                                    <td width="80%" colspan="6" style="letter-spacing: 1px; text-transform: uppercase; font-size: 8px; background: rgba(128,128,128, .5)">
+                                        {{ $list['data'] }}
+                                    </td>
+                                    @endif
                                 @endif
                             @else
                                 <td style="font-size: 9px;">{{ $list['data']['am_in'] ?? '' }}</td>

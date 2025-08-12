@@ -104,15 +104,19 @@ import { isError } from 'lodash';
         created(){
             this.filter();
         },
-
         mounted() {
             setInterval(() => {
                 this.currentSecond = new Date().toLocaleTimeString([],{seconds: '2-digit'});
                 this.currentTime = new Date().toLocaleTimeString("en-US");
                 this.currentDate = new Date().toLocaleDateString("en-US",options);
             }, 1000);
+            this.keepAliveInterval = setInterval(() => {
+                axios.get('/keep-alive'); 
+            }, 1000 * 60 * 30); 
         },
-
+        beforeUnmount() {
+            clearInterval(this.keepAliveInterval);
+        },
         methods: {
             find(){
                 this.user = ''; 

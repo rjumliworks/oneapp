@@ -42,13 +42,13 @@ class PrintClass
         ->get();
 
         $holidays = Schedule::whereBetween('start', [$startOfMonth, $endOfMonth]) // starts this month
-            ->orWhereBetween('end', [$startOfMonth, $endOfMonth]) // ends this month
-            ->orWhere(function ($q2) use ($startOfMonth, $endOfMonth) { // spans whole month
-                $q2->where('start', '<', $startOfMonth)
-                    ->where('end', '>', $endOfMonth);
-            })
-            ->where('event_id',31)
-            ->get();
+        ->orWhereBetween('end', [$startOfMonth, $endOfMonth]) // ends this month
+        ->orWhere(function ($q2) use ($startOfMonth, $endOfMonth) { // spans whole month
+            $q2->where('start', '<', $startOfMonth)
+                ->where('end', '>', $endOfMonth);
+        })
+        ->where('event_id',31)
+        ->get();
 
 
         for($i=$start_time; $i<$end_time; $i+=86400){

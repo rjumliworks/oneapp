@@ -11,6 +11,7 @@ use App\Models\Payroll;
 use App\Models\PayrollCycle;
 use App\Models\PayrollCutoff;
 use App\Models\PayrollDeduction;
+use App\Models\Request;
 use App\Models\UserDeduction;
 use App\Models\UserOrganization;
 use App\Http\Resources\Hr\DeductionResource;
@@ -118,15 +119,15 @@ class SaveClass
         foreach ($users as $user) {
             $exist = Payroll::where('user_id', $user)->where('cutoff_id', $request->id)->first();
 
-            // if ($exist) {
-            //     $existingUserIds[] = $user;
-            //     continue; // Skip processing if already exists
-            // }
+            if ($exist) {
+                $existingUserIds[] = $user;
+                continue; // Skip processing if already exists
+            }
 
-            // if ($this->hasIncomplete($data, $user) > 0) {
-            //     $incompleteUserIds[] = $user;
-            //     continue; // Skip processing if has incomplete DTR
-            // }
+            if ($this->hasIncomplete($data, $user) > 0) {
+                $incompleteUserIds[] = $user;
+                continue; // Skip processing if has incomplete DTR
+            }
 
             // ... proceed with payroll creation
             $payroll = $data->payrolls()->create([
@@ -237,22 +238,7 @@ class SaveClass
     private function hasIncomplete($data,$user){
         $start = Carbon::parse($data->start);
         $end = Carbon::parse($data->end);
-        //  $holidays = [
-        //     '2025-06-06',
-        //     '2025-06-12',
-        //     '2025-06-23',
-        //     '2025-06-24',
-        //     '2025-06-25',
-        //     '2025-06-26',
-        //     '2025-06-27',
-        //     '2025-06-30',
-        //     '2025-07-01',
-        //     '2025-07-02',
-        //     '2025-07-03',
-        //     '2025-05-23',
-        //     '2025-05-27',
-        //     '2025-05-28'
-        // ];
+    
         $incomplete = Dtr::where('user_id',$user)
         ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
         ->whereNotIn('date', $this->holidays)
@@ -265,25 +251,39 @@ class SaveClass
     private function tardiness($data,$user,$salary){
         $start = Carbon::parse($data->start);
         $end = Carbon::parse($data->end);
-        // $holidays = [
-        //     '2025-05-23',
-        //     '2025-05-27',
-        //     '2025-05-28',
-        //     '2025-06-06',
-        //     '2025-06-12',
-        //     '2025-06-26',
-        //     '2025-06-23',
-        //     '2025-06-24',
-        //     '2025-06-25',
-        //     '2025-06-27',
-        //     '2025-06-30',
-        //     '2025-07-01',
-        //     '2025-07-02',
-        //     '2025-07-03',
-        // ];
+             $datesList = collect();
+        $travels = Request::where('type_id',156)
+        ->whereHas('tags', function ($query) use ($user) {
+            $query->where('user_id', $user);
+        })
+        ->whereHas('dates', function ($q) use ($start, $end) {
+            $q->whereBetween('start', [$start, $end]) // starts this month
+            ->orWhereBetween('end', [$start, $end]) // ends this month
+            ->orWhere(function ($q2) use ($start, $end) { // spans whole month
+                $q2->where('start', '<', $start)
+                    ->where('end', '>', $end);
+            });
+        })
+        ->with('dates')
+        ->get();
+
+        foreach ($travels as $travel) {
+            foreach ($travel->dates as $range) {
+                $current = Carbon::parse($range->start);
+                $endDate = Carbon::parse($range->end);
+
+                while ($current->lte($endDate)) {
+                    $datesList->push($current->toDateString());
+                    $current->addDay();
+                }
+            }
+        }
+        $datesList = $datesList->unique()->sort()->values();
+        $combinedDates = $datesList->merge($this->holidays)->unique()->sort()->values();
+
         $period = CarbonPeriod::create($start, $end);
-        $filteredPeriod = collect($period)->reject(function ($date){
-            return in_array($date->toDateString(), $this->holidays);
+        $filteredPeriod = collect($period)->reject(function ($date) use ($combinedDates){
+            return in_array($date->toDateString(), $combinedDates->toArray());
         });
         $lateMinutes = 0;
         $undertimeMinutes = 0;

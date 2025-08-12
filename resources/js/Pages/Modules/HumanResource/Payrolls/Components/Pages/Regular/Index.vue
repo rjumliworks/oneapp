@@ -94,15 +94,12 @@
     </div>
     <!-- <User :is_regular="is_regular" :id="payroll.id" ref="user"/> -->
     <View :type="payroll.type" :deductions="dropdowns.deductions" :status="payroll.status.name" ref="view"/>
-    <Nonregular :is_regular="is_regular" :id="payroll.id" ref="nonregular"/>
 </template>
 <script>
 import simplebar from "simplebar-vue";
-import User from '../Modals/User.vue';
-import View from '../Modals/View.vue';
-import Nonregular from '../Modals/Nonregular.vue';
+import View from './Modals/View.vue';
 export default {
-    components: { simplebar, User, View, Nonregular },
+    components: { simplebar, View },
     props: ['payroll','is_regular','dropdowns'],
     data(){
         return {
