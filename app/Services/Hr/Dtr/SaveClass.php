@@ -14,6 +14,7 @@ class SaveClass
         $time = Carbon::now();
         $type = $request->type;
         $minutes = 0;
+        $is_completed = 0;
         switch($type){
             case 'Time In (am)':
                 if ($date->isMonday()) {

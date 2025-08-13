@@ -234,6 +234,115 @@ class SaveClass
         ];
     }
 
+    public function user($request){
+        $data = PayrollCutoff::with('cycle')->where('id', $request->id)->first();
+
+        $user = $request->user_id;
+        $exist = Payroll::where('user_id', $user)->where('cutoff_id', $request->id)->first();
+
+        if(!$exist){
+            $payroll = $data->payrolls()->create([
+                'user_id' => $user,
+                'cutoff_id' => $request->id
+            ]);
+            if ($payroll) {
+                $salary = floatval(str_replace(['₱', ','], '', optional(UserOrganization::with('salary')->where('user_id', $user)->first())->salary?->amount));
+
+                if($data->type == '1st') {
+                    $total = 0;
+                    $deductions = UserDeduction::where('is_active', 1)->where('is_automatic', 1)->where('user_id', $user)->get();
+
+                    foreach ($deductions as $deduction) {
+                        PayrollDeduction::create([
+                            'amount' => $deduction->amount,
+                            'deduction_id' => $deduction->deduction_id,
+                            'payroll_id' => $payroll->id
+                        ]);
+                        $cleanAmount = floatval(str_replace(['₱', ','], '', $deduction->amount));
+                        $total += $cleanAmount;
+                    }
+
+                    $payroll->gross = $salary;
+                    $payroll->deduction = $total;
+                    $payroll->netpay = $salary - $total;
+
+                    if (!$data->cycle->is_regular) {
+                        $tardiness = $this->tardiness($data, $user, $salary);
+                        $payroll->mins = $tardiness['mins'];
+                        $payroll->days = $tardiness['days'];
+                        $payroll->tardiness = $tardiness['total'];
+                        $payroll->netpay = ($salary / 2) - ($tardiness['total'] + $total);
+                    }
+
+                    $payroll->save();
+
+                }elseif($data->type == '2nd') {
+                    
+                    $previous = Payroll::where('user_id', $user)
+                        ->whereHas('cutoff', function ($query) use ($data) {
+                            $query->where('cycle_id', $data->cycle_id);
+                        })
+                        ->first();
+
+                    $tardiness = $this->tardiness($data, $user, $salary);
+                    $previous_net = (floatval(str_replace(['₱', ','], '', $previous->gross)) / 2) - floatval(str_replace(['₱', ','], '', $previous->tardiness));
+                    $tax = ($previous_net + (($salary / 2) - $tardiness['total'])) * 0.02;
+
+                    $payroll->gross = $salary;
+                    $payroll->deduction = $tax;
+                    $payroll->mins = $tardiness['mins'];
+                    $payroll->days = $tardiness['days'];
+                    $payroll->tardiness = $tardiness['total'];
+                    $payroll->netpay = ($salary / 2) - ($tardiness['total'] + $tax);
+                    $payroll->save();
+
+                    $deduction = UserDeduction::where('is_active', 1)->where('is_automatic', 0)->where('user_id', $user)->first();
+            
+                    PayrollDeduction::create([
+                        'amount' => $tax,
+                        'deduction_id' => $deduction->deduction_id,
+                        'payroll_id' => $payroll->id
+                    ]);
+
+                } else {
+                    // Other payroll type
+                    $total = 0;
+                    $deductions = UserDeduction::where('is_active', 1)->where('is_automatic', 1)->where('user_id', $user)->get();
+
+                    foreach ($deductions as $deduction) {
+                        PayrollDeduction::create([
+                            'amount' => $deduction->amount,
+                            'deduction_id' => $deduction->deduction_id,
+                            'payroll_id' => $payroll->id
+                        ]);
+                        $cleanAmount = floatval(str_replace(['₱', ','], '', $deduction->amount));
+                        $total += $cleanAmount;
+                    }
+
+                    $payroll->gross = $salary;
+                    $payroll->deduction = $total;
+                    $payroll->netpay = $salary - $total;
+
+                    if (!$data->cycle->is_regular) {
+                        $tardiness = $this->tardiness($data, $user, $salary);
+                        $payroll->mins = $tardiness['mins'];
+                        $payroll->days = $tardiness['days'];
+                        $payroll->tardiness = $tardiness['total'];
+                        $payroll->netpay = ($salary / 2) - ($tardiness['total'] + $total);
+                    }
+
+                    $payroll->save();
+                }
+            }
+        }
+
+        return [
+            'data' =>[],
+            'message' => 'Cycle creation was successful!',
+            'info' => "You've successfully created a new cycle."
+        ];
+    }
+
 
     private function hasIncomplete($data,$user){
         $start = Carbon::parse($data->start);

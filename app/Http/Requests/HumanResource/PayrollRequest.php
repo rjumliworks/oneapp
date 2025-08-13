@@ -58,6 +58,14 @@ class PayrollRequest extends FormRequest
                     'users.*' => ['integer'],
                 ];
             break;
+            case 'user':  
+                return [
+                    'user_id' => [
+                        'sometimes',
+                        'required',
+                    ],
+                ];
+            break;
             default: 
                 return [];
         }

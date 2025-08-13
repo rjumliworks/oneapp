@@ -64,37 +64,69 @@
                         </BCol>
                         <BCol lg="12" v-if="selected && !selected.already_in_payroll">
                             <div class="row g-3 mt-n3 mb-3">
-                                <div class="col-sm-6">
+                                <div class="col-sm-3">
                                     <div class="p-1 border border-dashed rounded">
                                         <div class="d-flex align-items-center">
                                             <div class="avatar-sm me-2">
-                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-calendar-2-fill"></i></div>
+                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-calendar-check-fill"></i></div>
                                             </div>
                                             <div class="flex-grow-1">
-                                                <p class="text-muted mb-0 fs-12">1st Quincena :</p>
-                                                <h5 class="mb-0 fs-12">asd</h5>
+                                                <p class="text-muted mb-0 fs-12">Completed DTR :</p>
+                                                <h5 class="mb-0 fs-12">{{completedCount}} / {{ totalWorkDays }}</h5>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-sm-3">
                                     <div class="p-1 border border-dashed rounded">
                                         <div class="d-flex align-items-center">
                                             <div class="avatar-sm me-2">
-                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-calendar-2-fill"></i></div>
+                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-calendar-todo-fill"></i></div>
                                             </div>
                                             <div class="flex-grow-1">
-                                                <p class="text-muted mb-0 fs-12">2nd Quicena :</p>
-                                                <h5 class="mb-0 fs-12">asdad</h5>
+                                                <p class="text-muted mb-0 fs-12">Holiday :</p>
+                                                <h5 class="mb-0 fs-12">{{holidayCount}}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="p-1 border border-dashed rounded">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2">
+                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-map-pin-fill"></i></div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-0 fs-12">Official Travel :</p>
+                                                <h5 class="mb-0 fs-12">{{travelCount}}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="p-1 border border-dashed rounded">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2">
+                                                <div class="avatar-title rounded bg-transparent text-primary fs-20"><i class="ri-close-circle-fill"></i></div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted mb-0 fs-12">Absent :</p>
+                                                <h5 class="mb-0 fs-12">{{absentCount}}</h5>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div v-if="completedCount != totalWorkDays"
+                                class="alert alert-warning alert-dismissible alert-label-icon label-arrow fade show material-shadow mt-2"
+                                role="alert">
+                                <i class="ri-alert-line label-icon"></i>
+                                <strong>Warning</strong> - Employee is not eligible to be added to the payroll because their DTR is incomplete.
+                            </div>
                             <div class="table-responsive" style="height: calc(100vh - 565px); overflow: auto;">
                                 <table class="table table-bordered align-middle mb-1">
-                                    <thead class="table-light fs-11 thead-fixed">
-                                        <tr>
+                                    <thead class="bg-primary fs-11 thead-fixed">
+                                        <tr class="text-white">
                                             <th class="text-center" style="width: 25%;">Date</th>
                                             <th class="text-center" style="width: 15%;">Am In</th>
                                             <th class="text-center" style="width: 15%;">Am Out</th>
@@ -106,9 +138,9 @@
                                     <tbody class="table-white fs-12">
                                         <tr v-for="(list,index) in selected.dtrs" v-bind:key="index" :class="{
                                             'bg-success-subtle': list.is_completed,
-                                            'bg-danger-subtle': list.status === 'Holiday',
+                                            'bg-dark-subtle': list.status === 'Holiday' || list.status === 'Non-working Day',
                                             'bg-warning-subtle': list.status === 'Official Travel',
-                                            'bg-dark-subtle': list.status === 'Non-working Day'
+                                            'bg-danger-subtle': list.status === 'Absent'
                                         }">
                                             <td class="text-center">{{ list.date }}</td>
                                             <template v-if="list.status === 'Non-working Day'">
@@ -118,7 +150,10 @@
                                                 <td class="text-center" colspan="5">{{list.title}}</td>
                                             </template>
                                             <template v-else-if="list.status === 'Official Travel'">
-                                                <td class="text-center" colspan="5">{{list.title}}</td>
+                                                <td class="text-center" colspan="5">Official Travel : {{list.title}}</td>
+                                            </template>
+                                            <template v-else-if="list.status === 'Absent'">
+                                                <td class="text-center" colspan="5">Absent</td>
                                             </template>
                                             <template v-else>
                                                 <td class="text-center">{{ list.am_in ? list.am_in.time : '-' }}</td>
@@ -141,7 +176,7 @@
         </form>
         <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Close</b-button>
-            <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
+            <b-button v-if="completedCount == totalWorkDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
         </template>
     </b-modal>
 </template>
@@ -157,7 +192,7 @@ export default {
             form: useForm({
                 id: this.id,
                 user_id: null,
-                option: 'users'
+                option: 'user'
             }),
             selected: null,
             names: [],
@@ -167,6 +202,26 @@ export default {
     },
     mounted() {
         this.isCustomDropdown();
+    },
+    computed: {
+        completedCount() {
+            return (this.selected?.dtrs || []).filter(item => item.is_completed == 1).length;
+        },
+        holidayCount() {
+            return (this.selected?.dtrs || []).filter(item => item.status == "Holiday").length;
+        },
+        travelCount() {
+            return (this.selected?.dtrs || []).filter(item => item.status == "Official Travel").length;
+        },
+        nonCount() {
+            return (this.selected?.dtrs || []).filter(item => item.status == "Non-working Day").length;
+        },
+        absentCount() {
+            return (this.selected?.dtrs || []).filter(item => item.status == "Absent").length;
+        },
+        totalWorkDays() {
+            return (this.selected?.dtrs?.length || 0) - (this.holidayCount + this.travelCount + this.nonCount + this.absentCount);
+        }
     },
     methods: { 
         show(){
@@ -196,6 +251,7 @@ export default {
         },
         chooseUser(data){
             this.selected = data;
+            this.form.user_id = data.value;
             this.keyword = null;
             document.getElementById("search-options").value = "";
             document.getElementById("search-options").focus();
@@ -204,7 +260,7 @@ export default {
             this.form.post('/payrolls',{
                 preserveScroll: true,
                 onSuccess: (response) => {
-                
+                    this.hide();
                 },
             });
         },
@@ -212,6 +268,7 @@ export default {
             this.form.errors[field] = false;
         },
         hide(){
+            this.form.reset();
             this.showModal = false;
         },
         isCustomDropdown() {

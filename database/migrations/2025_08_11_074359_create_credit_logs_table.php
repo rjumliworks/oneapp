@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('old_balance',12,2); 
             $table->decimal('new_balance',12,2); 
             $table->string('remarks')->nullable();
+            $table->boolean('is_automated')->default(1);
             $table->integer('user_id')->unsigned()->nullable(); //if change
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->smallInteger('type_id')->unsigned()->index();

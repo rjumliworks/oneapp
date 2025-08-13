@@ -29,6 +29,7 @@ class LeaveController extends Controller
             break;
             default:
                 return inertia('Modules/HumanResource/Leaves/Index',[
+                    'credits' => $this->view->credits(),
                     'dropdowns' => [
                         'leaves' => $this->dropdown->leaves(),
                         'details' => $this->dropdown->dropdowns('Leave Details')

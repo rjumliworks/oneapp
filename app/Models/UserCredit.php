@@ -11,7 +11,7 @@ class UserCredit extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['balance','earned','used','carried_over','year','leave_id','user_id'];
+    protected $fillable = ['balance','earned','used','carried_over','year','leave_id','user_id','is_active'];
 
     public function user()
     {

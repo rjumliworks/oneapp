@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('used',12,2);
             $table->decimal('carried_over', 12, 2)->default(0);
             $table->year('year');
+            $table->boolean('is_active')->default(1);
             $table->tinyInteger('leave_id')->unsigned()->index();
             $table->foreign('leave_id')->references('id')->on('list_leaves')->onDelete('cascade');
             $table->integer('user_id')->unsigned()->index();

@@ -11,7 +11,7 @@ class CreditLog extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $fillable = ['amount','old_balance','new_balance','remarks','user_id','type_id','credit_id'];
+    protected $fillable = ['amount','old_balance','new_balance','remarks','is_automated','user_id','type_id','credit_id'];
 
     public function user()
     {

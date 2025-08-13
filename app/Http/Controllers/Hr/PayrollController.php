@@ -59,6 +59,9 @@ class PayrollController extends Controller
                 case 'users':
                     return $this->save->users($request);
                 break;
+                case 'user':
+                    return $this->save->user($request);
+                break;
                 case 'remove':
                     return $this->save->remove($request);
                 break;
