@@ -15,7 +15,8 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->tinyIncrements('id');
             $table->string('name',100);
-            $table->string('citation');  
+            $table->string('citation'); 
+            $table->enum('sex', ['male', 'female'])->nullable()->comment('null means no sex restriction'); 
             $table->boolean('is_convertible')->default(0);
             $table->boolean('is_regular')->default(1);
             $table->boolean('is_after')->default(0);

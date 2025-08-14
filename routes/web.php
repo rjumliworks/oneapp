@@ -10,14 +10,15 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
     Route::get('/search', [App\Http\Controllers\DashboardController::class, 'search']);
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
+    Route::resource('/requests', App\Http\Controllers\Employee\RequestController::class);
     Route::resource('/schedules', App\Http\Controllers\Employee\ScheduleController::class);
+    Route::resource('/surveys', App\Http\Controllers\Hr\SurveyController::class);
     Route::post('/comment', [App\Http\Controllers\Common\CommentController::class, 'store']);
 
     Route::middleware(['role:Human Resource Officer'])->group(function () {
         Route::resource('/employees', App\Http\Controllers\Hr\EmployeeController::class);
         Route::resource('/dtrs', App\Http\Controllers\Hr\DtrController::class);
         Route::resource('/payrolls', App\Http\Controllers\Hr\PayrollController::class);
-        Route::resource('/surveys', App\Http\Controllers\Hr\SurveyController::class);
         Route::resource('/leaves', App\Http\Controllers\Hr\LeaveController::class);
         Route::resource('/credits', App\Http\Controllers\Hr\CreditController::class);
         Route::resource('/calendar', App\Http\Controllers\Hr\CalendarController::class);

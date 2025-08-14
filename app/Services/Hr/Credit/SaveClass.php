@@ -70,6 +70,21 @@ class SaveClass
                 
             }
         }
+
+        $users = User::with('profile')->whereHas('organization', function ($query) {
+            $query->where('type_id', 16)->where('status_id',2);
+        })->get();
+
+        foreach($users as $user){
+            $credit = $user->credits()->create([
+                'leave_id' => 14,
+                'user_id' => $user->id,
+                'balance' => 0,
+                'earned' => 0,
+                'used' => 0,
+                'year' => date('Y')
+            ]);
+        }
         
         return [
             'data' => '',

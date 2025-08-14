@@ -298,3 +298,9 @@ export default {
     }
 }
 </script>
+<style scoped>
+.multiselect__option--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+</style>

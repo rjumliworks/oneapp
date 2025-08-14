@@ -9,13 +9,13 @@
                 <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
                 </Link>
             </li>
-            <!-- <li class="nav-item">
-                <Link href="/schedules" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Modules/Employee/Schedules') }">
+            <li class="nav-item">
+                <Link href="/requests" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/Employee/Requests') }">
                 <i class="ri-calendar-todo-fill"></i>
-                <span class="fw-semibold fs-14" data-key="t-dashboards">Schedules</span>
+                <span class="fw-semibold fs-14" data-key="t-dashboards">Requests</span>
                 </Link>
-            </li> -->
+            </li>
             <tempalte v-if="$page.props.roles.includes('Travel Controler Officer')">
                 <li class="menu-title">
                     <i class="ri-more-fill" aria-expanded="false"></i>

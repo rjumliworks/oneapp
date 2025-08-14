@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Vrams;
+namespace App\Http\Controllers\Employee;
 
 use App\Services\DropdownClass;
 use App\Traits\HandlesTransaction;
 use App\Services\Vrams\Travel\SaveClass;
-use App\Services\Vrams\Travel\ViewClass;
+use App\Services\Employee\Request\ViewClass;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\Vrams\TravelRequest;
 
-class TravelController extends Controller
+class RequestController extends Controller
 {
     use HandlesTransaction;
 
@@ -25,20 +25,30 @@ class TravelController extends Controller
     public function index(Request $request){
         switch($request->option){
             case 'lists':
-                return $this->view->travel($request);
+                return $this->view->lists($request);
             break;
             case 'print':
                 return $this->view->print($request);
             break;
-            case 'schedules':
-                return $this->view->schedule($request);
-            break;
             default:
-                return inertia('Modules/Vrams/Travels/Index',[
-                    'counts' => $this->view->counts($this->dropdown->statuses('Request')),
+                return inertia('Modules/Employee/Requests/Index',[
+                    'counts' => $this->view->counts($this->dropdown->datas('Request Type')),
                     'dropdowns' => [
+                        'requests' => $this->dropdown->datas('Request Type'),
+                    ],
+                    'leave_dropdowns' => [
+                        'leaves' => $this->dropdown->leaves(),
+                        'details' => $this->dropdown->dropdowns('Leave Details'),
+                        'options' => $this->view->credits(),
+                    ],
+                    'travel_dropdowns' => [
                         'modes' => $this->dropdown->datas('Travel'),
                         'expenses' => $this->dropdown->datas('Travel Expense'),
+                        'transportations' => $this->dropdown->datas('Public Conveyance'),
+                        'statuses' => $this->dropdown->statuses('Request'),
+                        'regions' => $this->dropdown->regions()
+                    ],
+                    'vehicle_dropdowns' => [
                         'transportations' => $this->dropdown->datas('Public Conveyance'),
                         'statuses' => $this->dropdown->statuses('Request'),
                         'regions' => $this->dropdown->regions()
