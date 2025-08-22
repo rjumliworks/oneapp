@@ -38,7 +38,16 @@ class LeaveController extends Controller
         }   
     }
 
-    public function store(LeaveRequest $request){
+     public function store(LeaveRequest $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            return $this->save->leave($request);
+        });
 
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
     }
 }

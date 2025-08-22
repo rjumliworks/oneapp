@@ -16,6 +16,7 @@ class RequestDate extends Model
         'time',
         'start',
         'end',
+        'time_of_day',
         'request_id'
     ];
 

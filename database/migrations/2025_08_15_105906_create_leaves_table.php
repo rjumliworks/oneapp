@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('request_dates', function (Blueprint $table) {
+        Schema::create('leaves', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
-            $table->string('time')->nullable();
-            $table->date('start');
-            $table->date('end');
-            $table->enum('time_of_day', ['AM', 'PM', 'Whole Day']);
+            $table->integer('count');
+            $table->string('details')->nullable();
+            $table->tinyInteger('detail_id')->unsigned()->index();
+            $table->foreign('detail_id')->references('id')->on('list_dropdowns')->onDelete('cascade');   
+            $table->tinyInteger('type_id')->unsigned()->index();
+            $table->foreign('type_id')->references('id')->on('list_leaves')->onDelete('cascade');
             $table->bigInteger('request_id')->unsigned()->index();
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->timestamps();
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_dates');
+        Schema::dropIfExists('leaves');
     }
 };

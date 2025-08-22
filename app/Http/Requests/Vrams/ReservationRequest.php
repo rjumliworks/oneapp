@@ -19,7 +19,7 @@ class ReservationRequest extends FormRequest
             'tags' => 'required|array|min:1',
             'date' => 'sometimes|required',
             'time' => 'sometimes|required',
-            'vehicle_id' => 'sometimes|required|integer',
+            'vehicle' => 'sometimes|required',
             'remarks' => 'nullable|string',
             'document' => 'nullable|mimes:pdf|max:2000'
         ];
@@ -43,8 +43,8 @@ class ReservationRequest extends FormRequest
             'time.required' => 'Please specify the departure time.',
             'time.string' => 'Time must be a valid format.',
 
-            'vehicle_id.required' => 'Please select a vehicle.',
-            'vehicle_id.exists' => 'The selected vehicle is invalid.',
+            'vehicle.required' => 'Please select a vehicle.',
+            'vehicle.exists' => 'The selected vehicle is invalid.',
 
             'tags.required' => 'Please select at least one employee.',
 

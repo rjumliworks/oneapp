@@ -15,9 +15,9 @@
                     </div>
                 </BCol>
                 <BCol lg="6" class="mt-3">
-                    <InputLabel for="name" value="Vehicle" :message="form.errors.vehicle_id"/>
+                    <InputLabel for="name" value="Vehicle" :message="form.errors.vehicle"/>
                     <Multiselect
-                        v-model="form.vehicle_id" 
+                        v-model="form.vehicle" 
                         :options="vehicles"
                         label="name"
                         object
@@ -116,7 +116,7 @@ export default {
                 remarks: null,
                 date: null,
                 time: null,
-                vehicle_id: null,
+                vehicle: null,
                 tags: [],
                 address: null,
                 region_code: null,

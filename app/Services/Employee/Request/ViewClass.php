@@ -67,12 +67,16 @@ class ViewClass
                         'label' => 'Require Credits',
                         'options' => [
                             'value' => $item->leave->id,
-                            'name' => $item->leave->name.' - '.$item->balance,
+                            'label' => $item->leave->name.' - '.$item->balance,
+                            'name' => $item->leave->name,
                             'citation' => $item->leave->citation,
                             'is_regular' => $item->leave->is_regular,
                             'is_after' => $item->leave->is_after,
+                            'type' => $item->leave->type,
+                            'others' => $item->leave->others,
                             'balance' => $item->balance,
-                            'disabled'   => ($item->balance == 0 || $item->balance == 0.00) 
+                            'disabled'   => ($item->balance == 0 || $item->balance == 0.00),
+                            'required_document' => false
                         ]
                     ];
                 }
@@ -86,10 +90,14 @@ class ViewClass
                     'label' => 'Require Documents',
                     'options' => [
                         'value' => $item->id,
+                        'label' => $item->name,
                         'name' => $item->name,
                         'citation' => $item->citation,
                         'is_regular' => $item->is_regular,
-                        'is_after' => $item->is_after
+                        'is_after' => $item->is_after,
+                        'type' => $item->type,
+                        'others' => $item->others,
+                        'required_document' => true
                     ]
                 ]);
             }
@@ -107,12 +115,16 @@ class ViewClass
                     'label' => 'Require Credits',
                     'options' => [
                         'value' => $item->leave->id,
-                        'name' => $item->leave->name.' - '.$item->balance,
+                        'label' => $item->leave->name.' - '.$item->balance,
+                        'name' => $item->leave->name,
                         'citation' => $item->leave->citation,
                         'is_regular' => $item->leave->is_regular,
                         'is_after' => $item->leave->is_after,
+                        'type' => $item->leave->type,
+                        'others' => $item->leave->others,
                         'balance' => $item->balance,
-                        'disabled'   => ($item->balance == 0 || $item->balance == 0.00) 
+                        'disabled'   => ($item->balance == 0 || $item->balance == 0.00),
+                        'required_document' => false
                     ]
                 ]);
             }
@@ -126,10 +138,14 @@ class ViewClass
                     'label' => 'Others',
                     'options' => [
                         'value' => $item->id,
+                        'label' => $item->name,
                         'name' => $item->name,
                         'citation' => $item->citation,
                         'is_regular' => $item->is_regular,
-                        'is_after' => $item->is_after
+                        'is_after' => $item->is_after,
+                        'type' => $item->type,
+                        'others' => $item->others,
+                        'required_document' => false
                     ]
                 ]);
             }

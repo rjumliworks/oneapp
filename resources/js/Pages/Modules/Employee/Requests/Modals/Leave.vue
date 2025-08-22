@@ -4,19 +4,54 @@
             
         <form class="customform">
             <BRow class="g-3 mdiv">
-                <BCol lg="6" class="mt-3">
+                <BCol lg="12" class="mt-3">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex border border-dashed rounded p-3">
+                                <div class="flex-shrink-0 avatar-xs align-self-center me-3">
+                                    <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
+                                        <i class="ri-calendar-todo-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <p class="mb-1 text-muted fs-12">Inclusives Dates :</p>
+                                    <h6 class="text-truncate fw-semibold fs-13 mb-0">{{formattedDate}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex border border-dashed rounded p-3">
+                                <div class="flex-shrink-0 avatar-xs align-self-center me-3">
+                                    <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
+                                        <i class="ri-calendar-2-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <p class="mb-1 text-muted fs-12">No. of working days applied for :</p>
+                                    <h6 class="text-truncate fw-semibold fs-13 mb-0">{{form.dates.length}} <span>{{ form.dates.length > 1 ? 'days' : 'day' }}</span></h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </BCol>
+                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
+                <BCol :lg="!form.type?.required_document ? 6 : 12" class="mt-n1">
                     <InputLabel for="name" value="Type of Leave" :message="form.errors.type_id"/>
                     <Multiselect
                         v-model="form.type" :groups="true"
                         :options="dropdowns.options"
-                        label="name"
+                        label="label"
                         object
                         placeholder="Select type"
                     />
                 </BCol>
-                <BCol lg="6" class="mt-3">
+                <BCol lg="6" :class="!form.type?.required_document ? 'mt-n1' : 'mt-2'">
                     <InputLabel for="name" value="Details of Leave" :message="form.errors.detail_id"/>
                     <Multiselect :options="filteredDetails" :searchable="true" label="name" object v-model="form.detail" placeholder="Select Detail" @input="handleInput('detail_id')"/>
+                </BCol>
+                <BCol v-if="form.type?.required_document" lg="6" class="mt-2">
+                    <InputLabel for="name" value="Document" :message="form.errors.detail_id"/>
+                    <TextInput id="name" v-model="form.details" type="file" class="form-control" :placeholder="form.detail.others" @input="handleInput('details')" :light="true"/>
                 </BCol>
                 <BCol lg="12" v-if="form.detail?.others === 'specify' || form.detail?.others === 'specify illness' || form.detail?.others === 'specify reason'" class="mt-1">
                     <InputLabel for="name" value="Details" :message="form.errors.details"/>
@@ -28,7 +63,7 @@
                 </BCol>
                 <template v-if="dateType == 'Single Day'">
                     <BCol lg="6" class="mt-2">
-                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
+                        <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
                         <flat-pickr v-model="date" :config="single" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
                     </BCol>
                     <BCol lg="6" class="mt-2">
@@ -38,13 +73,13 @@
                 </template>
                 <template v-if="dateType == 'Range'">
                     <BCol lg="12" class="mt-2">
-                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
+                        <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
                         <flat-pickr v-model="date" :config="range" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
                     </BCol>
                 </template>
                 <template v-if="dateType == 'Multiple Dates (non-continuous)'">
                     <BCol lg="12" class="mt-2">
-                        <InputLabel for="name" value="Date"  :message="form.errors.dates"/>
+                        <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
                         <flat-pickr v-model="date" :config="multiple" placeholder="Select dates" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
                     </BCol>
                 </template>
@@ -103,6 +138,8 @@ export default {
                 details: null,
                 timeOfDay: 'Whole Day',
                 dates: [],
+                document: null,
+                date_type: null,
                 option: 'leave'
             }),
             check: false,
@@ -167,6 +204,27 @@ export default {
                 }
             }
             return matches;
+        },
+        formattedDate() {
+            if (!this.date) return '';
+            
+            // If it's a range or multiple dates, handle array
+            if (Array.isArray(this.date)) {
+                return this.date
+                    .map(d => new Date(d).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }))
+                    .join(' to '); // or ', ' for multiple
+            }
+
+            // Single date
+            return new Date(this.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
         }
     },
     watch: {
@@ -183,6 +241,9 @@ export default {
         'form.type': {
             immediate: true,
             handler(newVal) {
+                this.form.dates = [];
+                this.date = null;
+                this.dateType = null;
                 if (!newVal || !newVal.name) {
                     this.form.detail = null;
                     return;
@@ -221,6 +282,10 @@ export default {
                     this.form.type_id = null;
                 }
             }
+        },
+        dateType(newVal){
+            this.date = null;
+            this.form.dates = [];
         },
         date(newVal) {
             if (!newVal) return;
@@ -265,6 +330,7 @@ export default {
             this.showModal = true;
         },
         submit(){
+            this.form.date_type = this.dateType;
             this.form.post('/leaves',{
                 preserveScroll: true,
                 onSuccess: (response) => {
