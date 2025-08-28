@@ -73,14 +73,28 @@
                 </template>
                 <template v-if="dateType == 'Range'">
                     <BCol lg="12" class="mt-2">
-                        <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
-                        <flat-pickr v-model="date" :config="range" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                        <div class="d-flex">
+                            <div style="width: 100%;">
+                                <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
+                                <flat-pickr v-model="date" :config="range" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <b-button @click="openDates()" style="margin-top: 20px;" variant="light" class="waves-effect waves-light ms-1"><i class="ri-calendar-fill"></i></b-button>
+                            </div>
+                        </div>
                     </BCol>
                 </template>
                 <template v-if="dateType == 'Multiple Dates (non-continuous)'">
                     <BCol lg="12" class="mt-2">
-                        <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
-                        <flat-pickr v-model="date" :config="multiple" placeholder="Select dates" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                        <div class="d-flex">
+                            <div style="width: 100%;">
+                                <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
+                                <flat-pickr v-model="date" :config="multiple" placeholder="Select dates" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <b-button @click="openDates()" style="margin-top: 20px;" variant="light" class="waves-effect waves-light ms-1"><i class="ri-calendar-fill"></i></b-button>
+                            </div>
+                        </div>
                     </BCol>
                 </template>
             </BRow>
@@ -90,10 +104,10 @@
                 <BCol lg="12" class="mt-3">
                     <div class="mt-0 form-check fs-14">
                         <input type="checkbox" v-model="check" class="form-check-input" id="checkTerms">
-                        <label class="form-check-label fs-12" for="checkTerms">Please check the box if you have dates selected that are AM or PM only, not whole day</label>
+                        <label class="form-check-label fs-11 text-muted" for="checkTerms">Please check the box if you have dates selected that are AM or PM only, not whole day</label>
                     </div>
                 </BCol>
-                <BCol lg="12" style="max-height: 250px; overflow: auto;"  id="my-modal-content"> 
+                <!-- <BCol lg="12" style="max-height: 250px; overflow: auto;"  id="my-modal-content"> 
                     <div v-if="check" class="mt-3">
                         <div v-for="(date, index) in form.dates" :key="index" class="mb-2">
                             <div class="input-group mb-1">
@@ -109,7 +123,7 @@
                             </div>
                         </div>
                     </div>
-                </BCol>
+                </BCol> -->
             </BRow>
         </form>
         <template v-slot:footer>
@@ -117,15 +131,17 @@
             <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
         </template>
     </b-modal>
+    <ViewDate @update="updateDates" ref="dates"/>
 </template>
 <script>
 import { useForm } from '@inertiajs/vue3';
 import flatPickr from "vue-flatpickr-component";
 import Multiselect from "@vueform/multiselect";
+import ViewDate from './Date.vue';
 import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
-    components: { Multiselect, InputLabel, TextInput, flatPickr },
+    components: { Multiselect, InputLabel, TextInput, flatPickr, ViewDate },
     props: ['dropdowns'],
     data(){
         return {
@@ -287,6 +303,9 @@ export default {
             this.date = null;
             this.form.dates = [];
         },
+        check(newVal){
+            (newVal) ? this.openDates() : '';
+        },
         date(newVal) {
             if (!newVal) return;
             if (this.dateType === 'Single Day') {
@@ -354,6 +373,12 @@ export default {
             const year = date.getFullYear();
             const weekday = date.toLocaleString('en-US', { weekday: 'long' });
             return `${month} ${day}, ${year} (${weekday})`;
+        },
+        openDates(){
+            this.$refs.dates.show(this.form.dates);
+        },
+        updateDates(data){
+            this.form.dates = data;
         },
         handleInput(field) {
             this.form.errors[field] = false;

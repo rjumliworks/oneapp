@@ -7,6 +7,7 @@ use App\Models\Request;
 class SaveClass
 {
     public function leave($request){
+        dd('wew');
         $data = Request::create([
             'code' => $this->generateCode(),
             'type_id' => 158,
@@ -18,6 +19,17 @@ class SaveClass
                 'user_id' => \Auth::user()->id,
                 'division_id' => \Auth::user()->organization->division_id,
             ]);
+
+            $data->signatories()->create([
+                'division_id' => \Auth::user()->organization->division_id,
+                'is_approval_only' => 0
+            ]);
+
+            $data->leave()->create([
+                'division_id' => \Auth::user()->organization->division_id,
+                'is_approval_only' => 0
+            ]);
+
             if($request->date_type != 'Multiple Dates (non-continuous)'){
                 $dates = $request->dates;
                 $allWholeDay = array_reduce($dates, function ($carry, $item) {
