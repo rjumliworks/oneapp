@@ -1,9 +1,8 @@
 <template>
-    <b-modal v-model="showModal" style="--vz-modal-width: 550px;" hide-footer header-class="p-3 bg-light"
+    <b-modal v-model="showModal" style="--vz-modal-width: 550px;" header-class="p-3 bg-light"
         title="Leave Credits" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form>
             <BRow>
-                <!-- Applied Days -->
                 <BCol lg="12" class="mt-n2">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
@@ -13,75 +12,49 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-1 text-muted fs-12">No. of working days applied for :</p>
-                            <h6 class="text-truncate fw-semibold fs-13 mb-0">
-                                {{ count }}
-                                <span>{{ count > 1 ? "days" : "day" }}</span>
-                            </h6>
+                            <h6 class="text-truncate fw-semibold fs-13 mb-0">{{ count }}<span>{{ count > 1 ? "days" : "day" }}</span></h6>
                         </div>
                     </div>
                 </BCol>
 
-                <!-- Main type -->
                 <BCol lg="12" class="mt-3 mb-2" v-if="types.length > 0">
                     <div class="input-group">
-                        <div class="input-group-text">
-                            <i class="ri-checkbox-circle-fill"></i>
-                        </div>
+                        <div class="input-group-text"><i class="ri-checkbox-circle-fill"></i></div>
                         <input type="text" class="form-control" style="width: 74%;" :value="types[0].name" readonly />
-                        <input type="text" class="form-control text-center" style="width: 14%;"
-                            :value="types[0].balance" readonly />
+                        <input type="text" class="form-control text-center" style="width: 14%;" :value="types[0].balance" readonly />
                     </div>
                 </BCol>
 
-                <!-- Borrow from others -->
                 <BCol lg="12" style="max-height: 250px; overflow: auto;" class="mb-3 mt-3" id="my-modal-content2">
                     <div class="input-group" v-for="(type, index) in availableOptions" :key="type.value || index">
                         <div class="input-group-text">
-                            <!-- use primitive value for checkbox model to avoid object identity issues -->
-                            <input class="form-check-input mt-0" type="checkbox" :value="type.value"
-                                v-model="selectedValues" @change="distributeBorrow" />
+                            <input class="form-check-input mt-0" type="checkbox" :value="type.value" v-model="selectedValues" @change="distributeBorrow" />
                         </div>
-
                         <input type="text" class="form-control" style="width: 60%;" :value="type.name" readonly />
-                        <input type="text" class="form-control text-center" style="width: 12%;" :value="type.balance"
-                            readonly />
+                        <input type="text" class="form-control text-center" style="width: 12%;" :value="type.balance" readonly />
 
-                        <!-- borrow stays editable if you want manual override; it's auto-filled when you (un)check boxes -->
-                        <input
-  type="number"
-  class="form-control text-center"
-  style="width: 14%;"
-  v-model.number="type.borrow"
-  :max="getMaxBorrow(type)"
-  min="0"
-  @input="validateBorrow(type)"
-  @keydown.prevent
-/>
+                        <input type="number" class="form-control text-center" style="width: 14%;" v-model.number="type.borrow" :max="getMaxBorrow(type)" min="0" @input="validateBorrow(type)" @keydown.prevent/>
                     </div>
                 </BCol>
-
-                <!-- Shortfall display -->
                 <BCol lg="12" class="mt-2 mb-2" v-if="types.length > 0">
                     <div class="input-group">
-                        <div class="input-group-text">
-                            <i class="ri-checkbox-circle-fill"></i>
-                        </div>
-                        <input type="text" class="form-control" style="width: 60%;" value="No. of days to borrow"
-                            readonly />
-                        <input type="text" class="form-control text-center" style="width: 10%;" :value="shortfall"
-                            readonly />
-                        <input type="text" class="form-control text-center" style="width: 13%;" :value="totalBorrowed"
-                            readonly />
+                        <div class="input-group-text"><i class="ri-checkbox-circle-fill"></i></div>
+                        <input type="text" class="form-control" style="width: 60%;" value="No. of days to borrow" readonly />
+                        <input type="text" class="form-control text-center" style="width: 10%;" :value="shortfall" readonly />
+                        <input type="text" class="form-control text-center" style="width: 13%;" :value="totalBorrowed" readonly />
                     </div>
                 </BCol>
             </BRow>
         </form>
+        <template v-slot:footer>
+            <b-button @click="hide()" variant="light" block>Close</b-button>
+            <b-button @click="submit('ok')" variant="primary" block>Update</b-button>
+        </template>
     </b-modal>
 </template>
 
 <script>
     import Multiselect from "@vueform/multiselect";
-
     export default {
         props: ["options"],
         components: {
@@ -129,21 +102,21 @@
             }
         },
         methods: {
-             getMaxBorrow(type) {
-    // Max a user can input = the smaller of type.balance and remaining shortfall
-    const remainingShortfall = this.shortfall - (this.totalBorrowed - (type.borrow || 0))
-    return Math.min(type.balance, Math.max(remainingShortfall, 0))
-  },
-  validateBorrow(type) {
-    // Clamp borrow value so it never exceeds allowed max
-    const max = this.getMaxBorrow(type)
-    if (type.borrow > max) {
-      type.borrow = max
-    }
-    if (type.borrow < 0 || isNaN(type.borrow)) {
-      type.borrow = 0
-    }
-  },
+            getMaxBorrow(type) {
+                // Max a user can input = the smaller of type.balance and remaining shortfall
+                const remainingShortfall = this.shortfall - (this.totalBorrowed - (type.borrow || 0))
+                return Math.min(type.balance, Math.max(remainingShortfall, 0))
+            },
+            validateBorrow(type) {
+                // Clamp borrow value so it never exceeds allowed max
+                const max = this.getMaxBorrow(type)
+                if (type.borrow > max) {
+                type.borrow = max
+                }
+                if (type.borrow < 0 || isNaN(type.borrow)) {
+                type.borrow = 0
+                }
+            },
             // call this to show the modal and prepare a safe local copy of options
             show(data, count) {
                 this.count = Number(count || 0);
@@ -171,6 +144,9 @@
                 // Example: emit the selected borrow mapping
                 const borrowed = this.selectedItems.map(s => ({
                     value: s.value,
+                    name: s.name,
+                    balance: s.balance,
+                    available: s.balance-s.borrow,
                     borrow: Number(s.borrow || 0)
                 }));
                 this.$emit("update", {

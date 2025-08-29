@@ -21,7 +21,7 @@ class ViewClass
                 $options[] = [
                     'label' => 'Require Credits',
                     'options' => [
-                        'value' => $item->leave->id,
+                        'value' => $item->id,
                         'name' => $item->leave->name,
                         'citation' => $item->leave->citation,
                         'is_regular' => $item->leave->is_regular,
@@ -45,7 +45,7 @@ class ViewClass
             $options->push([
                 'label' => 'Require Credits',
                 'options' => [
-                    'value' => $item->leave->id,
+                    'value' => $item->id,
                     'name' => $item->leave->name,
                     'citation' => $item->leave->citation,
                     'is_regular' => $item->leave->is_regular,

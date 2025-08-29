@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('leave_credits', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
+            $table->boolean('is_borrowed')->default(0);
             $table->integer('log_id')->unsigned()->index();
             $table->foreign('log_id')->references('id')->on('credit_logs')->onDelete('cascade');
             $table->integer('credit_id')->unsigned()->index();

@@ -66,7 +66,7 @@ class ViewClass
                     $options[] = [
                         'label' => 'Require Credits',
                         'options' => [
-                            'value' => $item->leave->id,
+                            'value' => $item->id,
                             'label' => $item->leave->name.' - '.$item->balance,
                             'name' => $item->leave->name,
                             'citation' => $item->leave->citation,
@@ -76,7 +76,7 @@ class ViewClass
                             'others' => $item->leave->others,
                             'balance' => $item->balance,
                             'disabled'   => ($item->balance == 0 || $item->balance == 0.00),
-                            'required_document' => false
+                            'required_document' =>  $item->leave->requires_document
                         ]
                     ];
                 }
@@ -97,7 +97,7 @@ class ViewClass
                         'is_after' => $item->is_after,
                         'type' => $item->type,
                         'others' => $item->others,
-                        'required_document' => true
+                        'required_document' =>  $item->requires_document
                     ]
                 ]);
             }
@@ -114,7 +114,7 @@ class ViewClass
                 $options->push([
                     'label' => 'Require Credits',
                     'options' => [
-                        'value' => $item->leave->id,
+                        'value' => $item->id,
                         'label' => $item->leave->name.' - '.$item->balance,
                         'name' => $item->leave->name,
                         'citation' => $item->leave->citation,

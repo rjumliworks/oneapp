@@ -4,7 +4,7 @@
             
         <form class="customform">
             <BRow class="g-3 mdiv">
-                <BCol lg="12" class="mt-3">
+                <!-- <BCol lg="12" class="mt-3">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="d-flex border border-dashed rounded p-3">
@@ -34,8 +34,8 @@
                         </div>
                     </div>
                 </BCol>
-                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
-                <BCol :lg="!form.type?.required_document ? 6 : 12" class="mt-n1">
+                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol> mt-n1 -->
+                <BCol :lg="!form.type?.required_document ? 6 : 12" class="mt-3"> 
                     <InputLabel for="name" value="Type of Leave" :message="form.errors.type_id"/>
                     <Multiselect
                         v-model="form.type" :groups="true"
@@ -45,13 +45,18 @@
                         placeholder="Select type"
                     />
                 </BCol>
-                <BCol lg="6" :class="!form.type?.required_document ? 'mt-n1' : 'mt-2'">
-                    <InputLabel for="name" value="Details of Leave" :message="form.errors.detail_id"/>
-                    <Multiselect :options="filteredDetails" :searchable="true" label="name" object v-model="form.detail" placeholder="Select Detail" @input="handleInput('detail_id')"/>
+                <BCol lg="6" :class="!form.type?.required_document ? 'mt-3' : 'mt-2'">
+                    <InputLabel for="name" value="Details of Leave" :message="form.errors.detail"/>
+                    <Multiselect :options="filteredDetails" :searchable="true" label="name" object v-model="form.detail" placeholder="Select Detail" @input="handleInput('detail')"/>
                 </BCol>
-                <BCol v-if="form.type?.required_document" lg="6" class="mt-2">
+                <BCol v-if="!!form.type?.required_document" lg="6" class="mt-2">
                     <InputLabel for="name" value="Document" :message="form.errors.detail_id"/>
-                    <TextInput id="name" v-model="form.details" type="file" class="form-control" :placeholder="form.detail.others" @input="handleInput('details')" :light="true"/>
+                    <input
+                        id="document"
+                        type="file"
+                        class="form-control"
+                        @change="form.document = $event.target.files[0]"
+                    />
                 </BCol>
                 <BCol lg="12" v-if="form.detail?.others === 'specify' || form.detail?.others === 'specify illness' || form.detail?.others === 'specify reason'" class="mt-1 mb-n1">
                     <InputLabel for="name" value="Details" :message="form.errors.details"/>
@@ -59,7 +64,7 @@
                 </BCol>
                 <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
                 <BCol lg="12" class="mt-0">
-                    <Multiselect :options="['Single Day','Range','Multiple Dates (non-continuous)']" :searchable="true" label="name" v-model="dateType" placeholder="Select Date type"/>
+                    <Multiselect :options="['Single Day','Range','Multiple Dates (non-continuous)']" v-model="dateType" placeholder="Select Date type"/>
                 </BCol>
                 <template v-if="dateType == 'Single Day'">
                     <BCol lg="6" class="mt-1">
@@ -76,7 +81,7 @@
                         <div class="d-flex">
                             <div style="width: 100%;">
                                 <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
-                                <flat-pickr v-model="date" :config="range" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                                <flat-pickr v-model="date" :config="range" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;" @input="handleInput('dates')"></flat-pickr>
                             </div>
                             <div class="flex-shrink-0">
                                 <b-button @click="openDates()" style="margin-top: 20px;" variant="light" class="waves-effect waves-light ms-1"><i class="ri-calendar-fill"></i></b-button>
@@ -99,30 +104,97 @@
                 </template>
             </BRow>
         </form>
-        <template v-if="form.type">
+        <template v-if="form.type && form.dates && form.dates.length > 0">
             <form>
                 <BRow>
-                    <BCol lg="12" v-if="form.type.balance < totalDays" class="mt-0"><hr class="text-muted"/></BCol>
-                    <BCol lg="12" v-if="form.type.balance < totalDays">
-                        <div class="alert alert-danger alert-dismissible alert-additional mb-xl-0" role="alert">
+                    <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
+                    <BCol lg="12">
+                        <!-- <div v-for="(type, index) in form.types" :key="index" >
+                            <div class="input-group mb-1">
+                                <span @click="openTypes" class="input-group-text" style="cursor: pointer;"><i class="ri-add-circle-fill search-icon"></i></span>
+                                <input type="text" :value="type.name" class="form-control" style="width: 40%;" readonly>
+                                <input type="text" :value="type.balance"  class="text-center form-control" style="width: 10%;" readonly>
+                            </div>
+                        </div> -->
+                         <div v-if="(totalBalance+totalBorrowed) < totalDays" class="alert alert-warning alert-dismissible alert-label-icon label-arrow" role="alert">
+                            <i @click="openTypes" class="ri-add-circle-fill label-icon" style="cursor: pointer;"></i>Please borrow from another leave type to proceed.
+                        </div>
+                        <div v-else-if="(totalBalance+totalBorrowed) >= totalDays" class="alert alert-success alert-dismissible alert-label-icon label-arrow" role="alert">
+                            <i class="ri-notification-off-line label-icon"></i>You have enough leave credits to file this leave.
+                        </div>
+                        <div class="table-responsive bg-white">
+                            <table class="table align-middle table-bordered table-centered mb-0">
+                                
+                                <thead class="table-light thead-fixed">
+                                    <tr class="fs-11">
+                                        <th style="width: 40%;" class="text-center">Leave Type</th>
+                                        <th style="width: 20%;" class="text-center">Earned</th>
+                                        <th style="width: 20%;" class="text-center">Deducted</th>
+                                        <th style="width: 20%;" class="text-center">Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-white fs-12">
+                                    <tr>
+                                        <td class="text-center">{{ form.types[0].name }}</td>
+                                        <td class="text-center">{{ form.types[0].balance }}</td>
+                                        <td class="text-center">{{ Math.min(totalDays, form.types[0].balance) }}</td>
+                                        <td class="text-center">{{ Math.max(form.types[0].balance - totalDays, 0) }}</td>
+                                    </tr>
+                                    <tr v-for="(list,index) in form.borrowers" v-bind:key="index" class="text-dark">
+                                        <td class="text-center">{{ list.name }}</td>
+                                        <td class="text-center">{{ list.balance }}</td>
+                                        <td class="text-center">{{ list.borrow }}</td>
+                                        <td class="text-center">{{ list.available }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- <div class="alert alert-dismissible alert-additional mb-xl-0" :class="((totalBalance+totalBorrowed) >= totalDays) ? 'alert-success' : 'alert-warning'" role="alert">
                             <div class="alert-body">
-                                <div v-for="(row, rowIndex) in chunkedTypes" :key="rowIndex" class="row g-3 mb-n1">
-                                    <div v-for="(type, index) in row" :key="index" class="col-6">
-                                        <div class="input-group mb-1">
-                                            <span @click="openTypes" class="input-group-text" style="cursor: pointer;"><i class="ri-add-circle-fill search-icon"></i></span>
-                                            <input type="text" :value="type.name" class="form-control" style="width: 40%;" readonly>
-                                            <input type="text" :value="type.balance"  class="text-center form-control" style="width: 10%;" readonly>
-                                        </div>
+                                <div v-for="(type, index) in form.types" :key="index" >
+                                    <div class="input-group mb-1">
+                                        <span @click="openTypes" class="input-group-text" style="cursor: pointer;"><i class="ri-add-circle-fill search-icon"></i></span>
+                                        <input type="text" :value="type.name" class="form-control" style="width: 40%;" readonly>
+                                        <input type="text" :value="type.balance"  class="text-center form-control" style="width: 10%;" readonly>
                                     </div>
                                 </div>
+                      
+                                <div class="table-responsive bg-white" v-if="form.borrowers.length > 0">
+                                    <table class="table align-middle table-bordered table-centered mb-0">
+                                        
+                                        <thead class="table-light thead-fixed">
+                                            <tr class="fs-11">
+                                                <th style="width: 40%;" class="text-center">Leave Type</th>
+                                                <th style="width: 20%;" class="text-center">Earned</th>
+                                                <th style="width: 20%;" class="text-center">Deducted</th>
+                                                <th style="width: 20%;" class="text-center">Balance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-white fs-12">
+                                            <tr v-for="(list,index) in form.borrowers" v-bind:key="index" class="text-dark">
+                                                <td class="text-center">{{ list.name }}</td>
+                                                <td class="text-center">{{ list.balance }}</td>
+                                                <td class="text-center">{{ list.available }}</td>
+                                                <td class="text-center">{{ list.borrow }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="alert-content">
+                            <div class="alert-content" v-if="(totalBalance+totalBorrowed) < totalDays">
                                 <p class="mb-0 fs-12">
                                     Your selected leave type does not have enough balance to cover the requested days. <br/>
                                     Please borrow from another leave type to proceed.
                                 </p>
                             </div>
-                        </div>
+                            <div class="alert-content" v-else-if="(totalBalance+totalBorrowed) >= totalDays">
+                                <p class="mb-0 fs-12">
+                                    You have enough leave credits to file this leave. <br/>
+                                    Total available credits: {{ totalBalance + totalBorrowed }}, Total requested days: {{ totalDays }}.
+                                </p>
+                            </div>
+                        </div> -->
                     </BCol>
                 </BRow>
             </form>
@@ -136,11 +208,11 @@
     <ViewType :options="dropdowns.options" @update="updateTypes" ref="types"/>
 </template>
 <script>
+import ViewDate from './Date.vue';
+import ViewType from './Type.vue';
 import { useForm } from '@inertiajs/vue3';
 import flatPickr from "vue-flatpickr-component";
 import Multiselect from "@vueform/multiselect";
-import ViewDate from './Date.vue';
-import ViewType from './Type.vue';
 import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
@@ -153,6 +225,7 @@ export default {
                 user_id: null,
                 type: null,
                 type_id: null,
+                detail: null,
                 detail_id: null,
                 details: null,
                 timeOfDay: 'Whole Day',
@@ -160,6 +233,9 @@ export default {
                 document: null,
                 date_type: null,
                 types: [],
+                borrowers: [],
+                my_credits: 0,
+                need_credits: 0,
                 option: 'leave'
             }),
             date: null,
@@ -199,13 +275,6 @@ export default {
         }
     },
     computed: {
-        chunkedTypes() {
-            const chunks = []
-            for (let i = 0; i < this.form.types.length; i += 2) {
-                chunks.push(this.form.types.slice(i, i + 2))
-            }
-            return chunks
-        },
         filteredDetails() {
             if (!this.form.type || !this.form.type.name) {
                 return [];
@@ -252,6 +321,12 @@ export default {
                 day: 'numeric'
             });
         },
+        totalBalance() {
+            return this.form.types.reduce((sum, t) => sum + Number(t.balance || 0), 0)
+        },
+        totalBorrowed() {
+            return (this.form.borrowers.length > 0) ? this.form.borrowers.reduce((sum, b) => sum + Number(b.borrow || 0), 0) : 0
+        },
         totalDays() {
             return this.form.dates.reduce((sum, d) => {
             if (d.timeOfDay === 'AM' || d.timeOfDay === 'PM') {
@@ -282,10 +357,19 @@ export default {
                 this.form.types = [];
                 this.date = null;
                 this.dateType = null;
+                this.form.detail_id = null;
+                this.form.details = null;
+                this.form.errors.details = null;
+                this.form.borrowers = [];
                 if (!newVal || !newVal.name) {
                     this.form.detail = null;
+                    this.form.document = null;
                     return;
                 }
+                if (!newVal.required_document) {
+                    this.form.document = null; // 🔹 Clear previous file if new type doesn't need it
+                }
+
                 const selectedTypeName = newVal.name;
                 const matches = this.dropdowns.details.filter(detail => {
                     if (!detail.type) return false;
@@ -325,12 +409,15 @@ export default {
         dateType(newVal){
             this.date = null;
             this.form.dates = [];
+            this.form.borrowers = [];
         },
         check(newVal){
             (newVal) ? this.openDates() : '';
         },
         date(newVal) {
             if (!newVal) return;
+            this.form.borrowers = [];
+            
             if (this.dateType === 'Single Day') {
                 this.form.dates = [{
                     date: this.formatDate(newVal),
@@ -372,6 +459,8 @@ export default {
             this.showModal = true;
         },
         submit(){
+            this.form.need_credits = this.totalDays;
+            this.form.my_credits = this.totalBalance + this.totalBorrowed;
             this.form.date_type = this.dateType;
             this.form.post('/leaves',{
                 preserveScroll: true,
@@ -407,7 +496,7 @@ export default {
             this.form.dates = data;
         },
         updateTypes(data){
-            this.form.types = data;
+            this.form.borrowers = data.borrowed || [];
         },
         handleInput(field) {
             this.form.errors[field] = false;
