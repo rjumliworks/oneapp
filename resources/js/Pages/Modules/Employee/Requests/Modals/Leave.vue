@@ -28,7 +28,7 @@
                                 </div>
                                 <div class="flex-grow-1 overflow-hidden">
                                     <p class="mb-1 text-muted fs-12">No. of working days applied for :</p>
-                                    <h6 class="text-truncate fw-semibold fs-13 mb-0">{{form.dates.length}} <span>{{ form.dates.length > 1 ? 'days' : 'day' }}</span></h6>
+                                    <h6 class="text-truncate fw-semibold fs-13 mb-0">{{totalDays}} <span>{{ form.dates.length > 1 ? 'days' : 'day' }}</span></h6>
                                 </div>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                     <InputLabel for="name" value="Document" :message="form.errors.detail_id"/>
                     <TextInput id="name" v-model="form.details" type="file" class="form-control" :placeholder="form.detail.others" @input="handleInput('details')" :light="true"/>
                 </BCol>
-                <BCol lg="12" v-if="form.detail?.others === 'specify' || form.detail?.others === 'specify illness' || form.detail?.others === 'specify reason'" class="mt-1">
+                <BCol lg="12" v-if="form.detail?.others === 'specify' || form.detail?.others === 'specify illness' || form.detail?.others === 'specify reason'" class="mt-1 mb-n1">
                     <InputLabel for="name" value="Details" :message="form.errors.details"/>
                     <TextInput id="name" v-model="form.details" type="text" class="form-control" :placeholder="form.detail.others" @input="handleInput('details')" :light="true"/>
                 </BCol>
@@ -62,17 +62,17 @@
                     <Multiselect :options="['Single Day','Range','Multiple Dates (non-continuous)']" :searchable="true" label="name" v-model="dateType" placeholder="Select Date type"/>
                 </BCol>
                 <template v-if="dateType == 'Single Day'">
-                    <BCol lg="6" class="mt-2">
+                    <BCol lg="6" class="mt-1">
                         <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
                         <flat-pickr v-model="date" :config="single" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
                     </BCol>
-                    <BCol lg="6" class="mt-2">
+                    <BCol lg="6" class="mt-1">
                         <InputLabel for="name" value="Time of Day"  :message="form.errors.date"/>
                         <Multiselect :options="['Whole Day','AM','PM']" label="name" v-model="form.timeOfDay" placeholder="Select Date type"/>
                     </BCol>
                 </template>
                 <template v-if="dateType == 'Range'">
-                    <BCol lg="12" class="mt-2">
+                    <BCol lg="12" class="mt-1">
                         <div class="d-flex">
                             <div style="width: 100%;">
                                 <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
@@ -85,7 +85,7 @@
                     </BCol>
                 </template>
                 <template v-if="dateType == 'Multiple Dates (non-continuous)'">
-                    <BCol lg="12" class="mt-2">
+                    <BCol lg="12" class="mt-1">
                         <div class="d-flex">
                             <div style="width: 100%;">
                                 <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
@@ -99,49 +99,52 @@
                 </template>
             </BRow>
         </form>
-        <form>
-            <BRow>
-                <BCol lg="12" class="mt-3">
-                    <div class="mt-0 form-check fs-14">
-                        <input type="checkbox" v-model="check" class="form-check-input" id="checkTerms">
-                        <label class="form-check-label fs-11 text-muted" for="checkTerms">Please check the box if you have dates selected that are AM or PM only, not whole day</label>
-                    </div>
-                </BCol>
-                <!-- <BCol lg="12" style="max-height: 250px; overflow: auto;"  id="my-modal-content"> 
-                    <div v-if="check" class="mt-3">
-                        <div v-for="(date, index) in form.dates" :key="index" class="mb-2">
-                            <div class="input-group mb-1">
-                                <span class="input-group-text"> <i class="ri-calendar-line search-icon"></i></span>
-                                <input type="text" :value="formatDateWithWeekday(date.date)" placeholder="Search Employee" class="form-control" style="width: 20%;" readonly>
-                                <Multiselect class="white" style="width: 30%;" :options="['Whole Day','AM','PM']" v-model="date.timeOfDay" 
-                                :searchable="true" 
-                                :allow-empty="false"  
-                                :can-clear="false"
-                                :append-to-body="true"
-                                 append-to="#my-modal-content"
-                                placeholder="Select Status" />
+        <template v-if="form.type">
+            <form>
+                <BRow>
+                    <BCol lg="12" v-if="form.type.balance < totalDays" class="mt-0"><hr class="text-muted"/></BCol>
+                    <BCol lg="12" v-if="form.type.balance < totalDays">
+                        <div class="alert alert-danger alert-dismissible alert-additional mb-xl-0" role="alert">
+                            <div class="alert-body">
+                                <div v-for="(row, rowIndex) in chunkedTypes" :key="rowIndex" class="row g-3 mb-n1">
+                                    <div v-for="(type, index) in row" :key="index" class="col-6">
+                                        <div class="input-group mb-1">
+                                            <span @click="openTypes" class="input-group-text" style="cursor: pointer;"><i class="ri-add-circle-fill search-icon"></i></span>
+                                            <input type="text" :value="type.name" class="form-control" style="width: 40%;" readonly>
+                                            <input type="text" :value="type.balance"  class="text-center form-control" style="width: 10%;" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert-content">
+                                <p class="mb-0 fs-12">
+                                    Your selected leave type does not have enough balance to cover the requested days. <br/>
+                                    Please borrow from another leave type to proceed.
+                                </p>
                             </div>
                         </div>
-                    </div>
-                </BCol> -->
-            </BRow>
-        </form>
+                    </BCol>
+                </BRow>
+            </form>
+        </template>
         <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Cancel</b-button>
             <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
         </template>
     </b-modal>
-    <ViewDate @update="updateDates" ref="dates"/>
+    <ViewDate @update="updateDates" ref="dates"/>\
+    <ViewType :options="dropdowns.options" @update="updateTypes" ref="types"/>
 </template>
 <script>
 import { useForm } from '@inertiajs/vue3';
 import flatPickr from "vue-flatpickr-component";
 import Multiselect from "@vueform/multiselect";
 import ViewDate from './Date.vue';
+import ViewType from './Type.vue';
 import InputLabel from '@/Shared/Components/Forms/InputLabel.vue';
 import TextInput from '@/Shared/Components/Forms/TextInput.vue';
 export default {
-    components: { Multiselect, InputLabel, TextInput, flatPickr, ViewDate },
+    components: { Multiselect, InputLabel, TextInput, flatPickr, ViewDate, ViewType },
     props: ['dropdowns'],
     data(){
         return {
@@ -156,9 +159,9 @@ export default {
                 dates: [],
                 document: null,
                 date_type: null,
+                types: [],
                 option: 'leave'
             }),
-            check: false,
             date: null,
             single:{
                 mode: "single",
@@ -196,6 +199,13 @@ export default {
         }
     },
     computed: {
+        chunkedTypes() {
+            const chunks = []
+            for (let i = 0; i < this.form.types.length; i += 2) {
+                chunks.push(this.form.types.slice(i, i + 2))
+            }
+            return chunks
+        },
         filteredDetails() {
             if (!this.form.type || !this.form.type.name) {
                 return [];
@@ -241,6 +251,17 @@ export default {
                 month: 'long',
                 day: 'numeric'
             });
+        },
+        totalDays() {
+            return this.form.dates.reduce((sum, d) => {
+            if (d.timeOfDay === 'AM' || d.timeOfDay === 'PM') {
+                return sum + 0.5
+            }
+            if (d.timeOfDay === 'Whole Day') {
+                return sum + 1
+            }
+            return sum
+            }, 0)
         }
     },
     watch: {
@@ -258,6 +279,7 @@ export default {
             immediate: true,
             handler(newVal) {
                 this.form.dates = [];
+                this.form.types = [];
                 this.date = null;
                 this.dateType = null;
                 if (!newVal || !newVal.name) {
@@ -294,6 +316,7 @@ export default {
 
                 if(newVal){
                     this.form.type_id = newVal.value;
+                    this.form.types.push(newVal);
                 }else{
                     this.form.type_id = null;
                 }
@@ -377,8 +400,14 @@ export default {
         openDates(){
             this.$refs.dates.show(this.form.dates);
         },
+        openTypes(){
+            this.$refs.types.show(this.form.types,this.totalDays);
+        },
         updateDates(data){
             this.form.dates = data;
+        },
+        updateTypes(data){
+            this.form.types = data;
         },
         handleInput(field) {
             this.form.errors[field] = false;
