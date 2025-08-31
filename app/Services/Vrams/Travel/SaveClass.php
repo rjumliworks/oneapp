@@ -18,24 +18,71 @@ class SaveClass
             'user_id' => \Auth::user()->id
         ]);
         if($data){
-            $divisionIds = [];
+            $signatories = [];
+
             foreach ($request->tags ?? [] as $user) {
                 $divisionId = intval($user['division_id']);
+
+                if (!empty($user['signatory'])) {
+                    $signatory = $data->signatories()->create([
+                        'division_id' => $divisionId,
+                        'is_approval_only' => 1
+                    ]);
+                } else {
+                    // If the user doesn't have a signatory, create or update a signatory
+                    $isApprovalOnly = ($divisionId == 2) ? 1 : 0;
+                    
+                    // Check if there is an existing signatory with the same division_id
+                    $signatory = $data->signatories()->where('division_id', $divisionId)->first();
+                    
+                    // If a signatory exists but has is_approval_only = 0, update it to 1
+                    if ($signatory && $signatory->is_approval_only == 1) {
+                        $signatory->update([
+                            'is_approval_only' => 0,
+                        ]);
+                    } elseif (!$signatory) {
+                        // If no signatory exists for this division_id, create a new one
+                        $signatory = $data->signatories()->create([
+                            'division_id' => $divisionId,
+                            'is_approval_only' => $isApprovalOnly
+                        ]);
+                    }
+
+                    // Cache the signatory id to avoid repeated lookups
+                    $signatories[$divisionId] = $signatory->id;
+                }
+
+                // Create the tag with the associated signatory_id
                 $data->tags()->create([
                     'user_id' => intval($user['value']),
                     'division_id' => $divisionId,
-                ]);
-                $divisionIds[] = $divisionId;
-            }
-
-            $uniqueDivisionIds = collect($divisionIds)->unique()->values()->toArray();
-
-            foreach($uniqueDivisionIds as $division){
-                $data->signatories()->create([
-                    'division_id' => $division,
-                    'is_approval_only' => ($division == 2) ? 1 : 0
+                    'signatory_id' => $signatory->id, // Directly assign the signatory_id
                 ]);
             }
+            // $divisionIds = [];
+            // foreach ($request->tags ?? [] as $user) {
+            //     $divisionId = intval($user['division_id']);
+            //     $data->tags()->create([
+            //         'user_id' => intval($user['value']),
+            //         'division_id' => $divisionId,
+            //     ]);
+            //     $divisionIds[] = $divisionId;
+            // }
+
+            // $uniqueDivisionIds = collect($divisionIds)->unique()->values()->toArray();
+
+            // foreach($uniqueDivisionIds as $division){
+            //     $isApprovalOnly = ($division == 2) ? 1 : 0;
+            //     foreach ($request->tags ?? [] as $user) {
+            //         if (!empty($user['signatory']) && $user['division_id'] == $division) {
+            //             $isApprovalOnly = 1;
+            //         }
+            //     }
+            //     $data->signatories()->create([
+            //         'division_id' => $division,
+            //         'is_approval_only' => $isApprovalOnly
+            //     ]);
+            // }
             
             if(strpos($request->date, ' to ') !== false) {
                 [$start, $end] = explode(' to ', $request->date);

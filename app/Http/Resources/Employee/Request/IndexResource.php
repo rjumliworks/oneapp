@@ -1,34 +1,48 @@
 <?php
 
-namespace App\Http\Resources\Employee;
+namespace App\Http\Resources\Employee\Request;
 
 use Hashids\Hashids;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class RequestResource extends JsonResource
+class IndexResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
         $hashids = new Hashids('krad',10);
         $key = $hashids->encode($this->id);
 
+        switch($this->type->name){
+            case 'Travel Order':
+                $subtype = $this->travel->mode->name;
+            break;
+            case 'Leave Form':
+                $subtype = $this->leave->type->name;
+            break;
+            default:
+                $subtype = $this->reservation->vehicle->name;
+        }
+
+        $link = Str::slug($this->type->name) . 'krad' . $key;
+
         return [
             'id' => $this->id,
             'key' => $key,
             'code' => $this->code,
             'type' => $this->type->name,
+            'link' => Crypt::encryptString($link),
             'purpose' => $this->detail->purpose,
             'remarks' => $this->detail->remarks,
             'start' => $this->dates[0]->start,
             'end' => $this->dates[0]->end,
             'status' => $this->status,
-            'employee' => $this->user->profile->firstname.' '.$this->user->profile->lastname,
             'tags' => TagResource::collection($this->tags),
-            'comments' => CommentResource::collection($this->comments),
-            'signatories' => $this->signatories,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
+            'subtype' => $subtype
         ];
     }
 }

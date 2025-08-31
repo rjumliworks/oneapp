@@ -46,11 +46,11 @@
                     />
                 </BCol>
                 <BCol lg="6" :class="!form.type?.required_document ? 'mt-3' : 'mt-2'">
-                    <InputLabel for="name" value="Details of Leave" :message="form.errors.detail"/>
-                    <Multiselect :options="filteredDetails" :searchable="true" label="name" object v-model="form.detail" placeholder="Select Detail" @input="handleInput('detail')"/>
+                    <InputLabel for="name" value="Details of Leave" :message="form.errors.detail_id"/>
+                    <Multiselect :options="filteredDetails" :searchable="true" label="name" object v-model="form.detail" placeholder="Select Detail" @input="handleInput('detail_id')"/>
                 </BCol>
                 <BCol v-if="!!form.type?.required_document" lg="6" class="mt-2">
-                    <InputLabel for="name" value="Document" :message="form.errors.detail_id"/>
+                    <InputLabel for="name" value="Document" :message="form.errors.document"/>
                     <input
                         id="document"
                         type="file"
@@ -120,7 +120,7 @@
                             <i @click="openTypes" class="ri-add-circle-fill label-icon" style="cursor: pointer;"></i>Please borrow from another leave type to proceed.
                         </div>
                         <div v-else-if="(totalBalance+totalBorrowed) >= totalDays" class="alert alert-success alert-dismissible alert-label-icon label-arrow" role="alert">
-                            <i class="ri-notification-off-line label-icon"></i>You have enough leave credits to file this leave.
+                            <i @click="openTypes" class="ri-add-circle-fill label-icon" style="cursor: pointer;"></i>You have enough leave credits to file this leave.
                         </div>
                         <div class="table-responsive bg-white">
                             <table class="table align-middle table-bordered table-centered mb-0">
@@ -201,10 +201,10 @@
         </template>
         <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Cancel</b-button>
-            <b-button @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
+            <b-button v-if="(totalBalance+totalBorrowed) >= totalDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
         </template>
     </b-modal>
-    <ViewDate @update="updateDates" ref="dates"/>\
+    <ViewDate @update="updateDates" ref="dates"/>
     <ViewType :options="dropdowns.options" @update="updateTypes" ref="types"/>
 </template>
 <script>
@@ -400,7 +400,10 @@ export default {
 
                 if(newVal){
                     this.form.type_id = newVal.value;
-                    this.form.types.push(newVal);
+                    this.form.types.push({
+                        ...newVal,
+                        borrow: Math.min(this.totalDays, newVal.balance)
+                    });
                 }else{
                     this.form.type_id = null;
                 }
@@ -446,6 +449,7 @@ export default {
                     timeOfDay: 'Whole Day'
                 }));
             }
+            this.form.types[0].borrow = Math.min(this.totalDays, this.form.types[0].balance);
         },
         'form.timeOfDay'(val) {
             if (this.dateType === 'Single Day' && this.form.dates?.length === 1) {

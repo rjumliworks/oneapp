@@ -2,9 +2,91 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Model;
 
 class Leave extends Model
 {
-    //
+    use HasFactory, LogsActivity;
+
+    protected $fillable = [
+        'count',
+        'detail_id',
+        'type_id',
+        'request_id'
+    ];
+
+    public function detail()
+    {
+        return $this->belongsTo('App\Models\ListDropdown', 'detail_id', 'id');
+    }
+    
+    public function type()
+    {
+        return $this->belongsTo('App\Models\ListLeave', 'type_id', 'id');
+    }
+
+    public function request()
+    {
+        return $this->belongsTo('App\Models\Request', 'request_id', 'id');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return date('M d, Y g:i a', strtotime($value));
+    }
+
+    public function credits()
+    {
+        return $this->hasMany('App\Models\LeaveCredit', 'leave_id');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return date('M d, Y g:i a', strtotime($value));
+    }
+
+    protected static $expenseLabels = [
+        1 => 'Accommodation (Actual)',
+        2 => 'Accommodation (Per Diem)',
+        3 => 'Incidental Expenses',
+        4 => 'Meals',
+    ];
+
+    public function getExpenseItemsAttribute()
+    {
+        return collect($this->expenses)->map(function ($id) {
+            return [
+                'id' => (int) $id,
+                'name' => self::$expenseLabels[$id] ?? 'Unknown',
+            ];
+        });
+    }
+    
+    public function updateIfDirty(array $attributes){
+        $this->fill($attributes);
+        $dirtyAttributes = $this->getDirty();
+        if(!empty($dirtyAttributes)) {
+            $originalAttributes = array_intersect_key($this->getOriginal(), $dirtyAttributes);
+            $updated = $this->update($dirtyAttributes);
+            return $updated;
+        }
+        return false;
+    }
+
+    public function getActivitylogOptions(): LogOptions {
+        return LogOptions::defaults()
+        ->logOnly([
+            'mode_id',
+            'expense_id',
+            'request_id',
+            'expenses'
+        ])
+        ->setDescriptionForEvent(fn(string $eventName) => "{$eventName}")
+        ->useLogName('Travel Order')
+        ->logOnlyDirty()
+        ->dontSubmitEmptyLogs();
+    }
 }

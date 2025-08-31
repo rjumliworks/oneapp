@@ -5,7 +5,8 @@ namespace App\Services\Employee\Request;
 use App\Models\Request;
 use App\Models\ListLeave;
 use App\Models\UserCredit;
-use App\Http\Resources\Employee\RequestResource;
+use App\Http\Resources\DefaultResource;
+use App\Http\Resources\Employee\Request\IndexResource;
 
 class ViewClass
 {
@@ -29,8 +30,12 @@ class ViewClass
             'type',
             'dates',
             'detail',
-            'user:id',
-            'user.profile:user_id,firstname,middlename,lastname'
+            'travel:id,request_id,mode_id',
+            'travel.mode:id,name',
+            'leave:id,request_id,type_id',
+            'leave.type:id,name',
+            'reservation:id,request_id,vehicle_id',
+            'reservation.vehicle:id,name'
         ])
         ->when($request->status, fn($q, $status) => $q->where('status_id', $status))
         ->when($request->type, fn($q, $expense) => $q->where('type_id', $expense))
@@ -46,7 +51,32 @@ class ViewClass
         ->latest() 
         ->paginate($request->count ?? 10);
 
-        return RequestResource::collection($data);
+        return IndexResource::collection($data);
+    }
+
+    public function show($code){
+        $hashids = new Hashids('krad',10);
+        $id = $hashids->decode($code);
+
+        $data = Request::with([
+            'comments.user.profile:user_id,firstname,middlename,lastname,avatar','request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar',
+            'tags.user:id',
+            'tags.user.profile:user_id,firstname,middlename,lastname,avatar',
+            'statuses.user:id',
+            'statuses.user.profile:user_id,firstname,middlename,lastname',
+            'statuses.status',
+            'status',
+            'type',
+            'dates',
+            'detail',
+            'user:id',
+            'signatories.division','signatories.approved','signatories.recommended',
+            'location.region:code,name,region','location.province:code,name','location.municipality:code,name','location.barangay:code,name'
+        ])
+        ->where('id',$id)
+        ->first();
+
+        return new IndexResource($data);
     }
 
     public function credits()

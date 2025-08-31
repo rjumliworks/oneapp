@@ -10,6 +10,10 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
     Route::get('/search', [App\Http\Controllers\DashboardController::class, 'search']);
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
+    
+    Route::get('/requests/{type}/{id}', [App\Http\Controllers\Employee\RequestController::class, 'type']);
+
+    Route::resource('/approvals', App\Http\Controllers\Employee\ApprovalController::class);
     Route::resource('/requests', App\Http\Controllers\Employee\RequestController::class);
     Route::resource('/schedules', App\Http\Controllers\Employee\ScheduleController::class);
     Route::resource('/surveys', App\Http\Controllers\Hr\SurveyController::class);

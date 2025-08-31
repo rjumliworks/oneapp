@@ -19,7 +19,8 @@ class LeaveRequest extends FormRequest
             'details' => 'required_if:detail.others,specify illness,specify reason,specify',
             'dates' => 'sometimes|required|array|min:1',
             'dates.*.date' => 'required|date',
-            'dates.*.timeOfDay' => 'required|string'
+            'dates.*.timeOfDay' => 'required|string',
+            'document' => 'required_if:type.required_document,1',
         ];
     }
 
@@ -30,6 +31,7 @@ class LeaveRequest extends FormRequest
             'detail_id.required' => 'The detail field is required.',
 
             'details.required_if' => 'Details are required when others is set to "Specify Illness", "Specify Reason", or "Specify".',
+            'document.required_if' => 'Document filed is require.',
 
             'dates.required' => 'At least one date is required.',
             'dates.array' => 'Dates must be in a valid list.',
@@ -40,6 +42,7 @@ class LeaveRequest extends FormRequest
 
             'dates.*.timeOfDay.required' => 'Each time of day is required.',
             'dates.*.timeOfDay.string' => 'Each time of day must be a valid string.',
+            
         ];
     }
 

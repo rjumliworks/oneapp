@@ -16,6 +16,7 @@ class RequestTag extends Model
         'is_receiver_viewed',
         'user_id',
         'division_id',
+        'signatory_id',
         'request_id'
     ];
 

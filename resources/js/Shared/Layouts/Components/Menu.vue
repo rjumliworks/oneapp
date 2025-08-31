@@ -12,10 +12,19 @@
             <li class="nav-item">
                 <Link href="/requests" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/Employee/Requests') }">
-                <i class="ri-calendar-todo-fill"></i>
-                <span class="fw-semibold fs-14" data-key="t-dashboards">Requests</span>
+                <i class="ri-list-check-2"></i>
+                <span class="fw-semibold fs-14" data-key="t-dashboards">My Requests</span>
                 </Link>
             </li>
+            <tempalte v-if="$page.props.user.data.signatory">
+                <li class="nav-item">
+                    <Link href="/approvals" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/Employee/Approvals') }">
+                    <i class="ri-ball-pen-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">For Approval</span>
+                    </Link>
+                </li>
+            </tempalte>
             <tempalte v-if="$page.props.roles.includes('Travel Controler Officer')">
                 <li class="menu-title">
                     <i class="ri-more-fill" aria-expanded="false"></i>

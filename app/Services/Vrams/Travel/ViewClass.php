@@ -22,9 +22,7 @@ class ViewClass
         $data = Travel::with([
             'mode',
             'expense',
-            'approved.user.profile:user_id,firstname,middlename,lastname',
             'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar','request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar',
-            'recommended.user.profile:user_id,firstname,middlename,lastname',
             'request.tags.user:id',
             'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar',
             'request.statuses.user:id',
@@ -50,8 +48,6 @@ class ViewClass
             'mode',
             'expense',
             'request.comments',
-            'approved.user.profile:user_id,firstname,middlename,lastname',
-            'recommended.user.profile:user_id,firstname,middlename,lastname',
             'request.tags.user:id',
             'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar',
             'request.statuses.user:id',
@@ -149,12 +145,14 @@ class ViewClass
                     $query->where('name', $division);
                 })->first();
                 $recommended = $recommended1->user->profile;
+                $recommended_id = $recommended1->user_id;
                 $recommended_name = "{$recommended->firstname} "
                 . (!empty( $recommended->middlename) ? strtoupper(substr( $recommended->middlename, 0, 1)) . '. ' : '')
                 . "{$recommended->lastname}";
                 $recommended_oic = $recommended1->is_oic;
                 $recommended_others = $recommended1->division->others;
             }else{
+                $recommended_id = '-';
                 $recommended_name = 'Not needed';
                 $recommended_oic = '-';
                 $recommended_others = '-';
@@ -171,6 +169,7 @@ class ViewClass
                         'short' => $approval1->division->others
                     ],
                     'recommend' =>  [
+                        'id' => $recommended_id,
                         'name' => $recommended_name,
                         'oic' => $recommended_oic,
                         'short' => $recommended_others
@@ -183,10 +182,10 @@ class ViewClass
         $array = [
             'qrCodeImage' => $base64Image,
             'divisions' => array_values($groupedDivisions),
-            'travel' => json_decode($data),
+            'travel' => json_decode($data)
         ]; 
 
-        $pdf = \PDF::loadView('reports.tsr',$array)->setPaper('a4', 'portrait');
+        $pdf = \PDF::loadView('reports.travel',$array)->setPaper('a4', 'portrait');
         $pdf->output();
         $dompdf = $pdf->getDomPDF();
         $canvas = $dompdf->getCanvas();

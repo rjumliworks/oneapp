@@ -114,15 +114,6 @@
                 <center style="margin-top: 8px; font-size: 11px;  color:#000; font-weight: bold; padding: 2px;">LOCAL TRAVEL ORDER</center>
                 <center style="font-size: 11px; background-color: #097eeb; color:#fff; font-weight: bold; padding: 2px; text-transform: uppercase; ">{{$divisionData['division']}}</center>
             </div>
-
-            {{-- <table style="border: 1px solid black; font-size: 10px; margin-top: 15px;">
-                <tbody>
-                    <tr>
-                        <td width="25%">LOCAL TRAVEL ORDER NO. : {{$travel['travel_code']}}</td>
-                        <td style="float: right;" width="25%">Date and Time :</td>
-                    </tr>
-                </tbody>
-            </table> --}}
             <table style="border: 1px solid black;">
                 <thead style="background-color:#c8c8c8; padding: 5px; font-size: 9px;">
                     <tr>    

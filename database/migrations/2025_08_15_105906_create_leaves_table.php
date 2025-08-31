@@ -15,7 +15,6 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->integer('count');
-            $table->string('details')->nullable();
             $table->tinyInteger('detail_id')->unsigned()->index();
             $table->foreign('detail_id')->references('id')->on('list_dropdowns')->onDelete('cascade');   
             $table->tinyInteger('type_id')->unsigned()->index();

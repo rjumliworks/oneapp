@@ -40,6 +40,13 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    protected $appends = ['signatory'];
+
+    public function getSignatoryAttribute()
+    {
+        return $this->signatories()->with('designation:id,name,others','division:id,name,others')->where('is_active', 1)->first();
+    }
+
     public function profile()
     {
         return $this->hasOne('App\Models\UserProfile', 'user_id');
@@ -118,6 +125,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasRole($roleName)
     {
         return $this->roles()->where('name', $roleName)->exists();
+    }
+
+    public function signatories()
+    {
+        return $this->hasMany(Signatory::class);
     }
 
     public function getActivitylogOptions(): LogOptions {

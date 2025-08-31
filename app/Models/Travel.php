@@ -19,8 +19,7 @@ class Travel extends Model
         'transpo_id',
         'expense_id',
         'request_id',
-        'recommended_id',
-        'approved_id',
+        'is_ard',
         'expenses'
     ];
 
@@ -58,16 +57,6 @@ class Travel extends Model
         return date('M d, Y g:i a', strtotime($value));
     }
 
-    public function recommended()
-    {
-        return $this->belongsTo('App\Models\User', 'recommended_id', 'id');
-    }
-
-    public function approved()
-    {
-        return $this->belongsTo('App\Models\User', 'approved_id', 'id');
-    }
-
     protected static $expenseLabels = [
         1 => 'Accommodation (Actual)',
         2 => 'Accommodation (Per Diem)',
@@ -100,8 +89,10 @@ class Travel extends Model
         return LogOptions::defaults()
         ->logOnly([
             'mode_id',
+            'transpo_id',
             'expense_id',
             'request_id',
+            'is_ard',
             'expenses'
         ])
         ->setDescriptionForEvent(fn(string $eventName) => "{$eventName}")

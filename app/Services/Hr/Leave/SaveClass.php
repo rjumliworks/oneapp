@@ -3,11 +3,12 @@
 namespace App\Services\Hr\Leave;
 
 use App\Models\Request;
+use App\Models\UserCredit;
 
 class SaveClass
 {
     public function leave($request){
-        dd('wew');
+        // dd('wew');
         $data = Request::create([
             'code' => $this->generateCode(),
             'type_id' => 158,
@@ -25,9 +26,8 @@ class SaveClass
                 'is_approval_only' => 0
             ]);
 
-            $data->leave()->create([
-                'division_id' => \Auth::user()->organization->division_id,
-                'is_approval_only' => 0
+            $data->detail()->create([
+                'purpose' => $request->details,
             ]);
 
             if($request->date_type != 'Multiple Dates (non-continuous)'){
@@ -66,6 +66,67 @@ class SaveClass
                         'time' => '08:00',
                         'time_of_day' => $date['timeOfDay']
                     ]);
+                }
+            }
+
+            $leave = $data->leave()->create([
+                'count' => $request->need_credits,
+                'detail_id' => $request->detail_id,
+                'type_id' => $request->type_id
+            ]);
+            if($leave){
+                $types = $request->types;
+                foreach($types as $type){
+                    $credit = UserCredit::where('id',$type['value'])->first();
+                    $old_balance = $credit->balance;
+                    $credit->balance -= $type['borrow'];
+                    $credit->used += $type['borrow'];
+                    $credit->save();
+                    if($credit){
+                        $log = $credit->logs()->create([
+                            'amount' => $type['borrow'],
+                            'old_balance' => $old_balance,
+                            'new_balance' => $credit->balance,
+                            'remarks' => 'Deduction of leave credits for filed leave',
+                            'is_automated' => 1,
+                            'user_id' => 1,
+                            'type_id' => 163
+                        ]);
+                        if($log){
+                            $leave->credits()->create([
+                                'is_borrowed' => 0,
+                                'log_id' => $log->id,
+                                'credit_id' => $type['value']
+                            ]);
+                        }
+                    }
+                }
+
+                $borrowers = $request->borrowers;
+                foreach($borrowers as $borrower){
+                    $credit = UserCredit::where('id',$borrower['value'])->first();
+                    $old_balance = $credit->balance;
+                    $credit->balance -= $borrower['borrow'];
+                    $credit->used += $borrower['borrow'];
+                    $credit->save();
+                    if($credit){
+                        $log = $credit->logs()->create([
+                            'amount' => $borrower['borrow'],
+                            'old_balance' => $old_balance,
+                            'new_balance' => $credit->balance,
+                            'remarks' => 'Leave credits borrowed and deducted for filed leave',
+                            'is_automated' => 1,
+                            'user_id' => 1,
+                            'type_id' => 163
+                        ]);
+                        if($log){
+                            $leave->credits()->create([
+                                'is_borrowed' => 1,
+                                'log_id' => $log->id,
+                                'credit_id' => $borrower['value']
+                            ]);
+                        }
+                    }
                 }
             }
         }

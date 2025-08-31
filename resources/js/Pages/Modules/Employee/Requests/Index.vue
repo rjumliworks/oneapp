@@ -28,8 +28,18 @@
                             <div class="input-group mb-1">
                                 <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
                                 <input type="text" v-model="filter.keyword" placeholder="Search Travel Order" class="form-control" style="width: 40%;">
-                                <Multiselect class="white" style="width: 15%;" :options="dropdowns.modes" v-model="filter.mode" label="name" :searchable="true" placeholder="Select Travel Mode" />
-                                <Multiselect class="white" style="width: 15%;" :options="dropdowns.expenses" v-model="filter.expense" label="name" :searchable="true" placeholder="Select Expense Type" />
+                                <template v-if="filter.type == 156">
+                                    <Multiselect class="white" style="width: 15%;" :options="travel_dropdowns.modes" v-model="filter.mode" label="name" :searchable="true" placeholder="Select Travel Mode" />
+                                    <Multiselect class="white" style="width: 15%;" :options="travel_dropdowns.expenses" v-model="filter.expense" label="name" :searchable="true" placeholder="Select Expense Type" />
+                                </template>
+                                <template v-else-if="filter.type == 157">
+                                    
+                                </template>
+                                <template v-else-if="filter.type == 158">
+                                    <!-- <Multiselect class="white" style="width: 15%;" :options="leave_dropdowns.leaves" v-model="filter.keave" label="name" :searchable="true" placeholder="Select Travel Mode" /> -->
+                                    <Multiselect class="white" style="width: 15%;" v-model="filter.leave" :groups="true" :options="leave_dropdowns.leaves" label="name" placeholder="Select type"/>
+                                </template>
+                                <Multiselect class="white" style="width: 15%;" :options="dropdowns.statuses" v-model="filter.status" label="name" :searchable="true" placeholder="Select Status" />
                                 <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                                     <i class="bx bx-refresh search-icon"></i>
                                 </span>
@@ -46,7 +56,7 @@
                             <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist">
                                 <li class="nav-item">
                                     <BLink @click="viewStatus(null,null)" class="nav-link py-3 active" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                    <i class="ri-apps-2-line me-1 align-bottom"></i> All Request
+                                    <i class="ri-apps-2-line me-1 align-bottom"></i> My Request
                                     </BLink>
                                 </li>
                                 <li class="nav-item" v-for="(list,index) in dropdowns.requests" v-bind:key="index">
@@ -71,7 +81,10 @@
                                 <tr class="fs-11">
                                     <th style="width: 3%;" class="text-center">#</th>
                                     <th>Purpose & Destination</th>
-                                    <th style="width: 12%;" class="text-center">Type</th>
+                                    <th v-if="!filter.type" style="width: 14%;" class="text-center">Type</th>
+                                    <th v-else-if="filter.type == 156" style="width: 14%;" class="text-center">Mode</th>
+                                    <th v-else-if="filter.type == 158" style="width: 14%;" class="text-center">Type</th>
+                                    <th v-else-if="filter.type == 157" style="width: 14%;" class="text-center">Vehicle</th>
                                     <th style="width: 10%;" class="text-center">Personnel</th>
                                     <th style="width: 15%;" class="text-center">Dates</th>
                                     <th style="width: 15%;" class="text-center">Date Filed</th>
@@ -86,8 +99,14 @@
                                         <h5 class="fs-13 mb-0 fw-semibold text-primary">{{list.code }}</h5>
                                         <p class="fs-12 text-muted mb-0">{{list.code}}</p>
                                     </td>
-                                    <td class="text-center">
-                                        <span :class="'badge bg-primary'">{{list.type}}</span>
+                                    <td class="text-center" v-if="!filter.type">
+                                        <!-- <span :class="'badge bg-primary'">{{list.type}}</span> -->
+                                        <span v-if="list.type == 'Vehicle Reservation'" class="badge bg-secondary-subtle text-secondary">{{list.type}}</span>
+                                        <span v-else-if="list.type == 'Travel Order'" class="badge bg-success-subtle text-success">{{list.type}}</span>
+                                        <span v-else-if="list.type == 'Leave Form'" class="badge bg-danger-subtle text-danger">{{list.type}}</span>
+                                    </td>
+                                    <td class="text-center" v-else>
+                                        <span :class="'badge bg-primary'">{{list.subtype}}</span>
                                     </td>
                                     <td class="text-center align-middle">
                                         <div class="avatar-group  d-inline-flex justify-content-center">
@@ -105,7 +124,7 @@
                                         <span :class="'badge '+list.status.color">{{list.status.name}}</span>
                                     </td>
                                     <td class="text-end">
-                                        <Link :href="`/travels/${list.key}`">
+                                        <Link :href="`/requests/${list.link}`">
                                             <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
                                                 <i class="ri-eye-fill align-bottom"></i>
                                             </b-button>
@@ -146,7 +165,10 @@ export default {
             filter: {
                 keyword: null,
                 type: null,
-                status: null
+                status: null,
+                mode: null,
+                expense: null,
+                leave: null
             },
             icons: ['ri-flight-takeoff-fill','ri-car-fill','ri-calendar-2-fill'],
             index: null,
@@ -160,6 +182,12 @@ export default {
         "filter.status"(newVal){
             this.fetch();
         },
+        "filter.mode"(newVal){
+            this.fetch();
+        },
+        "filter.expense"(newVal){
+            this.fetch();
+        }
     },
     created(){
         this.fetch();
@@ -175,6 +203,8 @@ export default {
                     keyword: this.filter.keyword,
                     type: this.filter.type,
                     status: this.filter.status,
+                    expense: this.filter.expense,
+                    mode: this.filter.mode,
                     count: 10, 
                     option: 'lists'
                 }
@@ -203,9 +233,9 @@ export default {
             const year = startDate.getFullYear(); // assume same year
             return `${startStr}-${endStr}, ${year}`;
         },
-        viewStatus(index,status){
+        viewStatus(index,type){
             this.index = index;
-            this.filter.status = status;
+            this.filter.type = type;
             this.fetch();
         },
         openCreate(){
