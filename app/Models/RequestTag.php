@@ -14,6 +14,7 @@ class RequestTag extends Model
     protected $fillable = [
         'is_sender_viewed',
         'is_receiver_viewed',
+        'is_driver',
         'user_id',
         'division_id',
         'signatory_id',

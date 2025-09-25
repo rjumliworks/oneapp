@@ -37,7 +37,7 @@
                                                 <i class="ri-edit-box-fill fs-16"></i> Update
                                             </div>
                                             <div class="vr" style="width: 1px;"></div>
-                                            <div @click="openPrint(information.key)">  
+                                            <div @click="openPrint(information.request_key)">  
                                                 <b-button variant="primary" block><i class="ri-printer-fill me-1"></i> Print</b-button>
                                             </div>
                                         </div>
@@ -75,7 +75,7 @@ export default {
             this.$inertia.visit('/travels');
         },
         openPrint(id){
-            window.open('/travels?option=print&id='+id);
+            window.open('/travels?option=print&id='+id+'&travel='+this.information.key);
         },
         openEdit(selected){
             this.$refs.edit.show(selected);

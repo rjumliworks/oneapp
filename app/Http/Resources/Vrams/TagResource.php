@@ -12,6 +12,7 @@ class TagResource extends JsonResource
         return [
             'name' => $this->user->profile->firstname.' '.$this->user->profile->lastname,
             'avatar' => ($this->user->profile->avatar === 'avatar.jpg') ? '/images/avatars/'.$this->user->profile->avatar : '/storage/profile-pictures/'.$this->user->profile->avatar,
+            'is_driver' => $this->is_driver
         ];
     }
 }

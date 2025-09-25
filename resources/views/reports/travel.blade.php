@@ -123,7 +123,7 @@
                 </thead>
                 <tbody>
                     <tr style="text-align: center; text-transform: uppercase; color: #072388; font-weight: bold;">
-                        <td style="text-align: center; padding: 5px; font-size: 10x;">{{$travel['travel_code']}}</td>
+                        <td style="text-align: center; padding: 5px; font-size: 10x;">{{$divisionData['code']}}</td>
                         <td style="text-align: center; padding: 5px; font-size: 10x;">{{$travel['created_at']}}</td>
                     </tr>
                 </tbody>
@@ -235,10 +235,14 @@
                 <tr>
                     <td style="min-height: 50px; border-bottom-style: hidden;">
                         @if($divisionData['division'] != 'Office of the Regional Director')
-                            <span style="font-size:9px; color: #606060;">RECOMMENDING APPROVAL:</span>
+                            @if($divisionData['signatory']['approved_only'] === 0)
+                                <span style="font-size:9px; color: #606060;">RECOMMENDING APPROVAL:</span>
+                            @endif
                         @endif
                     </td>
-                    <td style="min-height: 50px; border-bottom-style: hidden;"><span style="font-size:9px; color: #606060;">APPROVED:</span></td>
+                    <td style="min-height: 50px; border-bottom-style: hidden;">
+                        <span style="font-size:9px; color: #606060;">APPROVED:</span>
+                    </td>
                 </tr>
                 <tr>
                     <td style="min-height: 100px; padding: 15px; border-bottom-style: hidden;"></td>
@@ -249,11 +253,13 @@
                         @if($divisionData['division'] == 'Office of the Regional Director')
 
                         @else
-                        {{ $divisionData['recommend']['name']}}</span><hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
-                            @if($divisionData['recommend']['oic'])
-                                OIC - Assistant Regional Director ({{$divisionData['recommend']['short']}})
-                            @else 
-                                Assistant Regional Director ({{$divisionData['recommend']['short']}})
+                            @if($divisionData['signatory']['approved_only'] === 0)
+                            {{ $divisionData['recommend']['name']}}</span><hr style="margin-top: 0px; margin-bottom: 1px; border: .1px solid black; width: 80%;">
+                                @if($divisionData['recommend']['oic'])
+                                    OIC - Assistant Regional Director ({{$divisionData['recommend']['short']}})
+                                @else 
+                                    Assistant Regional Director ({{$divisionData['recommend']['short']}}) 
+                                @endif
                             @endif
                         @endif
                     </td>

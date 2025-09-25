@@ -5,6 +5,7 @@ namespace App\Services\Vrams\Travel;
 use Hashids\Hashids;
 use Carbon\Carbon;
 use App\Models\Travel;
+use App\Models\TravelCode;
 use App\Models\Request;
 use App\Models\RequestReport;
 
@@ -18,71 +19,47 @@ class SaveClass
             'user_id' => \Auth::user()->id
         ]);
         if($data){
+            $divisions = [];
             $signatories = [];
 
             foreach ($request->tags ?? [] as $user) {
                 $divisionId = intval($user['division_id']);
 
-                if (!empty($user['signatory'])) {
+                if(!in_array($divisionId, $divisions)) {
+                    $divisions[] = $divisionId;
+                }
+
+                if(!empty($user['signatory'])) {
                     $signatory = $data->signatories()->create([
                         'division_id' => $divisionId,
                         'is_approval_only' => 1
                     ]);
-                } else {
-                    // If the user doesn't have a signatory, create or update a signatory
+                }else{
                     $isApprovalOnly = ($divisionId == 2) ? 1 : 0;
-                    
-                    // Check if there is an existing signatory with the same division_id
                     $signatory = $data->signatories()->where('division_id', $divisionId)->first();
                     
-                    // If a signatory exists but has is_approval_only = 0, update it to 1
-                    if ($signatory && $signatory->is_approval_only == 1) {
-                        $signatory->update([
-                            'is_approval_only' => 0,
-                        ]);
-                    } elseif (!$signatory) {
-                        // If no signatory exists for this division_id, create a new one
+                    if($signatory) {
+                        if(($divisionId != 2)){
+                            if($signatory->is_approval_only == 1){
+                                $signatory->update([
+                                    'is_approval_only' => 0, 
+                                ]);
+                            }
+                        }
+                    }elseif(!$signatory) {
                         $signatory = $data->signatories()->create([
                             'division_id' => $divisionId,
                             'is_approval_only' => $isApprovalOnly
                         ]);
                     }
-
-                    // Cache the signatory id to avoid repeated lookups
                     $signatories[$divisionId] = $signatory->id;
                 }
-
-                // Create the tag with the associated signatory_id
                 $data->tags()->create([
                     'user_id' => intval($user['value']),
                     'division_id' => $divisionId,
                     'signatory_id' => $signatory->id, // Directly assign the signatory_id
                 ]);
             }
-            // $divisionIds = [];
-            // foreach ($request->tags ?? [] as $user) {
-            //     $divisionId = intval($user['division_id']);
-            //     $data->tags()->create([
-            //         'user_id' => intval($user['value']),
-            //         'division_id' => $divisionId,
-            //     ]);
-            //     $divisionIds[] = $divisionId;
-            // }
-
-            // $uniqueDivisionIds = collect($divisionIds)->unique()->values()->toArray();
-
-            // foreach($uniqueDivisionIds as $division){
-            //     $isApprovalOnly = ($division == 2) ? 1 : 0;
-            //     foreach ($request->tags ?? [] as $user) {
-            //         if (!empty($user['signatory']) && $user['division_id'] == $division) {
-            //             $isApprovalOnly = 1;
-            //         }
-            //     }
-            //     $data->signatories()->create([
-            //         'division_id' => $division,
-            //         'is_approval_only' => $isApprovalOnly
-            //     ]);
-            // }
             
             if(strpos($request->date, ' to ') !== false) {
                 [$start, $end] = explode(' to ', $request->date);
@@ -114,14 +91,41 @@ class SaveClass
                 'expenses' => array_map('intval', $request->expenses)
             ];
             $travel = $data->travel()->create($travelData);
+            foreach($divisions as $div){
+                $travel->codes()->create([
+                    'code' => $this->generateTravelSoloCode(),
+                    'division_id' => $div
+                ]);
+            }
             if($request->mode_id == 150){
                 $data->reservation()->create([
                     'vehicle_id' => $request->vehicle['value'],
                     'driver_id' => $request->vehicle['driver_id']
                 ]);
+                $signatory = $data->signatories()->where('division_id', $divisionId)->first();
+                if(!$signatory) {
+                    $signatory = $data->signatories()->create([
+                        'division_id' => $divisionId,
+                        'is_approval_only' => 0
+                    ]);
+                }
+                $travel->codes()->create([
+                    'code' => $this->generateTravelSoloCode(),
+                    'division_id' => $divisionId
+                ]);
+                // $travel->codes()->create([
+                //     'code' => $this->generateTravelSoloCode(),
+                //     'division_id' => $divisionId
+                // ]);
+                // $signatory = $data->signatories()->create([
+                //     'division_id' => $divisionId,
+                //     'is_approval_only' => 0
+                // ]);
                 $data->tags()->create([
                     'user_id' => $request->vehicle['driver_id'],
                     'division_id' => 3,
+                    'signatory_id' => $signatory->id,
+                    'is_driver' => 1
                 ]);
             }
             $this->report($data->id);
@@ -166,6 +170,25 @@ class SaveClass
                 ? (int) substr($latest->code, -4) + 1
                 : 1;
 
+            $code = 'TRVL-'.now()->format('Y') .'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
+
+            return $code;
+        });
+    }
+
+    private function generateTravelSoloCode()
+    {
+        return \DB::transaction(function () {
+            $latest = TravelCode::lockForUpdate()
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->orderByDesc('id')
+                ->first();
+
+            $count = $latest
+                ? (int) substr($latest->code, -4) + 1
+                : 1;
+
             $code = now()->format('Y') .'-'.str_pad($count, 4, '0', STR_PAD_LEFT);
 
             return $code;
@@ -179,6 +202,7 @@ class SaveClass
     public function report($id){
         $data = Request::with([
             'travel.mode',
+            'travel.codes',
             'travel.expense',
             'reservation.vehicle',
             'type',
@@ -200,6 +224,7 @@ class SaveClass
             $fullName = "{$profile->firstname} {$middleInitial} {$profile->lastname}";
 
             $division = $user->organization->division->name ?? 'n/a';
+            $division_id = $user->organization->division->id ?? null;
 
             $employees[] = [
                 'name' => $fullName,
@@ -208,6 +233,8 @@ class SaveClass
                 'unit' => $user->organization->unit->name ?? 'n/a',
                 'unit_short' => $user->organization->unit->short ?? 'n/a',
                 'division' => $division,
+                'division_id' => $division_id,
+                'is_driver' => $tag->is_driver
             ];
 
             $divisions[] = $division;

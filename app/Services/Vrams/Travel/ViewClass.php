@@ -4,10 +4,12 @@ namespace App\Services\Vrams\Travel;
 
 use Hashids\Hashids;
 use App\Models\Travel;
+use App\Models\TravelCode;
 use App\Models\Signatory;
 use App\Models\RequestDate;
 use App\Models\RequestComments;
 use App\Models\RequestReport;
+use App\Models\RequestSignatory;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use App\Http\Resources\Vrams\TravelResource;
@@ -16,6 +18,7 @@ use App\Http\Resources\Vrams\ScheduleResource;
 class ViewClass
 {   
     public function show($code){
+    
         $hashids = new Hashids('krad',10);
         $id = $hashids->decode($code);
 
@@ -37,7 +40,7 @@ class ViewClass
             'request.signatories.division','request.signatories.approved','request.signatories.recommended',
             'request.location.region:code,name,region','request.location.province:code,name','request.location.municipality:code,name','request.location.barangay:code,name'
         ])
-        ->where('id',$id)
+        ->where('id',$id[0])
         ->first();
 
         return new TravelResource($data);
@@ -118,8 +121,9 @@ class ViewClass
     public function print($request){
         $hashids = new Hashids('krad',10);
         $id = $hashids->decode($request->id);
+        $travel_id = $hashids->decode($request->travel);
 
-        $data = RequestReport::where('request_id',$id)->value('information');
+        $data = RequestReport::where('request_id',$id[0])->value('information');
        
         $url = $_SERVER['HTTP_HOST'].'/verification/'.$request->id;
         $qrCode = new QrCode($url);
@@ -130,6 +134,7 @@ class ViewClass
 
         $travel = json_decode($data,true);
         $groupedDivisions = [];
+
 
         foreach ($travel['employees'] as $employee) {
             $division = $employee['division'];
@@ -157,7 +162,9 @@ class ViewClass
                 $recommended_oic = '-';
                 $recommended_others = '-';
             }
-           
+
+            $signatory = RequestSignatory::with('recommended.user.profile:user_id,firstname,middlename,lastname','approved.user.profile:user_id,firstname,middlename,lastname')
+            ->where('division_id',$employee['division_id'])->where('request_id',$id[0])->first();
 
             if (!isset($groupedDivisions[$division])) {
                 $groupedDivisions[$division] = [
@@ -173,7 +180,13 @@ class ViewClass
                         'name' => $recommended_name,
                         'oic' => $recommended_oic,
                         'short' => $recommended_others
-                    ]
+                    ],
+                    'signatory' => [
+                        'approved' => $signatory->approved,
+                        'recommend' => $signatory->recommended,
+                        'approved_only' => $signatory->is_approval_only
+                    ],
+                    'code' => TravelCode::where('division_id',$employee['division_id'])->where('travel_id',$travel_id[0])->value('code') 
                 ];
             }
             $groupedDivisions[$division]['employees'][] = $employee;
