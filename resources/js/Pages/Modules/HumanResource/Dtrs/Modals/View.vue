@@ -1,5 +1,5 @@
 <template>
-    <b-modal v-model="showModal" style="--vz-modal-width: 750px;" header-class="p-3 bg-light" title="View Date Time Record" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
+    <b-modal v-model="showModal" style="--vz-modal-width: 850px;" header-class="p-3 bg-light" title="View Date Time Record" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
         <form class="customform" v-if="selected">
             <BRow>
                <div class="col-md-12">
@@ -38,12 +38,12 @@
                                 <table class="table table-bordered align-middle mb-1">
                                     <thead class="bg-primary fs-11 thead-fixed">
                                         <tr class="text-white">
-                                            <th class="text-center" style="width: 20%;">Type</th>
+                                            <th class="text-center" style="width: 17%;">Type</th>
                                             <th class="text-center" style="width: 15%;">Time</th>
                                             <th class="text-center" style="width: 15%;">Minutes</th>
                                             <th class="text-center" style="width: 20%;">IP Address</th>
                                             <th class="text-center" style="width: 20%;">PC Name</th>
-                                            <th  style="width: 10%;"></th>
+                                            <th  style="width: 13%;"></th>
                                         </tr>
                                     </thead>
                                     <tbody class="fs-12">
@@ -60,6 +60,11 @@
                                                 <b-button v-else @click="openTime(selected.id,'Time In (am)')" variant="soft-info" v-b-tooltip.hover title="Set" size="sm">
                                                     <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
+                                                <a v-if="selected.am_in_at" class="glightbox" :href="'/storage/' + selected.am_in_at.image">
+                                                    <b-button class="ms-1" variant="soft-success" v-b-tooltip.hover title="Set" size="sm">
+                                                        <i class="ri-image-fill align-bottom"></i>
+                                                    </b-button>
+                                                </a>
                                             </td>
                                         </tr>
                                         <tr>
@@ -75,6 +80,11 @@
                                                 <b-button v-else @click="openTime(selected.id,'Time Out (am)')" variant="soft-info" v-b-tooltip.hover title="Set" size="sm">
                                                     <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
+                                                <a v-if="selected.am_out_at" class="glightbox" :href="'/storage/' + selected.am_out_at.image">
+                                                    <b-button class="ms-1" variant="soft-success" v-b-tooltip.hover title="Set" size="sm">
+                                                        <i class="ri-image-fill align-bottom"></i>
+                                                    </b-button>
+                                                </a>
                                             </td>
                                         </tr>
                                         <tr>
@@ -90,6 +100,11 @@
                                                 <b-button v-else @click="openTime(selected.id,'Time In (pm)')" variant="soft-info" v-b-tooltip.hover title="Set" size="sm">
                                                     <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
+                                                <a v-if="selected.pm_in_at" class="glightbox" :href="'/storage/' + selected.pm_in_at.image">
+                                                    <b-button class="ms-1" variant="soft-success" v-b-tooltip.hover title="Set" size="sm">
+                                                        <i class="ri-image-fill align-bottom"></i>
+                                                    </b-button>
+                                                </a>
                                             </td>
                                         </tr>
                                         <tr>
@@ -105,6 +120,11 @@
                                                 <b-button v-else @click="openTime(selected.id,'Time Out (pm)')" variant="soft-info" v-b-tooltip.hover title="Set" size="sm">
                                                     <i class="ri-add-circle-fill align-bottom"></i>
                                                 </b-button>
+                                                <a v-if="selected.pm_out_at" class="glightbox" :href="'/storage/' + selected.pm_out_at.image">
+                                                    <b-button class="ms-1" variant="soft-success" v-b-tooltip.hover title="Set" size="sm">
+                                                        <i class="ri-image-fill align-bottom"></i>
+                                                    </b-button>
+                                                </a>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -125,6 +145,8 @@
 <script>
 import Edit from './Edit.vue';
 import Time from './Time.vue';
+import GLightbox from "glightbox";
+import "glightbox/dist/css/glightbox.min.css";
 export default {
     components: { Edit, Time },
     data(){
@@ -135,9 +157,26 @@ export default {
             showModal: false
         }
     },
+    mounted() {
+        this.initLightbox();
+    },
     methods: { 
+        initLightbox() {
+            if (this.lightbox) {
+                this.lightbox.destroy(); // clean up old instance
+            }
+            this.lightbox = GLightbox({
+                selector: ".glightbox",
+                touchNavigation: true,
+                loop: true,
+                zoomable: true,
+            });
+        },
         show(data){
             this.selected = data;
+            this.$nextTick(() => {
+                this.initLightbox(); 
+            });
             this.showModal = true;
         },
         openEdit(id,data,type){

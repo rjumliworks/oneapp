@@ -8,58 +8,70 @@
                 
            
             <div class="row justify-content-center">
-                <div class="col-md-10">
+                <div class="col-md-12">
                     <div class="text-center mb-4">
                         <img src="/images/logo-sm.png" alt="" class="avatar-md mb-2">
                         <p class="fs-15 fw-semibold text-p text-uppercase">Department of Science & Technology - IX</p>
                         <p class="fs-13 text-muted" style="margin-top: -20px;">Human Resource - Date Time Record</p>
                     </div>
-                    <div class="card border bg-primary">
-                        <h4 class="text-white p-3" style="margin-bottom: -28px;">{{ currentDate}}</h4>
-                        <div class="card-body mt-4 mb-n3 bg-white bg-soft">
-                            <h1 style="font-size: 140px; margin-top: -10px; margin-bottom: -2px;" class="text-primary text-center dfw-medium" v-text="currentTime"></h1>
+                    <div class="card border bg-white">
+                        <div class="card-header bg-primary">
+                            <h4 class="text-white mt-2">{{ currentDate}}</h4>
                         </div>
-                    
-                        <div class="card-body border-top bg-soft" style="background-color: white; ">
-                            <div class="p-2">
-                                <div class="text-center">
-                                   <div class=" mt-n2 mb-n2">
-                                        <b-tabs v-model="activebutton" pills nav-class="bg-light rounded nav-justified fw-bold" content-class="mt-3">
-                                            <b-tab title="AM IN" v-on:click="swap('Time In (am)','0')"></b-tab>
-                                            <b-tab title="AM OUT" v-on:click="swap('Time Out (am)','1')"></b-tab>
-                                            <b-tab title="PM IN" v-on:click="swap('Time In (pm)','2')"></b-tab>
-                                            <b-tab title="PM OUT" v-on:click="swap('Time Out (pm)','3')"></b-tab>
-                                        </b-tabs>
-                                    </div>
-                                    <input @keyup.enter="find" v-model="form.username" autofocus type="text" class="form-control form-control-lg text-center" style="font-size: 30px; text-transform: uppercase; background-color: #eff2f7;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4"> 
+                                    <video
+                                        ref="cameraPreview"
+                                        autoplay
+                                        playsinline
+                                        class="qr-child img-thumbnail">
+                                    </video>
                                 </div>
-                                <template v-if="user">
-                                    <div v-if="status == 'New' || status == 'Success'" class="alert alert-success alert-dismissible alert-additional mt-3 mb-n1" role="alert">
-                                        <div class="alert-body">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <img :src="user.avatar" alt="" class="rounded-circle" style="height: 2.5rem; width: 2.5rem;">
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <h5 class="alert-heading mb-0">{{user.name}}</h5>
-                                                    <p class="mb-0"> {{user.division}}</p>
+                                <div class="col-md-8">
+                                    <h1 style="font-size: 120px; margin-top: -10px; margin-bottom: 5px;" class="text-primary text-center dfw-medium" v-text="currentTime"></h1>
+                                    <div class="p-2">
+                                        <div class="text-center">
+                                        <div class=" mt-n2 mb-n2">
+                                                <b-tabs v-model="activebutton" pills nav-class="bg-light rounded nav-justified fw-bold" content-class="mt-3">
+                                                    <b-tab title="AM IN" v-on:click="swap('Time In (am)','0')"></b-tab>
+                                                    <b-tab title="AM OUT" v-on:click="swap('Time Out (am)','1')"></b-tab>
+                                                    <b-tab title="PM IN" v-on:click="swap('Time In (pm)','2')"></b-tab>
+                                                    <b-tab title="PM OUT" v-on:click="swap('Time Out (pm)','3')"></b-tab>
+                                                </b-tabs>
+                                            </div>
+                                            <input @keyup.enter="find" v-model="form.username" autofocus type="text" class="form-control form-control-lg text-center" style="font-size: 30px; text-transform: uppercase; background-color: #eff2f7;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <template v-if="user">
+                                        <div v-if="status == 'New' || status == 'Success'" class="alert alert-success alert-dismissible alert-additional mt-3 mb-n1" role="alert">
+                                            <div class="alert-body">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <img :src="form.image" alt="" class="rounded-circle" style="height: 2.5rem; width: 2.5rem;">
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h5 class="alert-heading mb-0">{{user.name}}</h5>
+                                                        <p class="mb-0"> {{user.division}}</p>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div class="alert-content">
+                                                <p class="mb-0" v-html="user.message.message"></p>
+                                            </div>
                                         </div>
-                                        <div class="alert-content">
-                                            <p class="mb-0" v-html="user.message.message"></p>
+                                        <div v-else :class="'alert alert-'+user.message.status+' alert-dismissible bg-'+user.message.status+' mt-3 text-white alert-label-icon mb-xl-0'" role="alert">
+                                            <i class="ri-error-warning-line label-icon"></i><span v-html="user.message.message"></span>
                                         </div>
-                                    </div>
-                                    <div v-else :class="'alert alert-'+user.message.status+' alert-dismissible bg-'+user.message.status+' mt-3 text-white alert-label-icon mb-xl-0'" role="alert">
-                                        <i class="ri-error-warning-line label-icon"></i><span v-html="user.message.message"></span>
-                                     </div>
-                                </template>
-                                <template v-if="status == 'Error'">
-                                    <div class="alert alert-danger alert-dismissible bg-danger mt-3 text-white alert-label-icon mb-xl-0" role="alert">
-                                        <i class="ri-error-warning-line label-icon"></i><strong>Danger</strong> - Your record could not be found. Please contact the administrator for assistance.
-                                     </div>
-                                </template>
-
+                                    </template>
+                                    <template v-if="status == 'Error'">
+                                        <div class="alert alert-danger alert-dismissible bg-danger mt-3 text-white alert-label-icon mb-xl-0" role="alert">
+                                            <i class="ri-error-warning-line label-icon"></i><strong>Danger</strong> - Your record could not be found. Please contact the administrator for assistance.
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -94,6 +106,7 @@ import { isError } from 'lodash';
                 message: '',
                 status: '',
                 form: useForm({
+                    image: null,
                     username: null,
                     type:'Time In (am)',
                     option: 'dtr'
@@ -113,6 +126,7 @@ import { isError } from 'lodash';
             this.keepAliveInterval = setInterval(() => {
                 axios.get('/keep-alive'); 
             }, 1000 * 60 * 30); 
+            this.startCamera();
         },
         beforeUnmount() {
             clearInterval(this.keepAliveInterval);
@@ -121,7 +135,7 @@ import { isError } from 'lodash';
             find(){
                 this.user = ''; 
                 this.inactive = false;
-                
+                this.capturePhoto();
                 this.form.post('/dtr',{
                     preserveScroll: true,
                     onSuccess: (response) => {
@@ -163,13 +177,40 @@ import { isError } from 'lodash';
                     this.filter();
                     this.user = '';
                 }, 20000); 
+            },
+
+            async startCamera() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    this.$refs.cameraPreview.srcObject = stream;
+                } catch (err) {
+                    console.error("Camera access denied:", err);
+                    alert("Unable to access camera. Please allow permissions.");
+                }
+            },
+            capturePhoto() {
+                const video = this.$refs.cameraPreview
+                const canvas = document.createElement("canvas")
+                canvas.width = 200
+                canvas.height = 200
+                const ctx = canvas.getContext("2d")
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+                this.form.image = canvas.toDataURL("image/png")
             }
         }
     }
 </script>
 <style>
-.nav-pills .nav-link {
-    font-weight: bold;
-    font-size: 16px;
-}
+    .nav-pills .nav-link {
+        font-weight: bold;
+        font-size: 16px;
+    }
+    .qr-child {
+        padding-top: 8px;
+        padding-left: 8px;
+        padding-bottom: 8px;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;   
+    }
 </style>
