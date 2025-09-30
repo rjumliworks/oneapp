@@ -5,6 +5,8 @@ namespace App\Services\Hr\Dtr;
 use Carbon\Carbon;
 use App\Models\Dtr;
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Hr\TimeResource;
 
 class SaveClass
@@ -40,6 +42,7 @@ class SaveClass
                 $minutes = ($time->lessThan($officialAfternoonOut)) ? ceil($time->floatDiffInMinutes($officialAfternoonOut)) : 0;
             break;
         }
+        
         $info = [
             'ip' => \Request::ip(), 
             'pcname' => gethostname(),
@@ -47,6 +50,7 @@ class SaveClass
             'time' =>  $time->toTimeString(),
             'date' => $date,
             'minutes' => $minutes,
+            'image' => $this->image($request),
             'is_updated' => false,
             'changes' => []
         ];
@@ -237,5 +241,36 @@ class SaveClass
             'bg' => $bg,
             'status' => $a
         ];
+    }
+
+    public function image($request)
+    {
+        $image = $request->input('image'); // base64 string
+
+        // Validate format
+        if (!preg_match('/^data:image\/(\w+);base64,/', $image, $matches)) {
+            return response()->json(['error' => 'Invalid image format.'], 422);
+        }
+
+        $type = strtolower($matches[1]); // png, jpg, jpeg, gif
+        if (!in_array($type, ['jpg', 'jpeg', 'png'])) {
+            return response()->json(['error' => 'Invalid image type.'], 422);
+        }
+
+        // Remove header and decode
+        $image = substr($image, strpos($image, ',') + 1);
+        $image = str_replace(' ', '+', $image);
+        $imageData = base64_decode($image);
+
+        if ($imageData === false) {
+            return response()->json(['error' => 'Base64 decode failed.'], 422);
+        }
+
+        // Save to storage/app/public/images/attendance
+        $filename = Str::random(10) . '.' . $type;
+        $path = 'images/attendance/'.$request->username.'/'. $filename;
+        Storage::disk('public')->put($path, $imageData);
+
+        return $path;
     }
 }
