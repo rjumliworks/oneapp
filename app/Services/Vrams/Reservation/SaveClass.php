@@ -14,10 +14,45 @@ class SaveClass
             'user_id' => \Auth::user()->id
         ]);
         if($data){
+            $divisions = [];
+            $signatories = [];
+            
             foreach ($request->tags ?? [] as $user) {
+                $divisionId = intval($user['division_id']);
+
+                if(!in_array($divisionId, $divisions)) {
+                    $divisions[] = $divisionId;
+                }
+
+                if(!empty($user['signatory'])) {
+                    $signatory = $data->signatories()->create([
+                        'division_id' => $divisionId,
+                        'is_approval_only' => 1
+                    ]);
+                }else{
+                    $isApprovalOnly = ($divisionId == 2) ? 1 : 0;
+                    $signatory = $data->signatories()->where('division_id', $divisionId)->first();
+                    
+                    if($signatory) {
+                        if(($divisionId != 2)){
+                            if($signatory->is_approval_only == 1){
+                                $signatory->update([
+                                    'is_approval_only' => 0, 
+                                ]);
+                            }
+                        }
+                    }elseif(!$signatory) {
+                        $signatory = $data->signatories()->create([
+                            'division_id' => $divisionId,
+                            'is_approval_only' => $isApprovalOnly
+                        ]);
+                    }
+                    $signatories[$divisionId] = $signatory->id;
+                }
                 $data->tags()->create([
                     'user_id' => intval($user['value']),
                     'division_id' => intval($user['division_id']),
+                    'signatory_id' => $signatory->id, 
                 ]);
             }
 

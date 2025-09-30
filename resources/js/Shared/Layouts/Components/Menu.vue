@@ -147,8 +147,8 @@
                     <span data-key="t-menu">Executive</span>
                 </li>
                 <li class="nav-item">
-                    <Link href="/patients" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Patients') }">
+                    <Link href="/users" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/Administrator/Users') }">
                     <i class="ri-account-circle-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Users</span>
                     </Link>

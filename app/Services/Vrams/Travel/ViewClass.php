@@ -121,8 +121,8 @@ class ViewClass
     public function print($request){
         $hashids = new Hashids('krad',10);
         $id = $hashids->decode($request->id);
-        $travel_id = $hashids->decode($request->travel);
-
+        // $travel_id = $hashids->decode($request->travel);
+        $travel_id = Travel::where('request_id',$id[0])->value('id');
         $data = RequestReport::where('request_id',$id[0])->value('information');
        
         $url = $_SERVER['HTTP_HOST'].'/verification/'.$request->id;
@@ -134,7 +134,6 @@ class ViewClass
 
         $travel = json_decode($data,true);
         $groupedDivisions = [];
-
 
         foreach ($travel['employees'] as $employee) {
             $division = $employee['division'];
@@ -186,7 +185,7 @@ class ViewClass
                         'recommend' => $signatory->recommended,
                         'approved_only' => $signatory->is_approval_only
                     ],
-                    'code' => TravelCode::where('division_id',$employee['division_id'])->where('travel_id',$travel_id[0])->value('code') 
+                    'code' => TravelCode::where('division_id',$employee['division_id'])->where('travel_id',$travel_id)->value('code') 
                 ];
             }
             $groupedDivisions[$division]['employees'][] = $employee;

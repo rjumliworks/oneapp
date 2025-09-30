@@ -12,10 +12,11 @@ class TravelResource extends JsonResource
     {
         $hashids = new Hashids('krad',10);
         $key = $hashids->encode($this->id);
-
+        $request_key = $hashids->encode($this->request_id);
         return [
             'id' => $this->id,
             'key' => $key,
+            'request_key' => $request_key,
             'request_id' => $this->request->id,
             'code' => $this->request->code,
             'type' => $this->request->type->name,

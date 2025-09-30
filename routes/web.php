@@ -28,13 +28,17 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
         Route::resource('/leaves', App\Http\Controllers\Hr\LeaveController::class)->except(['store']);
     });
 
-    Route::middleware(['role:Travel Officer'])->group(function () {
+    // Route::middleware(['role:Travel Officer'])->group(function () {
         Route::resource('/travels', App\Http\Controllers\Vrams\TravelController::class)->except(['store']);
         Route::resource('/reservations', App\Http\Controllers\Vrams\ReservationController::class)->except(['store']);
-    });
+    // });
 
     Route::middleware(['role:Document Control Officer'])->group(function () {
         Route::resource('/documents', App\Http\Controllers\Trace\DocumentController::class);
+    });
+
+    Route::middleware(['role:Administrator'])->group(function () {
+        Route::resource('/users', App\Http\Controllers\Executive\UserController::class);
     });
 
     Route::post('/leaves', [App\Http\Controllers\Hr\LeaveController::class, 'store']);
