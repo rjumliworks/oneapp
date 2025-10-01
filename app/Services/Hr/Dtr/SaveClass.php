@@ -66,15 +66,15 @@ class SaveClass
             if($dtr){
                 switch($type){
                     case 'Time In (am)':
-                        // if($date->hour >= 12){
-                        //     $status = 'Disabled';
-                        // }else if($dtr->am_in_at){
-                        //     $status = 'Duplicate';
-                        // }else{
+                        if($date->hour >= 12){
+                            $status = 'Disabled';
+                        }else if($dtr->am_in_at){
+                            $status = 'Duplicate';
+                        }else{
                             $status = 'Success';
                             $dtr->am_in_at = json_encode($info);
                             $dtr->save();
-                        // }
+                        }
                     break;
                     case 'Time Out (am)':
                         if($dtr->am_out_at){

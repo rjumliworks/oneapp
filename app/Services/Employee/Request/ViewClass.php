@@ -97,6 +97,7 @@ class ViewClass
                         'label' => 'Require Credits',
                         'options' => [
                             'value' => $item->id,
+                            'type_id' => $item->leave->id,
                             'label' => $item->leave->name.' - '.$item->balance,
                             'name' => $item->leave->name,
                             'citation' => $item->leave->citation,

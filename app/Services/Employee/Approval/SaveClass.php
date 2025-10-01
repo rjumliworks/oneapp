@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Employee\Request;
+namespace App\Services\Employee\Approval;
 
 use Hashids\Hashids;
 use App\Models\Signatory;
@@ -22,6 +22,12 @@ class SaveClass
                 $signatory->recommended_id = \Auth::user()->id;
                 $signatory->recommended_date = now();
                 $signatory->save();
+            }else if($request->status_id == 26){
+                $signatory = RequestSignatory::where('request_id',$data->id)->update([
+                    'approved_id' => \Auth::user()->id,
+                    'approved_date' => now(),
+                    'is_completed' => 1
+                ]);
             }
         }
 

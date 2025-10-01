@@ -33,12 +33,15 @@
                                                     <i class="ri-close-circle-fill fs-16"></i> Close
                                                 </div>
                                             </Link>
-                                            <div class="text-muted" @click="openEdit(information)" style="cursor: pointer;">  
-                                                <i class="ri-edit-box-fill fs-16"></i> Update
-                                            </div>
                                             <div class="vr" style="width: 1px;"></div>
-                                            <div @click="openPrint(information.request_key)">  
-                                                <b-button variant="primary" block><i class="ri-printer-fill me-1"></i> Print</b-button>
+                                            <div v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44" class="me-n3" @click="openDisapprove(information.request_key,information.type)">  
+                                                <b-button variant="danger" block><i class="ri-close-circle-fill me-1"></i>Disapprove</b-button>
+                                            </div>
+                                            <div v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44" @click="openRecommend(information.request_key,information.type)">  
+                                                <b-button variant="secondary" block><i class="ri-checkbox-circle-fill me-1"></i>Recommend</b-button>
+                                            </div>
+                                             <div v-if="information.status.name == 'Recommended' && $page.props.user.data.signatory.designation_id == 45" @click="openApprove(information.request_key,information.type)">  
+                                                <b-button variant="success" block><i class="ri-checkbox-circle-fill me-1"></i>Approve</b-button>
                                             </div>
                                         </div>
                                     </BCol>
@@ -57,14 +60,20 @@
         </div>
     </div>
     <Edit ref="edit"/>
+    <Approved ref="approve"/>
+    <Recommend ref="recommend"/>
+    <Disapproved ref="disapprove"/>
 </template>
 <script>
 import Main from './Components/Main.vue';
 import Edit from './Modals/Edit.vue';
+import Approved from './Modals/Approved.vue';
+import Recommend from './Modals/Recommend.vue';
+import Disapproved from './Modals/Disapproved.vue';
 import Sidebar from './Components/Sidebar.vue';
 export default {
     props: ['information_data'],
-    components: { Main, Sidebar, Edit },
+    components: { Main, Sidebar, Edit, Approved, Disapproved, Recommend },
     data(){
         return {
             information: this.information_data.data
@@ -80,6 +89,15 @@ export default {
         openEdit(selected){
             this.$refs.edit.show(selected);
         },
+        openApprove(id,type){
+            this.$refs.approve.show(id,type);
+        },
+        openRecommend(id,type){
+            this.$refs.recommend.show(id,type);
+        },
+        openDisapprove(id,type){
+            this.$refs.disapprove.show(id,type);
+        }
     }
 }
 </script>

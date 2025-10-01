@@ -5,16 +5,21 @@ namespace App\Http\Controllers\Employee;
 use App\Traits\HandlesTransaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
+use App\Services\Employee\Request\ShowClass;
 use App\Services\Employee\Approval\ViewClass;
+use App\Services\Employee\Approval\SaveClass;
 
 class ApprovalController extends Controller
 {
     use HandlesTransaction;
 
-    public $view;
+    public $view,$show;
 
-    public function __construct(ViewClass $view){
+    public function __construct(ViewClass $view, ShowClass $show, SaveClass $save){
         $this->view = $view;
+        $this->show = $show;
+        $this->save = $save;
     }
 
     public function index(Request $request){
@@ -25,5 +30,47 @@ class ApprovalController extends Controller
             default:
                 return inertia('Modules/Employee/Approvals/Index'); 
         }   
+    }
+
+    public function show($string){
+        $string = Crypt::decryptString($string);
+        $parts = explode("krad", $string);
+   
+        $type = $parts[0]; 
+        $code  = $parts[1]; 
+        switch($type){
+            case 'travel-order':
+                return inertia('Modules/Employee/Approvals/View/Travels/View',[
+                    'information_data' => $this->show->travel($code)
+                ]);
+            break;
+            case 'vehicle-reservation':
+                return inertia('Modules/Employee/Approvals/View/Reservations/View',[
+                    'information_data' => $this->show->reservation($code)
+                ]);
+            break;
+            case 'leave-form':
+                return inertia('Modules/Employee/Approvals/View/Leaves/View',[
+                    'information_data' => $this->show->leave($code)
+                ]);
+            break;
+        }
+    }
+
+    public function update(Request $request){
+        $result = $this->handleTransaction(function () use ($request) {
+            switch($request->option){
+                case 'status':
+                    return $this->save->status($request);
+                break;
+            }
+        });
+        
+        return back()->with([
+            'data' => $result['data'],
+            'message' => $result['message'],
+            'info' => $result['info'],
+            'status' => $result['status'],
+        ]);
     }
 }

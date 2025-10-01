@@ -399,7 +399,7 @@ export default {
                 }
 
                 if(newVal){
-                    this.form.type_id = newVal.value;
+                    this.form.type_id = newVal.type_id;
                     this.form.types.push({
                         ...newVal,
                         borrow: Math.min(this.totalDays, newVal.balance)

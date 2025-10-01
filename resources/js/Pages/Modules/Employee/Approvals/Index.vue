@@ -123,7 +123,7 @@
                                         <span :class="'badge '+list.status.color">{{list.status.name}}</span>
                                     </td>
                                     <td class="text-end">
-                                        <Link :href="`/requests/${list.link}`">
+                                        <Link :href="`/approvals/${list.link}`">
                                             <b-button variant="soft-info" class="me-1" v-b-tooltip.hover title="View" size="sm">
                                                 <i class="ri-eye-fill align-bottom"></i>
                                             </b-button>

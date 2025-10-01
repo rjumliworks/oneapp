@@ -9,7 +9,9 @@ use App\Http\Resources\Employee\Request\IndexResource;
 class ViewClass
 {
     public function lists($request){
-        $division = Signatory::where('user_id',\Auth::user()->id)->where('is_active',1)->value('division_id');
+        $signatory = Signatory::where('user_id',\Auth::user()->id)->where('is_active',1)->first(); 
+        $mystatus = ($signatory['designation_id'] == 44) ? 24 : 25;
+        // add start end date to filter the request by signatories appointment
         $data = Request::with([
             'tags.user:id',
             'tags.user.profile:user_id,firstname,middlename,lastname,avatar',
@@ -32,10 +34,15 @@ class ViewClass
                 ->orWhereRaw('LOWER(CONCAT(lastname, " ", firstname)) LIKE ?', ['%' . strtolower($keyword) . '%']);
             });
         })
-        ->whereHas('signatories', function ($query) use ($division) {
-            $query->where('division_id', $division);
+        ->where('status_id',$mystatus)
+        ->whereHas('signatories', function ($query) use ($signatory) {
+          
+            if($signatory['designation_id'] == 44){
+                $query->where('division_id', $signatory['division_id']);
+                $query->where('is_approval_only',0);
+            }
         })
-        ->latest() 
+        ->orderBy('created_at','ASC')
         ->paginate($request->count ?? 10);
 
         return IndexResource::collection($data);

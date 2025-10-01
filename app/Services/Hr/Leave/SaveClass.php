@@ -16,18 +16,19 @@ class SaveClass
             'user_id' => \Auth::user()->id
         ]);
         if($data){
-            $data->tags()->create([
-                'user_id' => \Auth::user()->id,
-                'division_id' => \Auth::user()->organization->division_id,
-            ]);
-
-            $data->signatories()->create([
+            $signatory = $data->signatories()->create([
                 'division_id' => \Auth::user()->organization->division_id,
                 'is_approval_only' => 0
             ]);
 
+            $data->tags()->create([
+                'user_id' => \Auth::user()->id,
+                'division_id' => \Auth::user()->organization->division_id,
+                'signatory_id' => $signatory->id,
+            ]);
+
             $data->detail()->create([
-                'purpose' => $request->details,
+                'purpose' => ($request->details) ?  $request->details : 'n/a',
             ]);
 
             if($request->date_type != 'Multiple Dates (non-continuous)'){
