@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Models\UserCredit;
-use App\Models\listLeave;
+use App\Models\ListLeave;
 use Illuminate\Console\Command;
 
 class MonthlyCreditCommand extends Command
