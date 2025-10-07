@@ -63,4 +63,14 @@ class RequestStatus extends Model
         ->logOnlyDirty()
         ->dontSubmitEmptyLogs();
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return date('M d, Y g:i a', strtotime($value));
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return date('M d, Y g:i a', strtotime($value));
+    }
 }

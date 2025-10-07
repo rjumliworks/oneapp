@@ -36,4 +36,14 @@ class RequestSignatory extends Model
     {
         return $this->belongsTo('App\Models\Request', 'request_id', 'id');
     }
+
+    public function getRecommendedDateAttribute($value)
+    {
+        return date('M d, Y g:i a', strtotime($value));
+    }
+
+    public function getApprovedDateAttribute($value)
+    {
+        return date('M d, Y g:i a', strtotime($value));
+    }
 }

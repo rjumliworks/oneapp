@@ -5,9 +5,11 @@ namespace App\Services\Employee\Request;
 use Hashids\Hashids;
 use App\Models\Leave;
 use App\Models\Travel;
+use App\Models\Request;
 use App\Models\Reservation;
 use App\Http\Resources\Employee\Request\LeaveResource;
 use App\Http\Resources\Employee\Request\TravelResource;
+use App\Http\Resources\Employee\Request\OvertimeResource;
 use App\Http\Resources\Employee\Request\ReservationResource;
 
 class ShowClass
@@ -93,5 +95,29 @@ class ShowClass
         ->first();
 
         return new ReservationResource($data);
+    }
+
+    public function overtime($code){
+        $hashids = new Hashids('krad',10);
+        $id = $hashids->decode($code);
+
+        $data = Request::with([
+            'tags.user:id',
+            'tags.user.profile:user_id,firstname,middlename,lastname,avatar',
+            'statuses.user:id',
+            'statuses.user.profile:user_id,firstname,middlename,lastname,avatar',
+            'statuses.status',
+            'status',
+            'type',
+            'dates',
+            'detail',
+            'user:id',
+            'user.profile:user_id,firstname,middlename,lastname',
+            'signatories.division','signatories.approved.profile','signatories.recommended.profile'
+        ])
+        ->where('id',$id)
+        ->first();
+
+        return new OvertimeResource($data);
     }
 }

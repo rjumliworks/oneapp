@@ -103,6 +103,7 @@
                                         <span v-if="list.type == 'Vehicle Reservation'" class="badge bg-secondary-subtle text-secondary">{{list.type}}</span>
                                         <span v-else-if="list.type == 'Travel Order'" class="badge bg-success-subtle text-success">{{list.type}}</span>
                                         <span v-else-if="list.type == 'Leave Form'" class="badge bg-danger-subtle text-danger">{{list.type}}</span>
+                                        <span v-else-if="list.type == 'Render Overtime Service'" class="badge bg-info-subtle text-info">{{list.type}}</span>
                                     </td>
                                     <td class="text-center" v-else>
                                         <span :class="'badge bg-primary'">{{list.subtype}}</span>

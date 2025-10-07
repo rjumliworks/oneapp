@@ -86,6 +86,13 @@
                     </Link>
                 </li>
                 <li class="nav-item">
+                    <Link href="/cto" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/HumanResource/Cto') }">
+                    <i class="ri-time-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">CTO</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
                     <Link href="/surveys" class="nav-link menu-link"
                         :class="{'active': $page.component.startsWith('Modules/HumanResource/Surveys') }">
                     <i class="ri-article-fill"></i>
@@ -138,6 +145,26 @@
                         :class="{'active': $page.component.startsWith('Modules/Trace/Documents') }">
                     <i class="ri-file-text-fill"></i>
                     <span class="fw-semibold fs-14" data-key="t-dashboards">Documents</span>
+                    </Link>
+                </li>
+            </tempalte>
+            <tempalte v-if="$page.props.roles.includes('Asset Officer')">
+                <li class="menu-title">
+                    <i class="ri-more-fill" aria-expanded="false"></i>
+                    <span data-key="t-menu">Asset Management</span>
+                </li>
+                <li class="nav-item">
+                    <Link href="/equipments" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/Assets/Equipments') }">
+                    <i class="ri-settings-3-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Equipments</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
+                    <Link href="/buildings" class="nav-link menu-link"
+                        :class="{'active': $page.component.startsWith('Modules/Assets/Buildings') }">
+                    <i class="ri-government-line"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Buildings</span>
                     </Link>
                 </li>
             </tempalte>

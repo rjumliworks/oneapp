@@ -22,6 +22,9 @@ class IndexResource extends JsonResource
             case 'Leave Form':
                 $subtype = $this->leave->type->name;
             break;
+            case 'Render Overtime Service':
+                $subtype = $this->type->name;
+            break;
             default:
                 $subtype = $this->reservation->vehicle->name;
         }

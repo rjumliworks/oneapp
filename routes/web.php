@@ -26,6 +26,7 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
         Route::resource('/credits', App\Http\Controllers\Hr\CreditController::class);
         Route::resource('/calendar', App\Http\Controllers\Hr\CalendarController::class);
         Route::resource('/leaves', App\Http\Controllers\Hr\LeaveController::class)->except(['store']);
+        Route::resource('/cto', App\Http\Controllers\Hr\CtoController::class)->except(['store']);
     });
 
     // Route::middleware(['role:Travel Officer'])->group(function () {
@@ -41,9 +42,13 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
         Route::resource('/users', App\Http\Controllers\Executive\UserController::class);
     });
 
+    Route::resource('/equipments', App\Http\Controllers\Assests\EquipmentController::class);
+    Route::resource('/buildings', App\Http\Controllers\Assests\BuildingController::class);
+
     Route::post('/leaves', [App\Http\Controllers\Hr\LeaveController::class, 'store']);
     Route::post('/travels', [App\Http\Controllers\Vrams\TravelController::class, 'store']);
     Route::post('/reservations', [App\Http\Controllers\Vrams\ReservationController::class, 'store']);
+    Route::post('/cto', [App\Http\Controllers\Hr\CtoController::class, 'store']);
 
     Route::get('/keep-alive', function () {
         return response()->json(['status' => 'ok']);

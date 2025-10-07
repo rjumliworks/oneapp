@@ -16,8 +16,8 @@ return new class extends Migration
             $table->tinyIncrements('id');
             $table->string('name',100);
             $table->string('classification',20);  
-            $table->string('type',20)->defualt('n/a');  
-            $table->string('color',20)->default('n/a');  
+            $table->string('type',50)->defualt('n/a');  
+            $table->string('color',50)->default('n/a');  
             $table->string('others')->default('n/a');
             $table->boolean('is_active')->default(1);
         });

@@ -38,7 +38,7 @@ class Request extends Model
 
     public function statuses()
     {
-        return $this->hasMany('App\Models\RequestStatus', 'request_id');
+        return $this->hasMany('App\Models\RequestStatus', 'request_id')->orderBy('created_at','DESC');
     }
 
     public function tags()

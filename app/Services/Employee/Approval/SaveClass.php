@@ -29,6 +29,11 @@ class SaveClass
                     'is_completed' => 1
                 ]);
             }
+
+            $data->statuses()->create([
+                'user_id' => \Auth::user()->id,
+                'status_id' => $request->status_id
+            ]);
         }
 
         return [

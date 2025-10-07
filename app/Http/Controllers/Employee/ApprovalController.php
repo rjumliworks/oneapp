@@ -6,7 +6,7 @@ use App\Traits\HandlesTransaction;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use App\Services\Employee\Request\ShowClass;
+use App\Services\Employee\Approval\ShowClass;
 use App\Services\Employee\Approval\ViewClass;
 use App\Services\Employee\Approval\SaveClass;
 
@@ -52,6 +52,11 @@ class ApprovalController extends Controller
             case 'leave-form':
                 return inertia('Modules/Employee/Approvals/View/Leaves/View',[
                     'information_data' => $this->show->leave($code)
+                ]);
+            break;
+             case 'render-overtime-service':
+                return inertia('Modules/Employee/Approvals/View/Overtime/View',[
+                    'information_data' => $this->show->overtime($code)
                 ]);
             break;
         }
