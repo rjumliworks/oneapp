@@ -28,7 +28,9 @@ class ApprovalController extends Controller
                 return $this->view->lists($request);
             break;
             default:
-                return inertia('Modules/Employee/Approvals/Index'); 
+                return inertia('Modules/Employee/Approvals/Index',[
+                    'count' => $this->view->count()
+                ]); 
         }   
     }
 

@@ -7,7 +7,7 @@ use App\Models\UserCredit;
 
 class SaveClass
 {
-    public function leave($request){
+    public function store($request){
         // dd('wew');
         $data = Request::create([
             'code' => $this->generateCode(),

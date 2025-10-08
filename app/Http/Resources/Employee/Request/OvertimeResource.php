@@ -32,6 +32,7 @@ class OvertimeResource extends JsonResource
             'tags' => TagResource::collection($this->tags),
             'comments' => CommentResource::collection($this->comments),
             'statuses' => StatusResource::collection($this->statuses),
+            'overtime' => $this->overtime,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
         ];

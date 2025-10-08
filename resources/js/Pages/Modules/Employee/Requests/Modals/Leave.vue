@@ -64,12 +64,13 @@
                 </BCol>
                 <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
                 <BCol lg="12" class="mt-0">
-                    <Multiselect :options="['Single Day','Range','Multiple Dates (non-continuous)']" v-model="dateType" placeholder="Select Date type"/>
+                     <InputLabel for="name" value="Date Type" :message="form.errors.date_type"/>
+                    <Multiselect :options="['Single Day','Range','Multiple Dates (non-continuous)']" v-model="dateType" @input="handleInput('date_type')" placeholder="Select Date type"/>
                 </BCol>
                 <template v-if="dateType == 'Single Day'">
                     <BCol lg="6" class="mt-1">
                         <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
-                        <flat-pickr v-model="date" :config="single" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                        <flat-pickr v-model="date" :config="single" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"  @input="handleInput('dates')"></flat-pickr>
                     </BCol>
                     <BCol lg="6" class="mt-1">
                         <InputLabel for="name" value="Time of Day"  :message="form.errors.date"/>
@@ -236,6 +237,7 @@ export default {
                 borrowers: [],
                 my_credits: 0,
                 need_credits: 0,
+                date_type: null,
                 option: 'leave'
             }),
             date: null,
@@ -449,7 +451,12 @@ export default {
                     timeOfDay: 'Whole Day'
                 }));
             }
-            this.form.types[0].borrow = Math.min(this.totalDays, this.form.types[0].balance);
+            if (Array.isArray(this.form.types) && this.form.types.length > 0) {
+                const firstType = this.form.types[0];
+                if (firstType.balance !== undefined) {
+                    firstType.borrow = Math.min(this.totalDays || 0, firstType.balance);
+                }
+            }
         },
         'form.timeOfDay'(val) {
             if (this.dateType === 'Single Day' && this.form.dates?.length === 1) {
@@ -466,7 +473,7 @@ export default {
             this.form.need_credits = this.totalDays;
             this.form.my_credits = this.totalBalance + this.totalBorrowed;
             this.form.date_type = this.dateType;
-            this.form.post('/leaves',{
+            this.form.post('/requests',{
                 preserveScroll: true,
                 onSuccess: (response) => {
                     this.form.clearErrors();

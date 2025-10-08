@@ -12,13 +12,16 @@ use App\Models\Employee;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Services\DropdownClass;
+use App\Services\Dashboard\EmployeeClass;
 
 class DashboardController extends Controller
 {
     public function __construct(
             DropdownClass $dropdown,
+            EmployeeClass $employee
         ){
         $this->dropdown = $dropdown;
+        $this->employee = $employee;
     }
 
     public function search(Request $request){
@@ -50,7 +53,9 @@ class DashboardController extends Controller
         if(!\Auth::check()){
             return inertia('Auth/Login');
         }else{
-            return inertia('Modules/Executive/Dashboard/Index');
+            return inertia('Modules/Dashboard/Employee',[
+                // 'employee' => $this->employee->dashboard()
+            ]);
         }
     }
 

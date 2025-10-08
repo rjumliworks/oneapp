@@ -26,6 +26,7 @@ return new class extends Migration
             $table->foreign('request_id')->references('id')->on('requests')->onDelete('cascade');
             $table->boolean('is_approval_only')->default(0);
             $table->boolean('is_completed')->default(0);
+            $table->boolean('is_disapproved')->default(0);
             $table->timestamps();
         });
     }

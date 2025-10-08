@@ -8,6 +8,7 @@ class RequestSignatory extends Model
 {
     protected $fillable = [
         'is_completed',
+        'is_disapproved',
         'is_approval_only',
         'approved_id',
         'approved_date',

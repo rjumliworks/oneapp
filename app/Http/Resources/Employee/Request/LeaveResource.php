@@ -11,11 +11,11 @@ class LeaveResource extends JsonResource
     public function toArray(Request $request): array
     {
         $hashids = new Hashids('krad',10);
-        $key = $hashids->encode($this->id);
+        $key = $hashids->encode($this->request->id);
 
         return [
             'id' => $this->id,
-            'key' => $key,
+            'request_key' => $key,
             'request_id' => $this->request->id,
             'code' => $this->request->code,
             'count' => $this->count,
@@ -31,7 +31,10 @@ class LeaveResource extends JsonResource
             'status' => $this->request->status,
             'employee' => $this->request->user->profile->firstname.' '.$this->request->user->profile->lastname,
             'comments' => CommentResource::collection($this->request->comments),
-            'signatories' => $this->request->signatories,
+            'signatories' => count($this->request->signatories) === 1 
+                    ? new SignatoryResource($this->request->signatories[0]) 
+                    : SignatoryResource::collection($this->request->signatories),
+            'statuses' => StatusResource::collection($this->request->statuses),
             'tags' => TagResource::collection($this->request->tags),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

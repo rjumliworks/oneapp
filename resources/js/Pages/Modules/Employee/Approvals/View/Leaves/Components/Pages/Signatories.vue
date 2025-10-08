@@ -1,37 +1,41 @@
 <template>
-    <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 522px); overflow: auto;">
-        
-        <div class="table-responsive table-card">
-            <table class="table align-middle table-bordered table-striped table-centered mb-0">
-                <thead class="table-light thead-fixed">
-                    <tr class="fs-11">
-                        <th style="width: 7%;" class="text-center">#</th>
-                        <th>Division</th>
-                        <th style="width: 15%;" class="text-center">Approval</th>
-                        <th style="width: 15%;" class="text-center">Recommending</th>
-                        <th style="width: 18%;" class="text-center">Status</th>
-                    </tr>
-                </thead>
-                <tbody class="table-white fs-12">
-                    <tr v-for="(list,index) in information.signatories" v-bind:key="index" >
-                        <td class="text-center">{{ index+1 }}</td>
-                        <td>{{ list.division.name }}</td>
-                        <td class="text-center">
-                            <i v-if="list.approved" class="text-success fs-14 ri-checkbox-circle-fill"></i>
-                            <i v-else class="text-danger fs-14 ri-close-circle-fill"></i>
-                        </td>
-                        <td class="text-center">
-                            <i v-if="list.approved" class="text-success fs-14 ri-checkbox-circle-fill"></i>
-                            <i v-else-if="list.is_approval_only" class="text-dark fs-14 ri-indeterminate-circle-fill"></i>
-                            <i v-else-if="!list.recommended" class="text-danger fs-14 ri-close-circle-fill"></i>
-                        </td>
-                        <td class="text-center">
-                            <b-badge v-if="list.is_completed" variant="success">Completed</b-badge>
-                            <b-badge v-else variant="warning">Incomplete</b-badge>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 522px); overflow: auto;">
+        <div class="d-flex justify-content-between border border-dashed rounded p-3">
+            <div class="text-start">
+                <h6 class="text-muted text-uppercase fw-semibold text-truncate fs-11 mb-3">Recommended By</h6>
+                <h5 class="mb-0 mt-n2 fs-14">{{(list.recommended) ? list.recommended : '-'}}</h5>
+                <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.recommended_date}}</p>
+            </div>
+            <div class="text-end">
+                <h6 class="text-muted text-uppercase fw-semibold text-truncate fs-11 mb-3">Approved By</h6>
+                <h5 class="mb-0 mt-n2 fs-14">{{ (list.approved) ? list.approved : '-' }}</h5>
+                <p class="mb-0 mt-1 text-muted fs-11"><i class="ri-calendar-2-line align-middle me-2"></i>{{list.approved_date}}</p>
+            </div>
+        </div>
+        <div class="border border-dashed rounded p-1 mt-2">
+            <div class="profile-timeline" v-if="statuses.length > 0">
+                <div class="accordion accordion-flush" id="accordionFlushExample">
+                    <div class="accordion-item border-0" v-for="(list,index) in statuses" v-bind:key="index">
+                        <div class="accordion-header" id="headingOne">
+                            <BLink class="accordion-button p-2 shadow-none">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0 avatar-xs">
+                                        <div class="avatar-title bg-light rounded-circle" :class="list.color">
+                                            <i :class="list.icon"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3 fs-12">
+                                        <p class="text-muted fw-normal mb-0"><span class="fw-semibold text-dark">{{list.name}}</span> has {{list.status}} the request on <span class="fw-semibold text-dark">{{ list.date }}</span></p>
+                                    </div>
+                                </div>
+                            </BLink>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-else>
+                <p class="text-muted text-center mt-3 fs-12">No status update available</p>
+            </div>
         </div>
             
     </div>
@@ -40,25 +44,19 @@
 import simplebar from "simplebar-vue";
 export default {
     components: { simplebar },
-    props: ['information'],
-   data(){
-       return {
-           filter: {
-               keyword: null
-           }
-       }
-   },
-   methods: {
-       openCreate(){
-           this.$refs.create.show(this.id);
-       },
-       openCertification(data,id,course){
-           if(data.length > 0){
-               
-           }else{
-               this.$refs.certification.show(id,course);
-           }
-       }   
-   }
-}
+    props: ['information','statuses'],
+    data(){
+        return {
+            list : this.information.signatories,
+            filter: {
+                keyword: null
+            }
+        }
+    },
+    methods: {
+        openCreate(){
+            this.$refs.create.show(this.id);
+        },
+    }
+}   
 </script>

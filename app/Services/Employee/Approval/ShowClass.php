@@ -50,9 +50,9 @@ class ShowClass
             'credits.log','credits.credit.leave',
             'request.comments.user.profile:user_id,firstname,middlename,lastname,avatar','request.comments.replies.user.profile:user_id,firstname,middlename,lastname,avatar',
             'request.tags.user:id',
-            'request.tags.user.profile:user_id,firstname,middlename,lastname,avatar',
+            'request.tags.user.profile:user_id,firstname,middlename,lastname,suffix,avatar',
             'request.statuses.user:id',
-            'request.statuses.user.profile:user_id,firstname,middlename,lastname',
+            'request.statuses.user.profile:user_id,firstname,middlename,lastname,suffix,avatar',
             'request.statuses.status',
             'request.status',
             'request.type',
@@ -60,7 +60,7 @@ class ShowClass
             'request.detail',
             'request.user:id',
             'request.user.profile:user_id,firstname,middlename,lastname',
-            'request.signatories.division','request.signatories.approved','request.signatories.recommended'
+            'request.signatories.division','request.signatories.approved.profile','request.signatories.recommended.profile'
         ])
         ->where('request_id',$id)
         ->first();
@@ -83,6 +83,7 @@ class ShowClass
             'dates',
             'detail',
             'user:id',
+            'overtime.status',
             'comments.user.profile:user_id,firstname,middlename,lastname,suffix,avatar','comments.replies.user.profile:user_id,firstname,middlename,lastname,suffix,avatar',
             'user.profile:user_id,firstname,middlename,lastname,suffix',
             'signatories.division','signatories.approved.profile','signatories.recommended.profile'

@@ -3,8 +3,8 @@
         <div id="two-column-menu"></div>
         <ul class="navbar-nav h-100" id="navbar-nav">
             <li class="nav-item">
-                <Link href="/dashboard" class="nav-link menu-link"
-                    :class="{'active': $page.component.startsWith('Dashboard') }">
+                <Link href="/" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/Dashboard') }">
                 <i class="ri-apps-line"></i>
                 <span class="fw-semibold fs-14" data-key="t-dashboards">Dashboard</span>
                 </Link>

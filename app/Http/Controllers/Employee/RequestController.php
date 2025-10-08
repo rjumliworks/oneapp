@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Employee;
 
 use App\Services\DropdownClass;
 use App\Traits\HandlesTransaction;
-use App\Services\Vrams\Travel\SaveClass;
+// use App\Services\Vrams\Travel\SaveClass;
+use App\Services\Employee\Request\SaveClass;
 use App\Services\Employee\Request\ViewClass;
 use App\Services\Employee\Request\ShowClass;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use App\Http\Requests\Vrams\TravelRequest;
+use App\Services\Hr\Cto\SaveClass as CTO;
+use App\Services\Hr\Leave\SaveClass as Leave;
+use App\Http\Requests\Employee\MyrequestRequest;
 
 class RequestController extends Controller
 {
@@ -18,7 +22,10 @@ class RequestController extends Controller
 
     public $view,$save,$dropdown,$show;
 
-    public function __construct(SaveClass $save, ViewClass $view, ShowClass $show, DropdownClass $dropdown){
+    public function __construct(SaveClass $save, ViewClass $view, ShowClass $show, DropdownClass $dropdown, 
+        CTO $cto, Leave $leave){
+        $this->cto = $cto;
+        $this->leave = $leave;
         $this->view = $view;
         $this->save = $save;
         $this->show = $show;
@@ -59,9 +66,16 @@ class RequestController extends Controller
         }   
     }
 
-    public function store(TravelRequest $request){
+    public function store(MyrequestRequest $request){
         $result = $this->handleTransaction(function () use ($request) {
-            return $this->save->travel($request);
+            switch($request->option){
+                case 'cto':
+                    return $this->cto->store($request);
+                break;
+                case 'leave':
+                    return $this->leave->store($request);
+                break;
+            }
         });
 
         return back()->with([
@@ -102,6 +116,9 @@ class RequestController extends Controller
             switch($request->option){
                 case 'Update':
                     return $this->save->update($request);
+                break;
+                case 'overtime':
+                    return $this->save->overtime($request);
                 break;
             }
         });

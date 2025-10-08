@@ -27,23 +27,12 @@
                         <b-col lg>
                             <div class="input-group mb-1">
                                 <span class="input-group-text"> <i class="ri-search-line search-icon"></i></span>
-                                <!-- <input type="text" v-model="filter.keyword" placeholder="Search Travel Order" class="form-control" style="width: 40%;">
-                                <template v-if="filter.type == 156">
-                                    <Multiselect class="white" style="width: 15%;" :options="travel_dropdowns.modes" v-model="filter.mode" label="name" :searchable="true" placeholder="Select Travel Mode" />
-                                    <Multiselect class="white" style="width: 15%;" :options="travel_dropdowns.expenses" v-model="filter.expense" label="name" :searchable="true" placeholder="Select Expense Type" />
-                                </template>
-                                <template v-else-if="filter.type == 157">
-                                    
-                                </template>
-                                <template v-else-if="filter.type == 158">
-                                    <Multiselect class="white" style="width: 15%;" v-model="filter.leave" :groups="true" :options="leave_dropdowns.leaves" label="name" placeholder="Select type"/>
-                                </template>
-                                <Multiselect class="white" style="width: 15%;" :options="dropdowns.statuses" v-model="filter.status" label="name" :searchable="true" placeholder="Select Status" /> -->
+                                <input type="text" v-model="filter.keyword" placeholder="Search Request" class="form-control" style="width: 40%;">
                                 <span @click="refresh()" class="input-group-text" v-b-tooltip.hover title="Refresh" style="cursor: pointer;"> 
                                     <i class="bx bx-refresh search-icon"></i>
                                 </span>
                                 <b-button type="button" variant="primary" @click="openCreate">
-                                    <i class="ri-add-circle-fill align-bottom me-1"></i> Create
+                                    <i class="ri-search-line search-icon"></i>
                                 </b-button>
                             </div>
                         </b-col>
@@ -52,18 +41,29 @@
                 <div class="card bg-white border-bottom shadow-none" no-body>
                     <div class="d-flex">
                         <div class="flex-grow-1">
-                            <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist">
+                            <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist" v-if="$page.props.user.data.signatory.designation_id == 44">
                                 <li class="nav-item">
-                                    <BLink @click="viewStatus(null,null)" class="nav-link py-3 active" data-bs-toggle="tab" role="tab" aria-selected="true">
-                                    <i class="ri-apps-2-line me-1 align-bottom"></i> My Request
+                                    <BLink @click="viewStatus(null)" class="nav-link py-3 active" data-bs-toggle="tab" role="tab" aria-selected="true">
+                                    <i class="ri-apps-2-line me-1 align-bottom"></i> For Recommendation
                                     </BLink>
                                 </li>
-                                <!-- <li class="nav-item" v-for="(list,index) in dropdowns.requests" v-bind:key="index">
-                                    <BLink @click="viewStatus(index,list.value)" class="nav-link py-3" :class="(this.index == index) ? list.others+' active' : ''" data-bs-toggle="tab" role="tab" aria-selected="false">
-                                        <i :class="icons[index]" class="me-1 align-bottom"></i>
-                                        {{ list.name }} <BBadge v-if="counts[index] > 0" :class="list.color" class="align-middle ms-1">{{counts[index]}}</BBadge>
+                                <li class="nav-item">
+                                    <BLink @click="viewStatus(25)" class="nav-link py-3" data-bs-toggle="tab" role="tab" aria-selected="true">
+                                    <i class="ri-apps-2-line me-1 align-bottom"></i> Recommended <span v-if="count > 0">({{ count }})</span>
                                     </BLink>
-                                </li> -->
+                                </li>
+                            </ul>
+                            <ul class="nav nav-tabs nav-tabs-custom nav-primary fs-12" role="tablist" v-if="$page.props.user.data.signatory.designation_id == 43">
+                                <li class="nav-item">
+                                    <BLink @click="viewStatus(null)" class="nav-link py-3 active" data-bs-toggle="tab" role="tab" aria-selected="true">
+                                    <i class="ri-apps-2-line me-1 align-bottom"></i> For Approval
+                                    </BLink>
+                                </li>
+                                <li class="nav-item">
+                                    <BLink @click="viewStatus(26)" class="nav-link py-3" data-bs-toggle="tab" role="tab" aria-selected="true">
+                                    <i class="ri-apps-2-line me-1 align-bottom"></i> Approved <span v-if="count > 0">({{ count }})</span>
+                                    </BLink>
+                                </li>
                             </ul>
                         </div>
                         <div class="flex-shrink-0">
@@ -79,7 +79,7 @@
                             <thead class="table-light thead-fixed">
                                 <tr class="fs-11">
                                     <th style="width: 3%;" class="text-center">#</th>
-                                    <th>Purpose & Destination</th>
+                                    <th></th>
                                     <th v-if="!filter.type" style="width: 14%;" class="text-center">Type</th>
                                     <th v-else-if="filter.type == 156" style="width: 14%;" class="text-center">Mode</th>
                                     <th v-else-if="filter.type == 158" style="width: 14%;" class="text-center">Type</th>
@@ -91,7 +91,7 @@
                                     <th style="width: 5%;"></th>
                                 </tr>
                             </thead>
-                            <tbody class="table-white fs-12">
+                            <tbody v-if="lists.length > 0" class="table-white fs-12">
                                 <tr v-for="(list,index) in lists" v-bind:key="index" >
                                     <td class="text-center">{{ (meta.current_page - 1) * meta.per_page + index + 1 }}.</td>
                                     <td>
@@ -132,6 +132,12 @@
                                     </td>
                                 </tr>
                             </tbody>
+                            <tbody v-else class="table-white fs-12">
+                                <tr>
+                                    <td v-if="$page.props.user.data.signatory.designation_id == 44" class="text-muted text-center" colspan="8"> No request available for recommendation.</td>
+                                    <td v-else-if=" $page.props.user.data.signatory.designation_id == 43" class="text-muted text-center" colspan="8"> No request available for approval</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -149,6 +155,7 @@ import PageHeader from '@/Shared/Components/PageHeader.vue';
 import Pagination from "@/Shared/Components/Pagination.vue";
 export default {
     components: { PageHeader, Pagination, Multiselect },
+    props: ['count'],
     data(){
         return {
             currentUrl: window.location.origin,
@@ -194,10 +201,7 @@ export default {
             axios.get(page_url,{
                 params : {
                     keyword: this.filter.keyword,
-                    type: this.filter.type,
                     status: this.filter.status,
-                    expense: this.filter.expense,
-                    mode: this.filter.mode,
                     count: 10, 
                     option: 'lists'
                 }
@@ -226,9 +230,8 @@ export default {
             const year = startDate.getFullYear(); // assume same year
             return `${startStr}-${endStr}, ${year}`;
         },
-        viewStatus(index,type){
-            this.index = index;
-            this.filter.type = type;
+        viewStatus(status){
+            this.filter.status = status;
             this.fetch();
         },
         openCreate(){

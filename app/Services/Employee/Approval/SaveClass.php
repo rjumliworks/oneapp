@@ -5,6 +5,7 @@ namespace App\Services\Employee\Approval;
 use Hashids\Hashids;
 use App\Models\Signatory;
 use App\Models\Request;
+use App\Models\Overtime;
 use App\Models\RequestSignatory;
 
 class SaveClass
@@ -28,8 +29,14 @@ class SaveClass
                     'approved_date' => now(),
                     'is_completed' => 1
                 ]);
+                if($signatory){
+                    $this->overtime($data->id);
+                }
+            }else if($request->status_id == 30){
+                $signatory = RequestSignatory::where('request_id',$data->id)->update([
+                    'is_disapproved' => 1
+                ]);
             }
-
             $data->statuses()->create([
                 'user_id' => \Auth::user()->id,
                 'status_id' => $request->status_id
@@ -41,5 +48,31 @@ class SaveClass
             'message' => 'Request Status Updated',
             'info' => "The status of this request has been successfully updated. Please check your notifications for the latest details and next steps."
         ];
+    }
+
+    public function overtime($id){
+        $data = new Overtime;
+        $data->code = $this->generateCode();
+        $data->request_id = $id;
+        $data->status_id = 35;
+        $data->save();
+    }
+
+    private function generateCode()
+    {
+        return \DB::transaction(function () {
+            $latest = Overtime::lockForUpdate()
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->orderByDesc('id')
+                ->first();
+
+            $count = $latest
+                ? (int) substr($latest->code, -4) + 1
+                : 1;
+
+            $code = now()->format('Y') . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
+            return $code;
+        });
     }
 }

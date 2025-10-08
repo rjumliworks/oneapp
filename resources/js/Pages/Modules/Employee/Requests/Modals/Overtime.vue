@@ -4,19 +4,20 @@
             
         <form class="customform">
             <BRow class="g-3 mdiv">
-                <BCol lg="12" class="mt-2">
+                <!-- <BCol lg="12" class="mt-2">
                     <InputLabel for="name" value="Purpose" :message="form.errors.purpose"/>
                     <Textarea id="name" v-model="form.purpose" type="text" aria-placeholder="Add purpose" class="form-control" @input="handleInput('purpose')" :light="true"/>
                 </BCol>
-                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
-                <BCol lg="12" class="mt-0">
-                    <Multiselect :options="['Single Day','Range']" v-model="dateType" placeholder="Select Date type"/>
+                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol> -->
+                <BCol lg="12" class="mt-3">
+                    <InputLabel for="name" value="Date" :message="form.errors.date_type"/>
+                    <Multiselect :options="['Single Day','Range']" v-model="dateType" @input="handleInput('date_type')" placeholder="Select Date type"/>
                     <!-- 'Multiple Dates (non-continuous)' -->
                 </BCol>
                 <template v-if="dateType == 'Single Day'">
                     <BCol lg="6" class="mt-1">
                         <InputLabel for="name" value="Inclusive Dates"  :message="form.errors.dates"/>
-                        <flat-pickr v-model="date" :config="single" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;"></flat-pickr>
+                        <flat-pickr v-model="date" :config="single" placeholder="Select date" class="form-control flatpickr-input" style="min-height: 38.4px !important; border-color: #e9ebec; background-color: #f5f6f7;" @input="handleInput('dates')"></flat-pickr>
                     </BCol>
                     <BCol lg="6" class="mt-1">
                         <InputLabel for="name" value="Time of Day"  :message="form.errors.date"/>
@@ -49,6 +50,10 @@
                         </div>
                     </BCol>
                 </template> -->
+                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
+                <BCol lg="12" class="mt-1">
+                    <Textarea id="name" v-model="form.purpose" type="text" rows="3" placeholder="Add purpose of the request" class="form-control" :class="{ 'is-invalid': form.errors.purpose }" @input="handleInput('purpose')" :light="true"/>
+                </BCol>
             </BRow>
         </form>
         <template v-slot:footer>
@@ -74,7 +79,8 @@ export default {
                 dates: [],
                 purpose: null,
                 document: null,
-                option: 'save'
+                date_type: null,
+                option: 'cto'
             }),
             date: null,
             single:{
@@ -144,7 +150,10 @@ export default {
     },
     watch: {
         date(newVal) {
-            if (!newVal) return;
+            if (!newVal){
+                this.form.dates = [];
+                return;
+            }
             this.form.borrowers = [];
             
             if (this.dateType === 'Single Day') {
@@ -175,7 +184,6 @@ export default {
                     timeOfDay: 'Whole Day'
                 }));
             }
-            this.form.types[0].borrow = Math.min(this.totalDays, this.form.types[0].balance);
         },
         'form.timeOfDay'(val) {
             if (this.dateType === 'Single Day' && this.form.dates?.length === 1) {
@@ -189,7 +197,8 @@ export default {
             this.showModal = true;
         },
         submit(){
-            this.form.post('/cto',{
+            this.form.date_type = this.dateType;
+            this.form.post('/requests',{
                 preserveScroll: true,
                 onSuccess: (response) => {
                     this.form.clearErrors();

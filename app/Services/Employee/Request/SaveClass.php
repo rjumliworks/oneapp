@@ -3,8 +3,9 @@
 namespace App\Services\Employee\Request;
 
 use Hashids\Hashids;
-use App\Models\Signatory;
 use App\Models\Request;
+use App\Models\Overtime;
+use App\Models\Signatory;
 use App\Models\RequestSignatory;
 
 class SaveClass
@@ -29,6 +30,18 @@ class SaveClass
             'data' => $data,
             'message' => 'Request Status Updated',
             'info' => "The status of this request has been successfully updated. Please check your notifications for the latest details and next steps."
+        ];
+    }
+
+    public function overtime($request){
+        $data = Overtime::find($request->id);
+        $data->targets = $request->targets;
+        $data->save();
+
+        return [
+            'data' => $data,
+            'message' => 'Overtime targets updated',
+            'info' => "The targets has been successfully updated."
         ];
     }
 }

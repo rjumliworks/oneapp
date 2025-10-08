@@ -10,7 +10,7 @@ class ViewClass
 {
     public function lists($request){
         $signatory = Signatory::where('user_id',\Auth::user()->id)->where('is_active',1)->first(); 
-        $mystatus = ($signatory['designation_id'] == 44) ? 24 : 25;
+        $status = $request->status ?? (($signatory['designation_id'] == 44) ? 24 : 25);
         // add start end date to filter the request by signatories appointment
         $data = Request::with([
             'tags.user:id',
@@ -34,9 +34,8 @@ class ViewClass
                 ->orWhereRaw('LOWER(CONCAT(lastname, " ", firstname)) LIKE ?', ['%' . strtolower($keyword) . '%']);
             });
         })
-        ->where('status_id',$mystatus)
+        ->where('status_id',$status)
         ->whereHas('signatories', function ($query) use ($signatory) {
-          
             if($signatory['designation_id'] == 44){
                 $query->where('division_id', $signatory['division_id']);
                 $query->where('is_approval_only',0);
@@ -46,6 +45,19 @@ class ViewClass
         ->paginate($request->count ?? 10);
 
         return IndexResource::collection($data);
+    }
+
+    public function count(){
+        $signatory = Signatory::where('user_id',\Auth::user()->id)->where('is_active',1)->first(); 
+        $status = ($signatory['designation_id'] == 44) ? 25 : 26;
+        return $data = Request::where('status_id',$status)
+        ->whereHas('signatories', function ($query) use ($signatory) {
+            if($signatory['designation_id'] == 44){
+                $query->where('division_id', $signatory['division_id']);
+                $query->where('is_approval_only',0);
+            }
+        })
+        ->count();
     }
 
 }
