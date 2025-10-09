@@ -62,7 +62,7 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-0 text-muted fs-12">Leave Type :</p>
-                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.leave }} </h6>
+                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.leave.name }} </h6>
                         </div>
                     </div>
                 </div>
@@ -85,31 +85,53 @@
             <div class="row g-3 p-3">
                 <div class="col-md-12">
                     <div class="table-responsive bg-white">
-                        <table class="table align-middle table-bordered table-centered mb-0">
-                            
+                        <table class="table align-middle table-bordered table-centered mb-0" v-if="requires_credits"> 
                             <thead class="table-light thead-fixed">
                                 <tr class="fs-11">
                                     <th style="width: 32%;" class="text-center">Leave Type</th>
-                                    <th style="width: 17%;" class="text-center">Earned</th>
-                                    <th style="width: 17%;" class="text-center">Deducted</th>
-                                    <th style="width: 17%;" class="text-center">Balance</th>
+                                    <th style="width: 17%;" class="text-center">Old Balance</th>
+                                    <th style="width: 17%;" class="text-center">
+                                        {{ information.status.name === 'Disapproved' ? 'Returned' : 'Deducted' }}
+                                    </th>
+                                    <th style="width: 17%;" class="text-center">New Balance</th>
                                     <th style="width: 17%;" class="text-center">Status</th>
                                 </tr>
                             </thead>
+
                             <tbody class="table-white fs-12">
-                                <tr v-for="(list,index) in information.credits" v-bind:key="index" class="text-dark">
+                                <tr v-for="(list, index) in information.credits" :key="index" class="text-dark">
+                                    <template v-if="information.status.name !== 'Disapproved' ? !list.is_returned : list.is_returned">
+                                        <td class="text-center">{{ list.credit.leave.name }}</td>
+                                        <td class="text-center">{{ list.log.old_balance }}</td>
+                                        <td class="text-center">{{ list.log.amount }}</td>
+                                        <td class="text-center">{{ list.log.new_balance }}</td>
+                                        <td class="text-center">
+                                            <span v-if="information.status.name === 'Disapproved'" class="badge bg-warning">Returned</span>
+                                            <span v-else-if="!list.is_borrowed" class="badge bg-success">Deducted</span>
+                                            <span v-else class="badge bg-danger">Borrowed</span>
+                                        </td>
+                                    </template>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table v-else class="table align-middle table-bordered table-centered mb-0">
+                            <thead class="table-light thead-fixed">
+                                <tr class="fs-11">
+                                    <th style="width: 40%;" class="text-center">Leave Type</th>
+                                    <th style="width: 30%;" class="text-center">Maximum Allowable Days</th>
+                                    <th style="width: 30%;" class="text-center">Days Availed</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-white fs-12">
+                                <tr v-for="(list, index) in information.credits" :key="index" class="text-dark">
                                     <td class="text-center">{{ list.credit.leave.name }}</td>
                                     <td class="text-center">{{ list.log.old_balance }}</td>
                                     <td class="text-center">{{ list.log.amount }}</td>
-                                    <td class="text-center">{{ list.log.new_balance }}</td>
-                                    <td class="text-center">
-                                        <span v-if="!list.is_borrowed" class="badge bg-success">Deducted</span>
-                                        <span v-else class="badge bg-danger">Borrowed</span>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>

@@ -35,7 +35,7 @@ class MyrequestRequest extends FormRequest
                     'dates' => 'sometimes|required|array|min:1',
                     'dates.*.date' => 'required|date',
                     'dates.*.timeOfDay' => 'required|string',
-                    'document' => 'required_if:type.required_document,1',
+                    // 'document' => 'required_if:type.required_document,1',
                 ];
             break;
         }

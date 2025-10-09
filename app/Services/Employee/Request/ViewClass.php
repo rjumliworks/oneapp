@@ -113,14 +113,15 @@ class ViewClass
                 }
             }
             $leaves = ListLeave::where(function ($query) use ($sex){
-                $query->whereNull('sex')
-                    ->orWhere('sex',$sex);
-            })->where('is_regular',1)->where('is_active',1)->where('is_requested',1)->get();
+                $query->whereNull('sex')->orWhere('sex',$sex);
+            })
+            ->where('is_regular',1)->where('is_active',1)->where('is_requested',1)->get();
             foreach($leaves as $item){
                 $options->push([
                     'label' => 'Require Documents',
                     'options' => [
                         'value' => $item->id,
+                        'type_id' => $item->id,
                         'label' => $item->name,
                         'name' => $item->name,
                         'citation' => $item->citation,
@@ -128,6 +129,8 @@ class ViewClass
                         'is_after' => $item->is_after,
                         'type' => $item->type,
                         'others' => $item->others,
+                        'max_days' => $item->max_days,
+                        'renewal' => $item->renewal_period,
                         'required_document' =>  $item->requires_document
                     ]
                 ]);
@@ -146,6 +149,7 @@ class ViewClass
                     'label' => 'Require Credits',
                     'options' => [
                         'value' => $item->id,
+                        'type_id' => $item->leave->id,
                         'label' => $item->leave->name.' - '.$item->balance,
                         'name' => $item->leave->name,
                         'citation' => $item->leave->citation,
@@ -169,6 +173,7 @@ class ViewClass
                     'label' => 'Others',
                     'options' => [
                         'value' => $item->id,
+                        'type_id' => $item->id,
                         'label' => $item->name,
                         'name' => $item->name,
                         'citation' => $item->citation,
@@ -190,5 +195,11 @@ class ViewClass
         })->values();
 
         return $grouped;
+    }
+
+    public function check($request){
+        $leave = $request->type;
+        $data = UserCredit::where('year',date('Y'))->where('leave_id',$leave)->where('user_id',\Auth::user()->id)->first();
+        return ($data) ? $data : 'empty';
     }
 }

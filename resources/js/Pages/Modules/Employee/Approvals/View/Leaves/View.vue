@@ -89,6 +89,9 @@ export default {
         openRecommend(id,type){
             this.$refs.recommend.show(id,type);
         },
+        openDisapprove(id,type){
+            this.$refs.disapprove.show(id,type);
+        },
         back(){
             this.$inertia.visit('/travels');
         }

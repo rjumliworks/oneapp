@@ -37,6 +37,9 @@ class RequestController extends Controller
             case 'lists':
                 return $this->view->lists($request);
             break;
+            case 'check':
+                return $this->view->check($request);
+            break;
             case 'print':
                 // return $this->view->print($request);
             break;

@@ -18,14 +18,19 @@ class Leave extends Model
         'request_id'
     ];
 
-    public function detail()
+    public function credits()
     {
-        return $this->belongsTo('App\Models\ListDropdown', 'detail_id', 'id');
+        return $this->hasMany('App\Models\LeaveCredit', 'leave_id');
     }
-    
+
     public function type()
     {
         return $this->belongsTo('App\Models\ListLeave', 'type_id', 'id');
+    }
+
+    public function detail()
+    {
+        return $this->belongsTo('App\Models\ListDropdown', 'detail_id', 'id');
     }
 
     public function request()
@@ -36,11 +41,6 @@ class Leave extends Model
     public function getUpdatedAtAttribute($value)
     {
         return date('M d, Y g:i a', strtotime($value));
-    }
-
-    public function credits()
-    {
-        return $this->hasMany('App\Models\LeaveCredit', 'leave_id');
     }
 
     public function getCreatedAtAttribute($value)

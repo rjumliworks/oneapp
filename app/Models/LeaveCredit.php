@@ -13,6 +13,7 @@ class LeaveCredit extends Model
 
     protected $fillable = [
         'is_borrowed',
+        'is_returned',
         'log_id',
         'credit_id',
         'leave_id'
@@ -58,6 +59,7 @@ class LeaveCredit extends Model
         return LogOptions::defaults()
         ->logOnly([
             'is_borrowed',
+            'is_returned',
             'log_id',
             'credit_id',
             'leave_id'

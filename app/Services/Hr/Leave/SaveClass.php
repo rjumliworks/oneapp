@@ -8,7 +8,6 @@ use App\Models\UserCredit;
 class SaveClass
 {
     public function store($request){
-        // dd('wew');
         $data = Request::create([
             'code' => $this->generateCode(),
             'type_id' => 158,
@@ -78,54 +77,85 @@ class SaveClass
             if($leave){
                 $types = $request->types;
                 foreach($types as $type){
-                    $credit = UserCredit::where('id',$type['value'])->first();
-                    $old_balance = $credit->balance;
-                    $credit->balance -= $type['borrow'];
-                    $credit->used += $type['borrow'];
-                    $credit->save();
-                    if($credit){
-                        $log = $credit->logs()->create([
-                            'amount' => $type['borrow'],
-                            'old_balance' => $old_balance,
-                            'new_balance' => $credit->balance,
-                            'remarks' => 'Deduction of leave credits for filed leave',
-                            'is_automated' => 1,
-                            'user_id' => 1,
-                            'type_id' => 163
-                        ]);
-                        if($log){
-                            $leave->credits()->create([
-                                'is_borrowed' => 0,
-                                'log_id' => $log->id,
-                                'credit_id' => $type['value']
+                    if($type['required_document']){
+                        $credit = new UserCredit;
+                        $credit->balance = $type['max_days'] - $request->need_credits;;
+                        $credit->used = $request->need_credits;
+                        $credit->earned = $type['max_days'];
+                        $credit->year = date('Y');
+                        $credit->user_id = \Auth::user()->id;
+                        $credit->leave_id = $type['value'];
+                        $credit->save();
+                        if($credit){
+                            $log = $credit->logs()->create([
+                                'amount' => $request->need_credits,
+                                'old_balance' => $type['max_days'],
+                                'new_balance' => $credit->balance,
+                                'remarks' => 'Deduction of leave credits for filed leave',
+                                'is_automated' => 1,
+                                'user_id' => 1,
+                                'type_id' => 163
                             ]);
+                            if($log){
+                                $leave->credits()->create([
+                                    'is_borrowed' => 0,
+                                    'log_id' => $log->id,
+                                    'credit_id' => $credit->id
+                                ]);
+                            }
+                        }
+                    }else{
+                        $credit = UserCredit::where('id',$type['value'])->first();
+                        $old_balance = $credit->balance;
+                        $credit->balance -= $type['borrow'];
+                        $credit->used += $type['borrow'];
+                        $credit->save();
+                        if($credit){
+                            $log = $credit->logs()->create([
+                                'amount' => $type['borrow'],
+                                'old_balance' => $old_balance,
+                                'new_balance' => $credit->balance,
+                                'remarks' => 'Deduction of leave credits for filed leave',
+                                'is_automated' => 1,
+                                'user_id' => 1,
+                                'type_id' => 163
+                            ]);
+                            if($log){
+                                $leave->credits()->create([
+                                    'is_borrowed' => 0,
+                                    'log_id' => $log->id,
+                                    'credit_id' => $type['value']
+                                ]);
+                            }
                         }
                     }
                 }
 
                 $borrowers = $request->borrowers;
-                foreach($borrowers as $borrower){
-                    $credit = UserCredit::where('id',$borrower['value'])->first();
-                    $old_balance = $credit->balance;
-                    $credit->balance -= $borrower['borrow'];
-                    $credit->used += $borrower['borrow'];
-                    $credit->save();
-                    if($credit){
-                        $log = $credit->logs()->create([
-                            'amount' => $borrower['borrow'],
-                            'old_balance' => $old_balance,
-                            'new_balance' => $credit->balance,
-                            'remarks' => 'Leave credits borrowed and deducted for filed leave',
-                            'is_automated' => 1,
-                            'user_id' => 1,
-                            'type_id' => 163
-                        ]);
-                        if($log){
-                            $leave->credits()->create([
-                                'is_borrowed' => 1,
-                                'log_id' => $log->id,
-                                'credit_id' => $borrower['value']
+                if(count($borrowers) > 0){
+                    foreach($borrowers as $borrower){
+                        $credit = UserCredit::where('id',$borrower['value'])->first();
+                        $old_balance = $credit->balance;
+                        $credit->balance -= $borrower['borrow'];
+                        $credit->used += $borrower['borrow'];
+                        $credit->save();
+                        if($credit){
+                            $log = $credit->logs()->create([
+                                'amount' => $borrower['borrow'],
+                                'old_balance' => $old_balance,
+                                'new_balance' => $credit->balance,
+                                'remarks' => 'Leave credits borrowed and deducted for filed leave',
+                                'is_automated' => 1,
+                                'user_id' => 1,
+                                'type_id' => 163
                             ]);
+                            if($log){
+                                $leave->credits()->create([
+                                    'is_borrowed' => 1,
+                                    'log_id' => $log->id,
+                                    'credit_id' => $borrower['value']
+                                ]);
+                            }
                         }
                     }
                 }

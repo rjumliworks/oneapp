@@ -3,38 +3,15 @@
     <b-modal v-model="showModal" style="--vz-modal-width: 700px;" header-class="p-3 bg-light" title="Application for Leave" class="v-modal-custom" modal-class="zoomIn" centered no-close-on-backdrop>
             
         <form class="customform">
-            <BRow class="g-3 mdiv">
-                <!-- <BCol lg="12" class="mt-3">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="d-flex border border-dashed rounded p-3">
-                                <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                                    <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
-                                        <i class="ri-calendar-todo-fill"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="mb-1 text-muted fs-12">Inclusives Dates :</p>
-                                    <h6 class="text-truncate fw-semibold fs-13 mb-0">{{formattedDate}}</h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="d-flex border border-dashed rounded p-3">
-                                <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                                    <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
-                                        <i class="ri-calendar-2-fill"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="mb-1 text-muted fs-12">No. of working days applied for :</p>
-                                    <h6 class="text-truncate fw-semibold fs-13 mb-0">{{totalDays}} <span>{{ form.dates.length > 1 ? 'days' : 'day' }}</span></h6>
-                                </div>
-                            </div>
-                        </div>
+            <BRow class="g-3">
+                <BCol lg="12" class="mt-3 mb-n3" v-if="notice == 'empty' && form.type">
+                    <div class="alert alert-secondary alert-dismissible alert-label-icon label-arrow fade show material-shadow fs-11" role="alert">
+                        <i class="ri-check-double-line label-icon"></i>
+                        <strong>Notice:</strong>
+                        You are entitled to a maximum of <b>{{form.type.max_days}} days</b> for this leave.  <br /><br />
+                        You may use the full number of days, but please note that any remaining unused days will be forfeited once you return to work.
                     </div>
                 </BCol>
-                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol> mt-n1 -->
                 <BCol :lg="!form.type?.required_document ? 6 : 12" class="mt-3"> 
                     <InputLabel for="name" value="Type of Leave" :message="form.errors.type_id"/>
                     <Multiselect
@@ -42,6 +19,7 @@
                         :options="dropdowns.options"
                         label="label"
                         object
+                        @clear="notice = null"
                         placeholder="Select type"
                     />
                 </BCol>
@@ -62,7 +40,7 @@
                     <InputLabel for="name" value="Details" :message="form.errors.details"/>
                     <TextInput id="name" v-model="form.details" type="text" class="form-control" :placeholder="form.detail.others" @input="handleInput('details')" :light="true"/>
                 </BCol>
-                <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
+                <BCol lg="12" class="mt-0 mb-n1"><hr class="text-muted"/></BCol>
                 <BCol lg="12" class="mt-0">
                      <InputLabel for="name" value="Date Type" :message="form.errors.date_type"/>
                     <Multiselect :options="['Single Day','Range','Multiple Dates (non-continuous)']" v-model="dateType" @input="handleInput('date_type')" placeholder="Select Date type"/>
@@ -109,14 +87,7 @@
             <form>
                 <BRow>
                     <BCol lg="12" class="mt-0"><hr class="text-muted"/></BCol>
-                    <BCol lg="12">
-                        <!-- <div v-for="(type, index) in form.types" :key="index" >
-                            <div class="input-group mb-1">
-                                <span @click="openTypes" class="input-group-text" style="cursor: pointer;"><i class="ri-add-circle-fill search-icon"></i></span>
-                                <input type="text" :value="type.name" class="form-control" style="width: 40%;" readonly>
-                                <input type="text" :value="type.balance"  class="text-center form-control" style="width: 10%;" readonly>
-                            </div>
-                        </div> -->
+                    <BCol lg="12" v-if="!form.type.required_document">
                          <div v-if="(totalBalance+totalBorrowed) < totalDays" class="alert alert-warning alert-dismissible alert-label-icon label-arrow" role="alert">
                             <i @click="openTypes" class="ri-add-circle-fill label-icon" style="cursor: pointer;"></i>Please borrow from another leave type to proceed.
                         </div>
@@ -150,59 +121,39 @@
                                 </tbody>
                             </table>
                         </div>
-                        
-                        <!-- <div class="alert alert-dismissible alert-additional mb-xl-0" :class="((totalBalance+totalBorrowed) >= totalDays) ? 'alert-success' : 'alert-warning'" role="alert">
-                            <div class="alert-body">
-                                <div v-for="(type, index) in form.types" :key="index" >
-                                    <div class="input-group mb-1">
-                                        <span @click="openTypes" class="input-group-text" style="cursor: pointer;"><i class="ri-add-circle-fill search-icon"></i></span>
-                                        <input type="text" :value="type.name" class="form-control" style="width: 40%;" readonly>
-                                        <input type="text" :value="type.balance"  class="text-center form-control" style="width: 10%;" readonly>
-                                    </div>
-                                </div>
-                      
-                                <div class="table-responsive bg-white" v-if="form.borrowers.length > 0">
-                                    <table class="table align-middle table-bordered table-centered mb-0">
-                                        
-                                        <thead class="table-light thead-fixed">
-                                            <tr class="fs-11">
-                                                <th style="width: 40%;" class="text-center">Leave Type</th>
-                                                <th style="width: 20%;" class="text-center">Earned</th>
-                                                <th style="width: 20%;" class="text-center">Deducted</th>
-                                                <th style="width: 20%;" class="text-center">Balance</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="table-white fs-12">
-                                            <tr v-for="(list,index) in form.borrowers" v-bind:key="index" class="text-dark">
-                                                <td class="text-center">{{ list.name }}</td>
-                                                <td class="text-center">{{ list.balance }}</td>
-                                                <td class="text-center">{{ list.available }}</td>
-                                                <td class="text-center">{{ list.borrow }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="alert-content" v-if="(totalBalance+totalBorrowed) < totalDays">
-                                <p class="mb-0 fs-12">
-                                    Your selected leave type does not have enough balance to cover the requested days. <br/>
-                                    Please borrow from another leave type to proceed.
-                                </p>
-                            </div>
-                            <div class="alert-content" v-else-if="(totalBalance+totalBorrowed) >= totalDays">
-                                <p class="mb-0 fs-12">
-                                    You have enough leave credits to file this leave. <br/>
-                                    Total available credits: {{ totalBalance + totalBorrowed }}, Total requested days: {{ totalDays }}.
-                                </p>
-                            </div>
-                        </div> -->
+                    </BCol>
+                    <BCol lg="12" v-else>
+                        <div class="table-responsive bg-white">
+                            <table class="table align-middle table-bordered table-centered mb-0">
+                                
+                                <thead class="table-light thead-fixed">
+                                    <tr class="fs-11">
+                                        <th style="width: 40%;" class="text-center">Leave Type</th>
+                                        <th style="width: 30%;" class="text-center">Maximum Allowable Days</th>
+                                        <th style="width: 30%;" class="text-center">Days Availed</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-white fs-12">
+                                    <tr>
+                                        <td class="text-center">{{ form.type.name }}</td>
+                                        <td class="text-center">{{ form.type.max_days }}</td>
+                                        <td class="text-center">{{ totalDays }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </BCol>
                 </BRow>
             </form>
         </template>
         <template v-slot:footer>
             <b-button @click="hide()" variant="light" block>Cancel</b-button>
-            <b-button v-if="(totalBalance+totalBorrowed) >= totalDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
+            <template v-if="form.type?.required_document">
+                <b-button v-if="form.type.max_days >= totalDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
+            </template>
+            <template v-else>
+                <b-button v-if="(totalBalance+totalBorrowed) >= totalDays" @click="submit('ok')" variant="primary" :disabled="form.processing" block>Submit</b-button>
+            </template>
         </template>
     </b-modal>
     <ViewDate @update="updateDates" ref="dates"/>
@@ -272,6 +223,7 @@ export default {
                     }
                 ]
             },
+            notice: null,
             dateType: null,
             showModal: false
         }
@@ -369,7 +321,9 @@ export default {
                     return;
                 }
                 if (!newVal.required_document) {
-                    this.form.document = null; // 🔹 Clear previous file if new type doesn't need it
+                    this.form.document = null; 
+                }else{
+                    this.check();
                 }
 
                 const selectedTypeName = newVal.name;
@@ -407,6 +361,7 @@ export default {
                         borrow: Math.min(this.totalDays, newVal.balance)
                     });
                 }else{
+                    this.notice = null;
                     this.form.type_id = null;
                 }
             }
@@ -481,6 +436,20 @@ export default {
                     this.hide();
                 },
             });
+        },
+        check(){
+            axios.get('/requests',{
+                params : {
+                    type: this.form.type.value,
+                    option: 'check'
+                }
+            })
+            .then(response => {
+                if(response){
+                    this.notice = response.data;
+                }
+            })
+            .catch(err => console.log(err));
         },
         formatDate(date) {
             const d = new Date(date);
