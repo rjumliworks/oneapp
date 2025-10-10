@@ -143,7 +143,7 @@
             </div>
         </div>
     </BRow>
-    <Create 
+    <Create @update="fetch()"
     :vehicle_dropdowns="vehicle_dropdowns" 
     :travel_dropdowns="travel_dropdowns"
     :leave_dropdowns="leave_dropdowns"

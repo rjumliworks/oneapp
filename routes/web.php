@@ -40,6 +40,7 @@ Route::middleware(['2fa','auth','verified'])->group(function () {
 
     Route::middleware(['role:Administrator'])->group(function () {
         Route::resource('/users', App\Http\Controllers\Executive\UserController::class);
+        Route::resource('/signatories', App\Http\Controllers\Administrator\SignatoryController::class);
     });
 
     Route::resource('/equipments', App\Http\Controllers\Assests\EquipmentController::class);

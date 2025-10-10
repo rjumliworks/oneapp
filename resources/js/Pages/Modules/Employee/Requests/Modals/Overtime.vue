@@ -201,6 +201,7 @@ export default {
             this.form.post('/requests',{
                 preserveScroll: true,
                 onSuccess: (response) => {
+                    this.$emit('update',true);
                     this.form.clearErrors();
                     this.form.reset();
                     this.hide();

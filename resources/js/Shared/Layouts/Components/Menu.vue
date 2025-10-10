@@ -174,6 +174,13 @@
                     <span data-key="t-menu">Executive</span>
                 </li>
                 <li class="nav-item">
+                    <Link href="/signatories" class="nav-link menu-link"
+                    :class="{'active': $page.component.startsWith('Modules/Administrator/Signatories') }">
+                    <i class="ri-mark-pen-fill"></i>
+                    <span class="fw-semibold fs-14" data-key="t-dashboards">Signatories</span>
+                    </Link>
+                </li>
+                <li class="nav-item">
                     <Link href="/users" class="nav-link menu-link"
                     :class="{'active': $page.component.startsWith('Modules/Administrator/Users') }">
                     <i class="ri-account-circle-fill"></i>

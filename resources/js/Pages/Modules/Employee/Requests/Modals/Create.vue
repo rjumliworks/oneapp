@@ -59,8 +59,8 @@
     </b-modal>
     <Vehicle :dropdowns="vehicle_dropdowns" ref="vehicle"/>
     <Travel :dropdowns="travel_dropdowns" ref="travel"/>
-    <Leave :dropdowns="leave_dropdowns" ref="leave"/>
-    <Overtime :dropdowns="leave_dropdowns" ref="overtime"/>
+    <Leave @update="fetch()" :dropdowns="leave_dropdowns" ref="leave"/>
+    <Overtime @update="fetch()" :dropdowns="leave_dropdowns" ref="overtime"/>
 </template>
 <script>
 import Travel from './Travel.vue';
@@ -96,6 +96,9 @@ export default {
         },
         handleInput(field) {
             this.form.errors[field] = false;
+        },
+        fetch(){
+            this.$emit('update',true);
         },
         hide(){
             this.showModal = false;
