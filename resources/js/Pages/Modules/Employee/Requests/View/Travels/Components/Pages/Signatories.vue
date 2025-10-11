@@ -21,9 +21,10 @@
                             <i v-else class="text-danger fs-14 ri-close-circle-fill"></i>
                         </td>
                         <td class="text-center">
-                            <i v-if="list.approved" class="text-success fs-14 ri-checkbox-circle-fill"></i>
-                            <i v-else-if="list.is_approval_only" class="text-dark fs-14 ri-indeterminate-circle-fill"></i>
+                            <i v-if="list.is_approval_only" class="text-dark fs-14 ri-indeterminate-circle-fill"></i>
+                            <i v-else-if="list.approved" class="text-success fs-14 ri-checkbox-circle-fill"></i>
                             <i v-else-if="!list.recommended" class="text-danger fs-14 ri-close-circle-fill"></i>
+                            <i v-else class="text-success fs-14 ri-checkbox-circle-fill"></i>
                         </td>
                         <td class="text-center">
                             <b-badge v-if="list.is_completed" variant="success">Completed</b-badge>

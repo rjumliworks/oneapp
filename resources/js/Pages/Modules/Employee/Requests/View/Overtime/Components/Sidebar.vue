@@ -10,14 +10,15 @@
                     </div>
                 </div>
                 <div class="flex-grow-1">
-                    <h5 class="mb-0 fs-14"><span class="text-body">Leave Details</span></h5>
+                    <h5 class="mb-0 fs-14"><span class="text-body">Render Overtime Service </span></h5>
                     <p class="text-muted text-truncate-two-lines fs-12">Detailed overview of the Travel Order request</p>
                 </div>
             </div>
         </div>
-        <div class="card bg-white rounded-bottom shadow-none mb-0" style="height: calc(100vh - 342px); overflow-x: hidden; overflow-y: auto;">
+        <div class="card bg-white rounded-bottom shadow-none mb-0" style="height: calc(100vh - 342px); overflow: hidden;">
+            
             <div class="row g-3 p-3">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
@@ -30,115 +31,112 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-calendar-todo-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Leave Date(s) :</p>
+                            <p class="mb-0 text-muted fs-12">Date(s) :</p>
                             <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{formatDateRange(information.start, information.end)}} </h6>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="d-flex border border-dashed rounded p-3">
-                        <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-calendar-todo-fill"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Credits Deducted :</p>
-                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{information.count}} Credits <span class="text-muted fw-normal">(Days)</span></h6>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
+                <div class="col-md-12" v-if="information.status.name == 'Pending' || information.status.name == 'Recommended'">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
                             <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-file-text-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Leave Type :</p>
-                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.leave.name }} </h6>
+                            <p class="mb-0 text-muted fs-12">Purpose :</p>
+                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{ information.purpose }} </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <template v-if="information.status.name == 'Approved'">
+                <hr class="text-muted mt-0"/>
+                    <div class="d-flex mb-n2 ms-3 me-3">
+                    <div class="flex-shrink-0 me-3">
+                        <p class="mb-0 text-primary fs-12 fw-semibold">Individual Accomplishment Report</p>
+                    </div>
+                    <div class="flex-grow-1 mt-n1">
+                        <i @click="openAdd(information.overtime.id)" class="ri-add-circle-fill float-end text-muted fs-20" style="cursor: pointer;"></i>
+                    </div>
+                </div>
+                <hr class="text-muted mb-0"/>
+            </template>
+
+            <div v-if="information.overtime" class="row g-3 p-3">
+                <div class="col-md-4">
+                    <div class="d-flex border border-dashed rounded p-3">
+                        <div class="flex-shrink-0 avatar-xs align-self-center me-3">
+                            <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
+                               <i class="ri-information-fill"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="mb-0 text-muted fs-12">Status :</p>
+                            <h6 class="text-truncate fw-semibold fs-12 mb-0" :class="information.overtime.status.others">{{information.overtime.status.name}}</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-calendar-todo-fill"></i>
+                            <div class="avatar-title bg-light rounded-circle fs-16 text-primary">
+                               <i class="ri-hashtag"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Details :</p>
-                            <h6 class="text-truncate fw-semibold fs-12 mb-0"> {{information.detail}}</h6>
+                            <p class="mb-0 text-muted fs-12">RROS No. :</p>
+                            <h6 class="text-truncate fw-semibold fs-12 mb-0">{{information.overtime.code}}</h6>
                         </div>
                     </div>
                 </div>
-            </div>
-            <hr class="text-muted mt-0"/>
-                <p class="ms-3 mb-0 text-primary fs-12 fw-semibold">Leave Credits</p>
-            <hr class="text-muted mb-0"/>
-            <div class="row g-3 p-3">
+                <div class="col-md-4">
+                    <div class="d-flex border border-dashed rounded p-3">
+                        <div class="flex-shrink-0 avatar-xs align-self-center me-3">
+                            <div class="avatar-title bg-light rounded-circle fs-16 text-primary"><i class="ri-asterisk"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="mb-0 text-muted fs-12">COC Earned :</p>
+                            <h6 class="text-truncate fw-semibold fs-12 mb-0">{{(information.overtime.earned) ? information.overtime.earned : '-'}} </h6>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-12">
-                    <div class="table-responsive bg-white">
-                        <table class="table align-middle table-bordered table-centered mb-0" v-if="requires_credits"> 
+                    <div class="table-responsive bg-white" style="height: calc(100vh - 610px); overflow: auto;">
+                        <table class="table align-middle table-bordered table-centered mb-0">
                             <thead class="table-light thead-fixed">
                                 <tr class="fs-11">
-                                    <th style="width: 32%;" class="text-center">Leave Type</th>
-                                    <th style="width: 17%;" class="text-center">Old Balance</th>
-                                    <th style="width: 17%;" class="text-center">
-                                        {{ information.status.name === 'Disapproved' ? 'Returned' : 'Deducted' }}
-                                    </th>
-                                    <th style="width: 17%;" class="text-center">New Balance</th>
-                                    <th style="width: 17%;" class="text-center">Status</th>
-                                </tr>
-                            </thead>
-
-                            <tbody class="table-white fs-12">
-                                <tr v-for="(list, index) in information.credits" :key="index" class="text-dark">
-                                    <template v-if="information.status.name !== 'Disapproved' ? !list.is_returned : list.is_returned">
-                                        <td class="text-center">{{ list.credit.leave.name }}</td>
-                                        <td class="text-center">{{ list.log.old_balance }}</td>
-                                        <td class="text-center">{{ list.log.amount }}</td>
-                                        <td class="text-center">{{ list.log.new_balance }}</td>
-                                        <td class="text-center">
-                                            <span v-if="information.status.name === 'Disapproved'" class="badge bg-warning">Returned</span>
-                                            <span v-else-if="!list.is_borrowed" class="badge bg-success">Deducted</span>
-                                            <span v-else class="badge bg-danger">Borrowed</span>
-                                        </td>
-                                    </template>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table v-else class="table align-middle table-bordered table-centered mb-0">
-                            <thead class="table-light thead-fixed">
-                                <tr class="fs-11">
-                                    <th style="width: 40%;" class="text-center">Leave Type</th>
-                                    <th style="width: 30%;" class="text-center">Maximum Allowable Days</th>
-                                    <th style="width: 30%;" class="text-center">Days Availed</th>
+                                    <th style="width: 50%;" class="text-center">Target Deliverables</th>
+                                    <th style="width: 50%;" class="text-center">Actual Accomplshments</th>
                                 </tr>
                             </thead>
                             <tbody class="table-white fs-12">
-                                <tr v-for="(list, index) in information.credits" :key="index" class="text-dark">
-                                    <td class="text-center">{{ list.credit.leave.name }}</td>
-                                    <td class="text-center">{{ list.log.old_balance }}</td>
-                                    <td class="text-center">{{ list.log.amount }}</td>
+                                <tr v-for="(list,index) in information.overtime.targets" v-bind:key="index" class="text-dark">
+                                    <td class="text-center text-muted fs-11">{{list.target}}</td>
+                                    <td class="text-center text-muted fs-11">{{list.accomplishment}}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
+
         </div>
     </div>
+    <Add @saveTargets="handleSaveTargets" ref="add"/>
 </template>
 <script>
+import Add from './Pages/Add.vue';
 export default {
+    components: { Add },
     props: ['information'],
     data(){
         return {
@@ -176,6 +174,12 @@ export default {
             const year = startDate.getFullYear(); 
             return `${startStr}-${endStr}, ${year}`;
         },
+        handleSaveTargets({ id, targets }) {
+            this.information.overtime.targets = targets;
+        },
+        openAdd(id){
+            this.$refs.add.show(id,this.information.overtime.targets);
+        }
     }
 }
 </script>

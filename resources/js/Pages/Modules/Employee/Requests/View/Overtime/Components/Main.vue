@@ -10,7 +10,7 @@
                     </div>
                 </div>
                 <div class="flex-grow-1">
-                    <h5 class="mb-0 fs-14"><span class="text-body">Travel Order Activity</span></h5>
+                    <h5 class="mb-0 fs-14"><span class="text-body">Request Activity</span></h5>
                     <p class="text-muted text-truncate-two-lines fs-12">Includes official comments, document references, and chronological status updates</p>
                 </div>
             </div>
@@ -26,6 +26,12 @@
                             <div v-else-if="information.status.name == 'Recommended'" class="avatar-title bg-light rounded-circle fs-16 text-secondary">
                                 <i class="ri-record-circle-fill"></i>
                             </div>
+                            <div v-else-if="information.status.name == 'Approved'" class="avatar-title bg-light rounded-circle fs-16 text-success">
+                                <i class="ri-checkbox-circle-fill"></i>
+                            </div>
+                            <div v-else-if="information.status.name == 'Disapproved'" class="avatar-title bg-light rounded-circle fs-16 text-danger">
+                                <i class="ri-close-circle-fill"></i>
+                            </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-0 text-muted fs-12">Status :</p>
@@ -36,27 +42,40 @@
                 <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div v-if="information.status.name == 'Pending'" class="avatar-title bg-light rounded-circle fs-16" :class="crc === rc ? 'text-success' : 'text-warning'">
-                                <i class="ri-emotion-happy-fill"></i>
+                            <div v-if="information.signatories.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
+                                <i class=" ri-close-circle-fill"></i>
+                            </div>
+                            <div v-if="!information.signatories.recommended" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                                <i class="ri-close-circle-fill"></i>
+                            </div>
+                            <div v-else-if="information.signatories.recommended" class="avatar-title bg-light rounded-circle fs-16 text-success">
+                                <i class="ri-checkbox-circle-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Recommending :</p>
-                            <h6  class="text-truncate fw-semibold fs-12 mb-0">{{crc}} of {{ rc }} signed</h6>
+                            <p class="mb-0 text-muted fs-12">Recommended by :</p>
+                            <h6 v-if="!information.signatories.recommended" class="text-truncate fw-semibold fs-12 mb-0">Pending</h6>
+                            <h6 v-else class="fw-semibold fs-12 mb-0">{{information.signatories.recommended}}</h6>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="d-flex border border-dashed rounded p-3">
                         <div class="flex-shrink-0 avatar-xs align-self-center me-3">
-                            <div v-if="information.status.name == 'Pending'" class="avatar-title bg-light rounded-circle fs-16" :class="approvalStatus ? 'text-success' : 'text-warning'">
-                                <i class="ri-emotion-fill"></i>
+                            <div v-if="information.signatories.is_disapproved" class="avatar-title bg-light rounded-circle fs-16 text-danger">
+                                <i class=" ri-close-circle-fill"></i>
+                            </div>
+                            <div v-else-if="!information.signatories.approved" class="avatar-title bg-light rounded-circle fs-16 text-warning">
+                                <i class=" ri-close-circle-fill"></i>
+                            </div>
+                            <div v-else-if="information.signatories.approved" class="avatar-title bg-light rounded-circle fs-16 text-success">
+                                <i class=" ri-checkbox-circle-fill"></i>
                             </div>
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
-                            <p class="mb-0 text-muted fs-12">Approval :</p>
-                            <h6 v-if="!approvalStatus" class="text-truncate fw-semibold fs-12 mb-0">Pending</h6>
-                            <h6 v-else class="text-truncate fw-semibold fs-12 mb-0">Completed</h6>
+                            <p class="mb-0 text-muted fs-12">Approved by :</p>
+                            <h6 v-if="!information.signatories.approved" class="text-truncate fw-semibold fs-12 mb-0">Pending</h6>
+                            <h6 v-else class="text-truncate fw-semibold fs-12 mb-0">{{information.signatories.approved}}</h6>
                         </div>
                     </div>
                 </div>
@@ -85,7 +104,7 @@
                             <transition mode="out-in">
                                 <div :key="index" class="tab-content">
                                     <template v-if="menu == 'Home'">
-                                        <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 592px); overflow: auto;">
+                                        <div v-if="information.comments.length > 0" class="card-body bg-white rounded-bottom" style="height: calc(100vh - 592px); overflow: auto;">
                                             <div class="d-flex mb-4" :class="{ 'border-bottom': index !== information.comments.length - 1 }" v-for="(list,index) in information.comments" v-bind:key="index">
                                                 <div class="flex-shrink-0">
                                                     <img :src="list.avatar" alt="" class="avatar-xs rounded-circle" />
@@ -113,11 +132,12 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div v-else style="height: calc(100vh - 592px); overflow: auto;">
+                                           <p class="text-muted text-center mt-5">There are no comments for this request yet</p>
+                                        </div>
                                     </template>
-                                    <Signatories :information="information" v-if="menu == 'Signatories'" />
+                                    <Signatories :information="information" :statuses="information.statuses" v-if="menu == 'Activities'" />
                                     <Attachment :information="information" v-if="menu == 'Attachment'" />
-                                    <Status :information="information" v-if="menu == 'Statuses'" />
-                                    <Detail :information="information" v-if="menu == 'Details'" />
                                 </div>
                             </transition>
                         </div>
@@ -168,44 +188,27 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import { useForm } from '@inertiajs/vue3';
 import Home from './Pages/Home.vue';
-import Status from './Pages/Status.vue';
-import Detail from './Pages/Detail.vue';
 import Attachment from './Pages/Attachment.vue';
 import Signatories from './Pages/Signatories.vue';
 import simplebar from "simplebar-vue";
 import Multiselect from "@vueform/multiselect";
 export default {
-    components: { simplebar, Multiselect, Home, Signatories, Attachment, Status, Detail },
+    components: { simplebar, Multiselect, Home, Signatories, Attachment },
     props: ['information'],
     data(){
         return {
             form: useForm({
-                request_id: this.information.id,
+                request_id: this.information.request_id,
                 content: null,
                 comment_id: null,
                 option: 'comment'
             }),
             menus: [
-                'Home','Signatories','Details','Attachment','Statuses'
+                'Home','Attachment','Activities'
             ],
             menu: 'Home',
             replyuser: null,
             now: dayjs()
-        }
-    },
-    computed: {
-        r() {
-            return this.information.signatories.filter(s => s.is_approval_only === 0);
-        },
-        rc() {
-            return this.r.length;
-        },
-        crc() {
-            return this.r.filter(s => s.recommended_id !== null).length;
-        },
-        approvalStatus() {
-            const allApproved = this.information.signatories.every(s => s.approved_id !== null);
-            return allApproved ? 1 : 0;
         }
     },
     mounted() {

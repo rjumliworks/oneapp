@@ -1,5 +1,5 @@
 <template>
-    <Head title="Travel Order" />
+    <Head title="Employee Profile" />
     <div class="chat-wrapper d-lg-flex gap-1 mx-n4 mt-n4 p-1">
         <div class="w-100 p-4 pb-0" ref="box">
             <BRow>
@@ -13,7 +13,7 @@
                                           
                                             <BCol md>
                                                 <div>
-                                                    <h4 class="fw-bold">{{ information.location.name }} </h4>
+                                                    <h4 class="fw-bold">CTO</h4>
                                                     <div class="hstack gap-3 flex-wrap">
                                                         <div><i class="ri-qr-code-fill align-bottom me-1"></i> {{information.code}}</div>
                                                         <div class="vr" style="width: 1px;"></div>
@@ -28,20 +28,23 @@
                                     </BCol>
                                     <BCol md="auto">
                                         <div class="hstack gap-4 flex-wrap mt-2">
-                                            <Link href="/travels">
+                                            <Link href="/approvals">
                                                 <div class="text-muted" @click="hide()">  
                                                     <i class="ri-close-circle-fill fs-16"></i> Close
                                                 </div>
                                             </Link>
-                                            <template v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44">
+                                            <template v-if="information_data.data.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44">
                                                 <div class="vr" style="width: 1px;"></div>
-                                                <div v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44" class="me-n3" @click="openDisapprove(information.request_key,information.type)">  
+                                                <div class="me-n3" @click="openDisapprove(information.request_key,information.type)">  
                                                     <b-button variant="danger" block><i class="ri-close-circle-fill me-1"></i>Disapprove</b-button>
                                                 </div>
-                                                <div v-if="information.status.name == 'Pending' && $page.props.user.data.signatory.designation_id == 44" @click="openRecommend(information.request_key,information.type)">  
+                                                <div @click="openRecommend(information.request_key,information.type)">  
                                                     <b-button variant="secondary" block><i class="ri-checkbox-circle-fill me-1"></i>Recommend</b-button>
                                                 </div>
-                                                <div v-if="information.status.name == 'Recommended'" @click="openApprove(information.request_key,information.type)">  
+                                            </template>
+                                            <template  v-if="information_data.data.status.name == 'Recommended' && $page.props.user.data.signatory.designation_id == 43">
+                                                <div class="vr" style="width: 1px;"></div>
+                                                <div @click="openApprove(information.request_key,information.type)">  
                                                     <b-button variant="success" block><i class="ri-checkbox-circle-fill me-1"></i>Approve</b-button>
                                                 </div>
                                             </template>
@@ -61,36 +64,25 @@
             </BRow>
         </div>
     </div>
-    <Edit ref="edit"/>
     <Approved ref="approve"/>
     <Recommend ref="recommend"/>
     <Disapproved ref="disapprove"/>
 </template>
 <script>
-import Main from './Components/Main.vue';
-import Edit from './Modals/Edit.vue';
 import Approved from './Modals/Approved.vue';
 import Recommend from './Modals/Recommend.vue';
 import Disapproved from './Modals/Disapproved.vue';
+import Main from './Components/Main.vue';
 import Sidebar from './Components/Sidebar.vue';
 export default {
     props: ['information_data'],
-    components: { Main, Sidebar, Edit, Approved, Disapproved, Recommend },
+    components: { Main, Sidebar, Approved, Recommend, Disapproved },
     data(){
         return {
             information: this.information_data.data
         }
     },
     methods: {
-        back(){
-            this.$inertia.visit('/travels');
-        },
-        openPrint(id){
-            window.open('/travels?option=print&id='+id);
-        },
-        openEdit(selected){
-            this.$refs.edit.show(selected);
-        },
         openApprove(id,type){
             this.$refs.approve.show(id,type);
         },
@@ -99,6 +91,9 @@ export default {
         },
         openDisapprove(id,type){
             this.$refs.disapprove.show(id,type);
+        },
+        back(){
+            this.$inertia.visit('/approvals');
         }
     }
 }

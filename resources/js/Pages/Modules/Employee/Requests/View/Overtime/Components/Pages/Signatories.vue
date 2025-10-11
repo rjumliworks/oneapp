@@ -1,5 +1,5 @@
 <template>
-        <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 522px); overflow: auto;">
+    <div class="card-body bg-white rounded-bottom" style="height: calc(100vh - 522px); overflow: auto;">
         <div class="d-flex justify-content-between border border-dashed rounded p-3">
             <div class="text-start">
                 <h6 class="text-muted text-uppercase fw-semibold text-truncate fs-11 mb-3">Recommended By</h6>
@@ -45,18 +45,18 @@ import simplebar from "simplebar-vue";
 export default {
     components: { simplebar },
     props: ['information','statuses'],
-    data(){
-        return {
+   data(){
+       return {
             list : this.information.signatories,
             filter: {
                 keyword: null
             }
-        }
-    },
-    methods: {
-        openCreate(){
-            this.$refs.create.show(this.id);
-        },
-    }
-}   
+       }
+   },
+   methods: {
+       openCreate(){
+           this.$refs.create.show(this.id);
+       }
+   }
+}
 </script>
