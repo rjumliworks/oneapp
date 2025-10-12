@@ -4,54 +4,58 @@
      <PageHeader title="Signatory Management" pageTitle="List" />
      <BRow>
          <div class="col-md-12">
-             <div class="card bg-light-subtle shadow-none border">
-                 <div class="card-header bg-light-subtle">
+            
+              
                      <div class="row g-3 p-0">
                          <div class="col-md-4">
-                            <div class="d-flex border border-dashed rounded p-3">
-                                <div class="flex-shrink-0 avatar-sm align-self-center me-3">
-                                    <div class="avatar-title bg-light rounded-circle fs-24 text-success">
-                                        <i class="ri-checkbox-circle-fill"></i>
+                            <div class="card bg-light-subtle shadow-none border">
+                                <div class="d-flex p-3">
+                                    <div class="flex-shrink-0 avatar-sm align-self-center me-3">
+                                        <div class="avatar-title bg-light rounded-circle fs-24 text-success">
+                                            <i class="ri-checkbox-circle-fill"></i>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="mb-0 text-muted fs-12">Regional Director :</p>
-                                    <h6 class="text-truncate fw-semibold fs-13 mb-0">Approved</h6>
-                                    <p class="mb-0 text-muted fs-12">Office of the Regional Director</p>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <p class="mb-0 text-muted fs-12">Office of the Regional Director</p>
+                                        <h6 class="text-truncate fw-semibold fs-13 mb-0">Approved</h6>
+                                        <p class="mb-0 text-muted fs-12">Regional Director</p>
+                                    </div>
                                 </div>
                             </div>
                          </div>
                          <div class="col-md-4">
-                             <div class="d-flex border border-dashed rounded p-3">
-                                <div class="flex-shrink-0 avatar-sm align-self-center me-3">
-                                    <div class="avatar-title bg-light rounded-circle fs-24 text-success">
-                                        <i class="ri-checkbox-circle-fill"></i>
+                            <div class="card bg-light-subtle shadow-none border">
+                                <div class="d-flex p-3">
+                                    <div class="flex-shrink-0 avatar-sm align-self-center me-3">
+                                        <div class="avatar-title bg-light rounded-circle fs-24 text-success">
+                                            <i class="ri-checkbox-circle-fill"></i>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="mb-0 text-muted fs-12">Assistant Regional Director :</p>
-                                    <h6 class="fw-semibold fs-13 mb-0">Ricardo J. Apolinario, III</h6>
-                                    <p class="mb-0 text-muted fs-12">Finance and Administrative Support Services</p>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <p class="mb-0 text-muted fs-12">Finance and Administrative Support Services</p>
+                                        <h6 class="fw-semibold fs-13 mb-0">Ricardo J. Apolinario, III</h6>
+                                        <p class="mb-0 text-muted fs-12">Assistant Regional Director </p>
+                                    </div>
                                 </div>
                              </div>
                          </div>
                          <div class="col-md-4">
-                            <div class="d-flex border border-dashed rounded p-3">
-                                <div class="flex-shrink-0 avatar-sm align-self-center me-3">
-                                    <div class="avatar-title bg-light rounded-circle fs-24 text-success">
-                                        <i class="ri-checkbox-circle-fill"></i>
+                            <div class="card bg-light-subtle shadow-none border">
+                                <div class="d-flex p-3">
+                                    <div class="flex-shrink-0 avatar-sm align-self-center me-3">
+                                        <div class="avatar-title bg-light rounded-circle fs-24 text-success">
+                                            <i class="ri-checkbox-circle-fill"></i>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <p class="mb-0 text-muted fs-12">Assistant Regional Director :</p>
-                                    <h6 class="text-truncate fw-semibold fs-13 mb-0">Rosemarie S. Salazar</h6>
-                                    <p class="mb-0 text-muted fs-12">Technical Operations Services</p>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <p class="mb-0 text-muted fs-12">Technical Operations Services</p>
+                                        <h6 class="text-truncate fw-semibold fs-13 mb-0">Rosemarie S. Salazar</h6>
+                                        <p class="mb-0 text-muted fs-12">Assistant Regional Director</p>
+                                    </div>
                                 </div>
                             </div>
                          </div>
                      </div>
-                 </div>
-             </div>
          </div>
          <div class="col-md-12">
              <div class="card bg-light-subtle shadow-none border">
